@@ -1,0 +1,128 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640" role="img" aria-labelledby="title description">
+  <title id="title">Vedic Celestial Visualizer</title>
+  <desc id="description">A dark celestial project cover with a geocentric orbital diagram and engineering milestone summary.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#050611"/>
+      <stop offset="0.52" stop-color="#11102b"/>
+      <stop offset="1" stop-color="#080a17"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="70%" cy="48%" r="45%">
+      <stop offset="0" stop-color="#7c3aed" stop-opacity=".34"/>
+      <stop offset=".55" stop-color="#2563eb" stop-opacity=".11"/>
+      <stop offset="1" stop-color="#050611" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="earth" cx="38%" cy="30%" r="70%">
+      <stop offset="0" stop-color="#bae6fd"/>
+      <stop offset=".45" stop-color="#38bdf8"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </radialGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset=".5" stop-color="#c4b5fd"/>
+      <stop offset="1" stop-color="#67e8f9"/>
+    </linearGradient>
+    <filter id="glow" x="-100%" y="-100%" width="300%" height="300%">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#c4b5fd" stroke-opacity=".035"/>
+    </pattern>
+  </defs>
+
+  <rect width="1280" height="640" rx="28" fill="url(#background)"/>
+  <rect width="1280" height="640" rx="28" fill="url(#grid)"/>
+  <rect width="1280" height="640" rx="28" fill="url(#halo)"/>
+  <path d="M0 545C240 474 381 603 620 542S1002 449 1280 527V640H0Z" fill="#7c3aed" opacity=".045"/>
+
+  <g fill="#fff">
+    <circle cx="61" cy="70" r="1.2" opacity=".45"/>
+    <circle cx="172" cy="108" r="1.4" opacity=".7"/>
+    <circle cx="304" cy="69" r="1" opacity=".55"/>
+    <circle cx="432" cy="120" r="1.5" opacity=".42"/>
+    <circle cx="541" cy="61" r="1" opacity=".7"/>
+    <circle cx="1122" cy="79" r="1.5" opacity=".58"/>
+    <circle cx="1211" cy="172" r="1" opacity=".76"/>
+    <circle cx="1100" cy="550" r="1.4" opacity=".52"/>
+    <circle cx="121" cy="519" r="1" opacity=".62"/>
+    <circle cx="502" cy="566" r="1.3" opacity=".55"/>
+  </g>
+
+  <g transform="translate(76 102)">
+    <rect width="72" height="72" rx="20" fill="#171735" stroke="#a78bfa" stroke-opacity=".38"/>
+    <circle cx="36" cy="36" r="18" fill="none" stroke="url(#accent)" stroke-width="2"/>
+    <ellipse cx="36" cy="36" rx="25" ry="9" fill="none" stroke="#c4b5fd" stroke-width="1.5" transform="rotate(-24 36 36)" opacity=".86"/>
+    <circle cx="36" cy="36" r="7" fill="#38bdf8"/>
+    <circle cx="58" cy="23" r="3.5" fill="#fde68a" filter="url(#glow)"/>
+  </g>
+
+  <g font-family="Inter, Segoe UI, Arial, sans-serif">
+    <text x="76" y="231" fill="#c4b5fd" font-size="18" font-weight="700" letter-spacing="4">ENGINEERING MILESTONE · V0.1.0</text>
+    <text x="76" y="299" fill="#ffffff" font-size="48" font-weight="750">Vedic Celestial</text>
+    <text x="76" y="354" fill="#ffffff" font-size="48" font-weight="750">Visualizer</text>
+    <rect x="76" y="385" width="470" height="3" rx="1.5" fill="url(#accent)" opacity=".92"/>
+    <text x="76" y="431" fill="#cbd5e1" font-size="21">Deterministic astronomy · Explainable Jyotish</text>
+    <text x="76" y="463" fill="#cbd5e1" font-size="21">AI-ready context · Responsible interpretation</text>
+
+    <g font-size="14" font-weight="650">
+      <g transform="translate(76 505)">
+        <rect width="130" height="38" rx="19" fill="#ffffff" fill-opacity=".055" stroke="#ffffff" stroke-opacity=".12"/>
+        <text x="65" y="24" text-anchor="middle" fill="#e2e8f0">Next.js + TS</text>
+      </g>
+      <g transform="translate(218 505)">
+        <rect width="150" height="38" rx="19" fill="#ffffff" fill-opacity=".055" stroke="#ffffff" stroke-opacity=".12"/>
+        <text x="75" y="24" text-anchor="middle" fill="#e2e8f0">Three.js / WebGL</text>
+      </g>
+      <g transform="translate(380 505)">
+        <rect width="166" height="38" rx="19" fill="#ffffff" fill-opacity=".055" stroke="#ffffff" stroke-opacity=".12"/>
+        <text x="83" y="24" text-anchor="middle" fill="#e2e8f0">3 locales · 2 themes</text>
+      </g>
+    </g>
+  </g>
+
+  <g transform="translate(936 315)">
+    <circle r="237" fill="none" stroke="#c4b5fd" stroke-opacity=".055"/>
+    <circle r="196" fill="none" stroke="#a78bfa" stroke-opacity=".12"/>
+    <circle r="156" fill="none" stroke="#67e8f9" stroke-opacity=".13"/>
+    <circle r="116" fill="none" stroke="#fde68a" stroke-opacity=".16"/>
+
+    <g stroke="#c4b5fd" stroke-opacity=".075">
+      <path d="M0-237V237"/>
+      <path d="M-237 0H237"/>
+      <path d="M-205-119L205 119"/>
+      <path d="M-205 119L205-119"/>
+      <path d="M-119-205L119 205"/>
+      <path d="M-119 205L119-205"/>
+    </g>
+
+    <ellipse rx="246" ry="90" fill="none" stroke="url(#accent)" stroke-width="2" transform="rotate(-18)" opacity=".76"/>
+    <ellipse rx="198" ry="58" fill="none" stroke="#a78bfa" stroke-width="1.5" transform="rotate(29)" opacity=".43"/>
+    <ellipse rx="148" ry="45" fill="none" stroke="#38bdf8" stroke-width="1.2" transform="rotate(-49)" opacity=".34"/>
+
+    <circle r="42" fill="#2563eb" opacity=".18" filter="url(#glow)"/>
+    <circle r="29" fill="url(#earth)"/>
+    <path d="M-21-7C-7-17 2-13 9-5S23 4 25 13C12 10 8 18-4 15S-22 7-21-7Z" fill="#bbf7d0" opacity=".76"/>
+    <path d="M-7-22C0-18 7-17 10-11C2-8-3-10-8-13Z" fill="#dcfce7" opacity=".72"/>
+
+    <g filter="url(#glow)">
+      <circle cx="-207" cy="-41" r="8" fill="#fde68a"/>
+      <circle cx="194" cy="-70" r="6" fill="#f9a8d4"/>
+      <circle cx="136" cy="109" r="7" fill="#f87171"/>
+      <circle cx="-102" cy="142" r="6" fill="#86efac"/>
+      <circle cx="-42" cy="-151" r="6" fill="#c4b5fd"/>
+      <circle cx="59" cy="-104" r="5" fill="#e2e8f0"/>
+    </g>
+
+    <g fill="#c4b5fd" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" letter-spacing="1">
+      <text x="-12" y="-212">27 NAKSHATRAS</text>
+      <text x="-215" y="210">EXPLAINABLE TRANSITS</text>
+      <text x="79" y="219">142 TESTS</text>
+    </g>
+  </g>
+
+  <rect x="1" y="1" width="1278" height="638" rx="27" fill="none" stroke="#ffffff" stroke-opacity=".1" stroke-width="2"/>
+</svg>

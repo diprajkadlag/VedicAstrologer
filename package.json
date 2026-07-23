@@ -1,7 +1,26 @@
 {
   "name": "vedic-astrologer",
   "version": "0.1.0",
+  "description": "Interactive 3D Lahiri-sidereal Jyotish visualizer with explainable transits and an AI-ready context pipeline.",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/diprajkadlag/VedicAstrologer.git"
+  },
+  "homepage": "https://github.com/diprajkadlag/VedicAstrologer#readme",
+  "bugs": {
+    "url": "https://github.com/diprajkadlag/VedicAstrologer/issues"
+  },
+  "keywords": [
+    "nextjs",
+    "typescript",
+    "threejs",
+    "webgl",
+    "astronomy",
+    "jyotish",
+    "explainable-ai",
+    "prompt-engineering"
+  ],
   "packageManager": "npm@11.16.0",
   "engines": {
     "node": ">=20.9.0"
