@@ -1,0 +1,23 @@
+# Dependencies
+/node_modules
+
+# Next.js
+/.next
+/out
+
+# Testing and coverage
+/coverage
+
+# Local tooling (portable Node is kept here in this environment)
+/.tools
+
+# Environment and logs
+.env*
+!.env.example
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.tsbuildinfo
+next-env.d.ts
