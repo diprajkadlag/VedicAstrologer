@@ -9,8 +9,8 @@ import {
 
 describe("app internationalization primitives", () => {
   it("recognizes only supported persisted preferences", () => {
-    expect(["en", "hi", "mr"].every(isAppLocale)).toBe(true);
-    expect(isAppLocale("de")).toBe(false);
+    expect(["en", "hi", "mr", "de"].every(isAppLocale)).toBe(true);
+    expect(isAppLocale("fr")).toBe(false);
     expect(["dark", "light"].every(isAppTheme)).toBe(true);
     expect(isAppTheme("system")).toBe(false);
   });
@@ -24,17 +24,18 @@ describe("app internationalization primitives", () => {
     ).toBe("Surya: Bhava 10; {unknown}");
   });
 
-  it("keeps scoped dictionaries aligned across all three languages", () => {
+  it("keeps scoped dictionaries aligned across all four languages", () => {
     const dictionary = defineMessages({
       en: { title: "Title", body: "Body" },
       hi: { title: "शीर्षक", body: "विवरण" },
       mr: { title: "शीर्षक", body: "मजकूर" },
+      de: { title: "Titel", body: "Inhalt" },
     });
 
     const expected = ["body", "title"];
     expect(Object.keys(dictionary.en).sort()).toEqual(expected);
     expect(Object.keys(dictionary.hi).sort()).toEqual(expected);
     expect(Object.keys(dictionary.mr).sort()).toEqual(expected);
+    expect(Object.keys(dictionary.de).sort()).toEqual(expected);
   });
 });
-

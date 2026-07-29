@@ -4,6 +4,43 @@ This changelog records portfolio milestones for the application. Version 0.1.0 i
 an initial, test-backed release candidate, not a claim of production or
 professional astrological certification.
 
+## [Unreleased] - 2026-07-29
+
+### Added
+
+- German as a fourth application language alongside English, Hindi, and
+  Marathi, including the chart workspace, analysis, Gochara, AI prompt
+  preparation, educational guide, and recovery states.
+- A guided six-step birth-data flow that asks for one item at a time, supports
+  optional seconds-level precision, validates each step, and offers a final
+  editable review before calculation.
+- A keyboard-operable illustrated feature showcase covering the 3D cosmos,
+  traditional charts, analysis, time navigation, and Kundali export.
+- Client-side Kundali summary PDF generation in the selected application
+  language, with bundled Noto Sans/Devanagari fonts, calculated natal
+  placements, Vimshottari periods, methodology, and limitations.
+
+### Changed
+
+- Light is now the first-visit default theme; the dark theme remains available
+  and an explicit user choice is persisted.
+- User-facing zodiac, planetary, house, mansion, and quarter terminology is
+  Sanskrit-first in every language rather than substituting Western zodiac
+  names.
+- Localization lookups now retain a safe English fallback during partial
+  development updates instead of crashing on a newly selected locale.
+- Portfolio documentation now distinguishes browser-local chart/PDF work,
+  deployment-specific geocoding transport, deterministic calculations,
+  traditional interpretation, and scientific evidence more explicitly.
+
+### Responsibility boundary
+
+- The PDF and interface summarize the application's declared calculations and
+  symbolic Jyotish rules; they are not independently certified ephemeris
+  reports, scientific predictions, diagnoses, or professional advice.
+- German translation coverage does not change the underlying calculation
+  conventions or remove boundary uncertainty.
+
 ## [0.1.0] - 2026-07-23
 
 ### Added

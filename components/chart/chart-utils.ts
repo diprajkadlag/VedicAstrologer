@@ -56,6 +56,13 @@ const CHART_DESCRIPTION_MESSAGES = defineMessages({
     planet: "{planet}, {rasi}, भाव {house}, {degrees} अंश{retrograde}",
     retrograde: ", वक्री",
   },
+  de: {
+    empty: "keine Grahas",
+    house: "Bhava {house}, {rasi}, {occupants}",
+    planet:
+      "{planet}, {rasi}, Bhava {house}, {degrees} Grad{retrograde}",
+    retrograde: ", rückläufig",
+  },
 });
 
 export function getChartRasiAbbreviation(

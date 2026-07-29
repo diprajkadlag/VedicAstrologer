@@ -279,6 +279,70 @@ const COSMOS_MESSAGES = defineMessages({
     showGrahaAria:
       "{planet} दाखवा: {rasi}, भाव {house}{retrograde}",
   },
+  de: {
+    sectionAria: "Interaktive geozentrische Himmelssphäre",
+    lagna: "Lagna",
+    bhava: "Bhava",
+    pada: "Pada",
+    retrogradeShort: "R",
+    retrogradeAriaSuffix: ", rückläufig",
+    geocentricSky: "Geozentrischer siderischer Himmel",
+    lahiriAyanamsa: "Lahiri-Ayanamsa {value}°",
+    nakshatraLabels: "Nakshatra-Bezeichnungen",
+    ephemerisTrails: "Ephemeridenbahnen",
+    asterismNote:
+      "Die Nakshatra-Sterngruppen sind illustrativ; die Bahnen beruhen auf stichprobenartig berechneten Ephemeridenpositionen.",
+    fullscreenUnsupportedError:
+      "Dieser Browser unterstützt den Vollbildmodus nicht.",
+    fullscreenFailedError:
+      "Der Browser konnte den Vollbildmodus nicht öffnen. Prüfe die Website-Berechtigungen und versuche es erneut.",
+    fullscreenExitAria: "Vollbildansicht der Himmelssphäre beenden",
+    fullscreenOpenAria: "Himmelssphäre im Vollbildmodus öffnen",
+    fullscreenUnavailableAria:
+      "Der Vollbildmodus ist in diesem Browser nicht verfügbar",
+    exitFullscreenTitle: "Vollbildmodus beenden",
+    openFullscreenTitle: "Vollbildmodus öffnen",
+    fullscreenUnavailableTitle: "Vollbildmodus nicht verfügbar",
+    minimize: "Verkleinern",
+    fullscreen: "Vollbild",
+    unavailable: "Nicht verfügbar",
+    webglUnavailable:
+      "WebGL ist in diesem Browser nicht verfügbar. Kundali und Analyse bleiben weiter unten zugänglich.",
+    webglCheckingTitle: "3D-Grafikunterstützung wird geprüft",
+    webglCheckingBody:
+      "Die Himmelsdarstellung startet erst, nachdem der Browser einen nutzbaren WebGL-Kontext bestätigt hat.",
+    webglUnavailableTitle: "Der 3D-Kosmos ist nicht verfügbar",
+    webglUnavailableBody:
+      "Dieser Browser konnte keinen nutzbaren WebGL-Grafikkontext erstellen.",
+    webglDisabledBody:
+      "Der Browser meldet, dass WebGL oder der zugehörige Grafikanbieter deaktiviert ist.",
+    webglLostBody:
+      "Der Browser hat den WebGL-Grafikkontext während der Darstellung des Kosmos verloren.",
+    webglRuntimeBody:
+      "Die 3D-Darstellung wurde nach einem unerwarteten Grafikfehler sicher angehalten.",
+    webglHelpTitle: "So lässt sich die 3D-Ansicht wiederherstellen",
+    webglHardwareStep:
+      "Aktiviere die Hardwarebeschleunigung in den Browser-Einstellungen und starte den Browser anschließend vollständig neu.",
+    webglBrowserStep:
+      "Verwende einen aktuellen WebGL-fähigen Browser wie Chrome, Edge, Firefox oder Safari.",
+    webglDriverStep:
+      "Bleibt WebGL deaktiviert, aktualisiere den Grafiktreiber oder bitte die Geräteverwaltung, WebGL freizugeben.",
+    webglRestAvailable:
+      "Rāśi-Kundali, Dashas, Gochara-Berechnungen und Jyotish-Analyse bleiben verfügbar.",
+    webglRetry: "WebGL erneut prüfen",
+    webglRetryAria: "WebGL-Unterstützung erneut prüfen",
+    webglReason: "Technischer Grund: {reason}",
+    webglReasonApi: "WebGL-API nicht verfügbar",
+    webglReasonContext: "Grafikkontext nicht verfügbar",
+    webglReasonDisabled: "Grafikanbieter deaktiviert",
+    webglReasonLost: "Grafikkontext verloren",
+    webglReasonRuntime: "Initialisierung der Darstellung fehlgeschlagen",
+    dragZoom: "Ziehen zum Drehen · Scrollen zum Zoomen",
+    selectGraha: "Graha auswählen",
+    toolbarAria: "Graha in der Himmelssphäre auswählen",
+    showGrahaAria:
+      "{planet} anzeigen: {rasi}, Bhava {house}{retrograde}",
+  },
 });
 
 type CosmosTranslate = (

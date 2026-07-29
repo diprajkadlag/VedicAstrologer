@@ -15,6 +15,7 @@ const MARK_MESSAGES = defineMessages({
   en: { retrogradeShort: "R" },
   hi: { retrogradeShort: "व" },
   mr: { retrogradeShort: "व" },
+  de: { retrogradeShort: "R" },
 });
 
 interface ChartPlanetMarkProps {

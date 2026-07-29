@@ -236,6 +236,70 @@ const messages = defineMessages({
     safeUse:
       "ज्योतिष ही प्रतीकात्मक चिंतनपरंपरा म्हणून मांडली आहे; वैज्ञानिकरीत्या सिद्ध कारण म्हणून नाही. हे वैद्यकीय, कायदेशीर, आर्थिक, मानसिक आरोग्य, प्रजनन, मृत्यू किंवा सुरक्षितता सल्ला समजू नका.",
   },
+  de: {
+    eyebrow: "AI-Jyotish-Arbeitsbereich",
+    title: "Fragen Sie auf Grundlage Ihrer berechneten Kundali",
+    intro:
+      "Wählen Sie eine gezielte Frage oder formulieren Sie eine eigene. Diese reine Browser-Version erstellt einen fundierten Prompt und einen berechneten Kundali-Datensatz; sie kontaktiert keinen AI-Dienst.",
+    localOnly: "Nur lokal · kein LLM-Aufruf",
+    quickQuestions: "Schnellanalysen",
+    presetDaily: "Mein tägliches Gochara erstellen",
+    presetMonthly: "Meinen monatlichen Fokus zusammenfassen",
+    presetCareer: "Karriere- und Lebensweg-Analyse",
+    presetDasha: "Aktuelle Dasha vertieft betrachten",
+    presetMind: "Geistige und emotionale Stärken",
+    questionDaily:
+      "Erstelle anhand des heutigen Chandra-Nakshatra und der Gochara von meiner Janma Rasi und meinem Lagna eine praktische Tagesreflexion mit Hauptthema, unterstützenden Handlungen, Hinweisen zur Vorsicht und einer Reflexionsfrage.",
+    questionMonthly:
+      "Deute meinen monatlichen Fokus anhand der aktuellen Gochara von Surya und Budha und benenne den längerfristigen Hintergrund von Guru und Shani. Nenne praktische Prioritäten, Kommunikationsthemen und eine Reflexionsfrage.",
+    questionCareer:
+      "Untersuche Karriere- und Lebenswegthemen über den 10. Bhava, seinen Bhavesha und dessen Platzierung, Grahas im 10. Bhava, den Lagnesha, aktuelle Dashas und relevante Gochara. Beschreibe Potenziale und Zielkonflikte, ohne garantierte Ergebnisse zu behaupten.",
+    questionDasha:
+      "Erkläre meine aktuelle Vimshottari-Mahadasha und -Antardasha: was beide Herrscher in meiner Geburtskundali symbolisieren, wie ihre Bhavas und Platzierungen zusammenspielen, mögliche Schwerpunkte, konstruktive Nutzung und ausgewogene Vorsicht.",
+    questionMind:
+      "Beschreibe emotionale Muster und praktische Stärken anhand von Chandras Rasi und Bhava, Geburts-Nakshatra und Pada, dessen Herrscher, aktueller Dasha und heutigem Chandra-Gochara. Schlage bodenständige Reflexionspraktiken vor.",
+    customQuestion: "Ihre Frage",
+    placeholder:
+      "Zum Beispiel: Wie kann ich über meinen aktuellen Guru-Gochara in Bezug auf meine Forschungsarbeit nachdenken?",
+    characterCount: "{count} / {maximum}",
+    prepare: "Fundierten Prompt vorbereiten",
+    required: "Geben Sie eine Frage ein oder wählen Sie eine Schnellfrage.",
+    tooLong: "Die Frage darf höchstens {maximum} Zeichen lang sein.",
+    contextError:
+      "Der Prompt konnte nicht erstellt werden, weil Kundali, Geburtszeitpunkt, Referenzdatum und Gochara-Kontext nicht übereinstimmen.",
+    preparedFor: "Vorbereitete Frage",
+    localSnapshot: "Lokal berechneter Kontext",
+    notAiAnswer:
+      "Dies ist ein berechneter Kundali-Datensatz, keine von AI erzeugte Deutung.",
+    chartAnchors: "Geburtskundali-Anker",
+    lagnaLine: "Lagna: {rasi}.",
+    moonLine:
+      "Chandra: {rasi}, {nakshatra}, Pada {pada}, Bhava {house}.",
+    timing: "Aktuelle Vimshottari-Phase",
+    timingLine:
+      "{major}-Mahadasha ({majorRasi}, Bhava {majorHouse}) · {minor}-Antardasha ({minorRasi}, Bhava {minorHouse}).",
+    transits: "Aktuelle Gochara-Positionen",
+    lunarTransit:
+      "Chandra: {nakshatra}, Pada {pada}; Bhava {lagnaHouse} vom Lagna und Bhava {moonHouse} von der Janma Rasi.",
+    majorTransits:
+      "Guru: Bhava {jupiterLagna}/{jupiterMoon} vom Lagna/von der Janma Rasi. Shani: Bhava {saturnLagna}/{saturnMoon}.",
+    responseBoundary:
+      "Diese berechneten Positionen sind Ausgangspunkte für Reflexion, keine Schlussfolgerungen oder Ereignisprognosen.",
+    previewTitle: "Vorschau von Prompt und Kontext",
+    previewHelp:
+      "Prüfen Sie die Daten vor dem Teilen. Das JSON ist ein stabiles, maschinenlesbares Schema und enthält Geburtskoordinaten sowie berechnete Kundali-Daten. Feldnamen und einige interne Werte bleiben für API-Kompatibilität auf Englisch; die gewünschte Antwortsprache folgt der App-Sprache.",
+    systemInstructions: "Systemanweisungen",
+    userContext: "Maschinenlesbares Kontextschema",
+    copyPrompt: "Vollständigen Prompt kopieren",
+    copied: "Prompt kopiert",
+    copyFailed:
+      "Kopieren fehlgeschlagen. Markieren Sie den Vorschautext und kopieren Sie ihn manuell.",
+    noExternalCall:
+      "Es ist kein externes Modell eingerichtet. Die App gibt diesen lokalen Datensatz daher nicht als AI-Antwort aus.",
+    safeUseTitle: "Grenzen der Deutung",
+    safeUse:
+      "Jyotish wird als symbolische Tradition zur Reflexion dargestellt, nicht als wissenschaftlich belegter Kausalzusammenhang. Verwenden Sie die Ausgabe nicht als medizinische, rechtliche, finanzielle, psychologische, Fruchtbarkeits-, Sterblichkeits- oder Sicherheitsberatung.",
+  },
 });
 
 const presetUi = [

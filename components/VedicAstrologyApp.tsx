@@ -20,6 +20,8 @@ import {
 
 import InterpretationPanel from "@/components/analysis/InterpretationPanel";
 import ChartWorkspace from "@/components/dashboard/ChartWorkspace";
+import KundaliPdfDownload from "@/components/export/KundaliPdfDownload";
+import FeatureShowcase from "@/components/marketing/FeatureShowcase";
 import {
   useAppPreferences,
   useScopedTranslations,
@@ -217,6 +219,58 @@ const messages = defineMessages({
     accuracy:
       "Astronomy Engine लक्ष्य: सुमारे 1 चाप-मिनिट · कस्टम निरयन सीमा बदलू शकतात",
   },
+  de: {
+    loadingWebgl: "WebGL-Observatorium wird initialisiert",
+    featureSphereTitle: "3D-Himmelssphäre",
+    featureSphereBody: "Bewege dich durch den geozentrischen Himmel und wähle jeden Graha.",
+    featureChartsTitle: "Zwei vedische Darstellungen",
+    featureChartsBody: "Wechsle zwischen nord- und südindischer Rasi-Darstellung.",
+    featureAnalysisTitle: "Jyotish-Analyse",
+    featureAnalysisBody: "Erkunde Bhavas, Nakshatras, Deutungen und Vimshottari-Dashas.",
+    interactiveObservatory: "Interaktives Observatorium",
+    landingTitle: "Ein Geburtsmoment aus jeder Perspektive.",
+    landingBody: "Erstelle zuerst die Kundali. Danach öffnet sich der vollständige Arbeitsbereich mit synchronisierten 3D-, SVG- und Deutungsansichten.",
+    retrogradeShort: "R",
+    selectedPlanetDetail: "{rasi} {degrees} · {nakshatra} Pada {pada} · Bhava {house}",
+    clearSelection: "Auswahl aufheben",
+    calculateError: "Die Kundali konnte nicht berechnet werden. Prüfe die Geburtsdaten.",
+    instantError: "Der gewählte Zeitpunkt konnte nicht berechnet werden.",
+    brand: "Jyotish-Observatorium",
+    title: "Erkunde den Himmel deines Geburtsmoments.",
+    subtitle: "Entdecke eine siderische Lahiri-Kundali mit geozentrischem 3D-Kosmos, traditionellen Darstellungen und transparenter regelbasierter Analyse.",
+    ready: "Vollständiges Observatorium · Bereit",
+    birthEntry: "Geburtsdaten eingeben",
+    updateTitle: "Natalen Ausgangspunkt aktualisieren",
+    updateBody: "Eine neue Berechnung ersetzt die natale Kundali, setzt den Zeitnavigator zurück und aktualisiert alle Ansichten und Deutungen.",
+    returnObservatory: "Zum Observatorium zurückkehren",
+    generated: "Natale Kundali erstellt",
+    bornAt: "{place} · {date} um {time}",
+    editBirth: "Geburtsdaten ändern",
+    displayedPositions: "Angezeigte Positionen · {moment}",
+    natalMoment: "Geburtsmoment",
+    simulatedInstant: "Simulierter Zeitpunkt",
+    ascendant: "Lagna",
+    sun: "Surya",
+    moon: "Chandra",
+    planetSun: "Surya",
+    planetMoon: "Chandra",
+    planetMercury: "Budha",
+    planetVenus: "Shukra",
+    planetMars: "Mangala",
+    planetJupiter: "Guru",
+    planetSaturn: "Shani",
+    planetRahu: "Rahu",
+    planetKetu: "Ketu",
+    corePada: "{nakshatra} Pada {pada}",
+    coreNakshatra: "{nakshatra} · Bhava {house}",
+    coreNakshatraPada: "{nakshatra} Pada {pada} · Bhava {house}",
+    webglSphere: "WebGL-Himmelssphäre",
+    geocentricCosmos: "Geozentrischer Kosmos",
+    simulatedSky: "Simulierter Himmel",
+    natalInterpretation: "Natale Jyotish-Deutung",
+    methodology: "Lahiri-Ayanamsa · mittlere Mondknoten · Ganzzeichen-Bhavas",
+    accuracy: "Astronomy-Engine-Ziel: etwa 1 Bogenminute · benutzerdefinierte siderische Grenzen können abweichen",
+  },
 });
 
 function CelestialLoading() {
@@ -294,67 +348,6 @@ function CoreStat({
       </div>
       <p className="mt-1 truncate text-xs text-slate-400">{detail}</p>
     </article>
-  );
-}
-
-function LandingPreview() {
-  const t = useScopedTranslations(messages);
-  const features = [
-    [t("featureSphereTitle"), t("featureSphereBody")],
-    [t("featureChartsTitle"), t("featureChartsBody")],
-    [t("featureAnalysisTitle"), t("featureAnalysisBody")],
-  ] as const;
-
-  return (
-    <div className="relative min-h-[640px] overflow-hidden rounded-[28px] border border-white/10 bg-[#080a17]/85 p-6 sm:p-8">
-      <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
-        <div className="absolute left-1/2 top-[42%] size-[32rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-amber-200/10" />
-        <div className="absolute left-1/2 top-[42%] size-[23rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-violet-300/15" />
-        <div className="absolute left-1/2 top-[42%] size-[13rem] -translate-x-1/2 -translate-y-1/2 rounded-full border border-sky-300/15" />
-        <div className="absolute left-1/2 top-[42%] size-20 -translate-x-1/2 -translate-y-1/2 rounded-full bg-sky-400/15 shadow-[0_0_80px_rgba(56,189,248,0.3)]" />
-        {Array.from({ length: 18 }, (_, index) => (
-          <span
-            key={index}
-            className="absolute size-1 rounded-full bg-white/70"
-            style={{
-              left: `${8 + ((index * 37) % 85)}%`,
-              top: `${6 + ((index * 53) % 84)}%`,
-              opacity: 0.25 + (index % 4) * 0.15,
-            }}
-          />
-        ))}
-      </div>
-
-      <div className="relative flex min-h-[580px] flex-col justify-between">
-        <div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-violet-300/15 bg-violet-400/[0.07] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.22em] text-violet-700 dark:text-violet-200">
-            <Telescope aria-hidden="true" className="size-3.5" />
-            {t("interactiveObservatory")}
-          </div>
-          <h2 className="mt-5 max-w-lg text-3xl font-semibold tracking-tight text-white sm:text-4xl">
-            {t("landingTitle")}
-          </h2>
-          <p className="mt-3 max-w-lg text-sm leading-6 text-slate-400">
-            {t("landingBody")}
-          </p>
-        </div>
-
-        <div className="grid gap-3 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3">
-          {features.map(([title, description], index) => (
-            <article
-              key={title}
-              className="rounded-2xl border border-white/[0.08] bg-black/25 p-4 backdrop-blur-sm"
-            >
-              <span className="text-[10px] font-semibold text-amber-800 dark:text-amber-300/70">
-                0{index + 1}
-              </span>
-              <h3 className="mt-2 text-sm font-medium text-white">{title}</h3>
-              <p className="mt-1.5 text-xs leading-5 text-slate-500">{description}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 }
 
@@ -597,7 +590,7 @@ export default function VedicAstrologyApp() {
               </button>
             </div>
           ) : (
-            <LandingPreview />
+            <FeatureShowcase />
           )}
         </section>
 
@@ -627,6 +620,12 @@ export default function VedicAstrologyApp() {
                   <span className="rounded-full border border-emerald-300/15 bg-emerald-300/[0.07] px-3 py-1.5 text-xs text-emerald-800 dark:text-emerald-100/75">
                     {request.birth.utcOffset} · {request.birth.timeZone}
                   </span>
+                  <KundaliPdfDownload
+                    chart={natalChart}
+                    request={request}
+                    asOf={analysisAsOf}
+                    locale={locale}
+                  />
                   <button
                     type="button"
                     onClick={() => {

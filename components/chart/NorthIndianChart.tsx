@@ -40,6 +40,14 @@ const NORTH_CHART_MESSAGES = defineMessages({
     figcaption:
       "उत्तर भारतीय कुंडली. भाव स्थिर असतात; राशी लग्नापासून फिरतात.",
   },
+  de: {
+    ariaLabel: "Nordindische vedische Geburtskundali",
+    description:
+      "Zwölf feste Bhavas in der traditionellen nordindischen Rautenform. Wähle ein Bhava oder Graha aus, um Details anzuzeigen.",
+    lagnaShort: "LAGNA",
+    figcaption:
+      "Nordindische Kundali. Die Bhavas sind fest angeordnet; die Rāśis drehen sich ausgehend vom Lagna.",
+  },
 });
 
 interface PlanetLayout {

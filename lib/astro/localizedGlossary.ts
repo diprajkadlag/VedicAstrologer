@@ -209,6 +209,96 @@ const DISTINCT_TERMS: Readonly<
   },
 };
 
+const GERMAN_SANSKRIT_NAMES: Readonly<
+  Partial<Record<AstroTermId, string>>
+> = {
+  lagna: "Lagna",
+  graha: "Graha",
+  rasi: "Rāśi",
+  "janma-rasi": "Janma Rāśi",
+  bhava: "Bhāva",
+  "house-lord": "Bhāveśa",
+  nakshatra: "Nakṣatra",
+  pada: "Pāda",
+  "nakshatra-lord": "Nakṣatra Adhipati",
+  ayanamsa: "Ayanāṃśa",
+  lahiri: "Citrapakṣa",
+  retrograde: "Vakri",
+  gochara: "Gocara",
+  dasha: "Daśā",
+  vimshottari: "Viṃśottarī Daśā",
+  mahadasha: "Mahādaśā",
+  antardasha: "Antardaśā",
+  "rahu-ketu": "Rāhu–Ketu",
+};
+
+interface GermanGlossarySupplement {
+  title: string;
+  short: string;
+  detailed: string;
+  readingTips: readonly string[];
+}
+
+const GERMAN_DISTINCT_TERMS: Readonly<
+  Record<keyof typeof DISTINCT_TERMS, GermanGlossarySupplement>
+> = {
+  "nakshatra-lord": {
+    title: "Nakshatra-Herrscher",
+    short:
+      "Der Graha, der einer Mondstation in der wiederkehrenden Vimshottari-Abfolge zugeordnet ist.",
+    detailed:
+      "Die Reihenfolge Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani und Budha wiederholt sich über die 27 Nakshatras. Dieser Herrscher verbindet die Nakshatra-Ebene einer Stellung mit seiner Position in der Geburtskundali und bestimmt beim Geburts-Chandra den ersten Mahadasha-Herrscher. Es handelt sich um eine traditionelle symbolische Zuordnung, nicht um den astronomischen Herrscher eines Sternbilds und nicht um einen Rasi-Herrscher.",
+    readingTips: [
+      "Vor der Deutung der Verbindung den Nakshatra-Herrscher in der Geburtskundali lokalisieren.",
+      "Den Nakshatra-Herrscher nicht mit dem Herrscher seiner Rasi oder seines Bhava verwechseln.",
+    ],
+  },
+  lahiri: {
+    title: "Lahiri-Ayanamsa",
+    short:
+      "Eine in Indien weit verbreitete siderische Bezugskonvention, auch Chitrapaksha genannt.",
+    detailed:
+      "Lahiri liefert den Versatz, mit dem tropische Längengrade für Rasis, Nakshatras, Lagna, Grahas und Mondknoten in einen einheitlichen siderischen Bezugsrahmen umgerechnet werden. Andere anerkannte Ayanamsa-Konventionen ergeben leicht abweichende Längengrade und können Positionen nahe einer Grenze verändern. Lahiri ist die offengelegte Konvention dieser App; sie wird nicht als einzig möglicher siderischer Standard dargestellt.",
+    readingTips: [
+      "Beim Vergleich von Geburts- und Gochara-Kundalis dasselbe Ayanamsa verwenden.",
+      "Grenzwechsel zwischen Konventionen als Methodenunterschied behandeln, nicht als verborgene Präzision.",
+    ],
+  },
+  vimshottari: {
+    title: "Vimshottari-Dasha",
+    short:
+      "Eine 120-jährige symbolische Abfolge von neun Graha-Perioden, abgeleitet aus Chandras Geburts-Nakshatra.",
+    detailed:
+      "Vimshottari durchläuft Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani und Budha mit ungleichen Zeitspannen, die insgesamt 120 Jahre ergeben. Chandras Geburts-Nakshatra bestimmt den ersten Herrscher; sein berechneter Fortschritt durch diese Mondstation legt die verbleibende Dauer fest. Das ist ein traditionelles Zeitsystem, kein astronomischer Kausalmechanismus und keine Garantie für vorhergesagte Ereignisse.",
+    readingTips: [
+      "Mahadasha als übergeordnetes Kapitel und Antardasha als zeitnähere Unterthematik lesen.",
+      "Beide Periodenherrscher anhand ihrer Geburtsstellungen beurteilen; ihre Namen allein reichen nicht aus.",
+    ],
+  },
+  mahadasha: {
+    title: "Mahadasha",
+    short:
+      "Die große Graha-Periode, die im Vimshottari-System das langfristige Hintergrundkapitel bildet.",
+    detailed:
+      "Eine Mahadasha dauert je nach Herrscher sechs bis zwanzig Jahre. Die traditionelle Deutung beginnt mit dessen Geburts-Bhava, Rasi, Bhava-Herrschaften, Würde und Beziehungen; anschließend werden aktuelle Antardasha und Gochara ergänzt. Sie beschreibt ein lang anhaltendes Feld der Betonung statt eines einzelnen Ereignisses. Ein schwieriges Symbol macht nicht jedes Jahr gleichermaßen schwierig.",
+    readingTips: [
+      "Vor der Synthese den Mahadasha-Herrscher und die von ihm beherrschten Bhavas bestimmen.",
+      "Antardasha und aktuelle Gochara ergänzen; die große Periode nicht isoliert lesen.",
+    ],
+  },
+  antardasha: {
+    title: "Antardasha",
+    short:
+      "Eine Unterperiode, durch die sich eine Mahadasha über einen zweiten Graha ausdrückt.",
+    detailed:
+      "Der Mahadasha-Herrscher setzt den größeren Rahmen; der Antardasha-Herrscher beschreibt den unmittelbareren Weg darin. Die Deutung vergleicht Geburts-Bhavas, Rasis, Herrschaften, Würde und Beziehungen beider Grahas und prüft anschließend aktuelle Gochara auf zeitweilige Aktivierungen. Eine allgemeine Kombination zweier Herrscher ist nur eine Ausgangshypothese, keine persönliche Vorhersage oder Gewissheit.",
+    readingTips: [
+      "Den großen Herrscher als Kontext und den Unterperioden-Herrscher als aktiven Fokus lesen.",
+      "Wiederkehrende Bhava-Themen beider Herrscher suchen und anschließend prüfen, statt sie vorauszusetzen.",
+    ],
+  },
+};
+
 const CALCULATION_NOTES: Readonly<
   Partial<Record<AstroTermId, LocalizedText>>
 > = {
@@ -294,6 +384,43 @@ const CALCULATION_NOTES: Readonly<
   ),
 };
 
+const GERMAN_CALCULATION_NOTES: Readonly<
+  Partial<Record<AstroTermId, string>>
+> = {
+  lagna:
+    "Die App bestimmt für eingegebene Zeit und Koordinaten den Schnittpunkt von östlichem Horizont und Ekliptik, wendet das Lahiri-Ayanamsa an und verwendet dessen Rasi als ersten Ganzzeichen-Bhava.",
+  rasi:
+    "Der normalisierte siderische Längengrad wird von Mesha bis Meena in zwölf aufeinanderfolgende Abschnitte zu je 30° geteilt.",
+  "janma-rasi":
+    "Chandras Lahiri-siderischer Längengrad bei der Geburt bestimmt seinen 30° breiten Rasi-Abschnitt.",
+  bhava:
+    "Diese App verwendet Ganzzeichen-Bhavas: Die Lagna-Rasi ist Bhava 1 und jede folgende Rasi bildet den nächsten Bhava.",
+  "whole-sign-house":
+    "Die Bhava-Nummer ergibt sich durch inklusives Zählen der Rasis ab der Lagna-Rasi; nach Meena beginnt die Folge erneut.",
+  "house-lord":
+    "Die App ermittelt den klassischen Graha-Herrscher der Rasi in jedem Bhava und lokalisiert diesen Graha anschließend in der Geburtskundali.",
+  nakshatra:
+    "Der siderische Tierkreis von 360° wird in 27 gleich große Abschnitte zu je 13°20′ geteilt, beginnend mit Ashwini bei 0° Mesha.",
+  pada:
+    "Der Grad innerhalb eines Nakshatra wird in vier gleich große Viertel zu je 3°20′ geteilt, nummeriert von 1 bis 4.",
+  "nakshatra-lord":
+    "Die App wendet die feste Vimshottari-Abfolge der neun Herrscher auf den berechneten Nakshatra-Index an.",
+  ayanamsa:
+    "Der gewählte Ayanamsa-Versatz wird vom tropischen ekliptikalen Längengrad abgezogen, um den siderischen Längengrad zu erhalten.",
+  lahiri:
+    "Die Ephemeride wendet ihr dokumentiertes Lahiri-Präzessionsmodell einheitlich auf Geburts-, Simulations- und Gochara-Positionen an.",
+  retrograde:
+    "Längengrade werden um den gewählten Zeitpunkt herum abgetastet. Negative geozentrische Längengeschwindigkeit wird als rückläufig, nahezu null als stationär markiert.",
+  gochara:
+    "Die App berechnet Graha-Positionen für das gewählte Datum und vergleicht ihre Ganzzeichen-Bhavas sowohl vom Geburts-Lagna als auch von Janma Rasi aus.",
+  vimshottari:
+    "Chandras berechneter Fortschritt durch sein Geburts-Nakshatra bestimmt die verbleibende erste Periode; die App verwendet die offengelegte Konvention eines Jahres mit 365,25 Tagen und halb offene Grenzen.",
+  antardasha:
+    "Jede Mahadasha wird in neun Unterperioden geteilt. Die Dauer entspricht den Jahren des großen Herrschers × den Jahren des Unterherrschers ÷ 120.",
+  "rahu-ketu":
+    "Die App verwendet für Rahu den mittleren aufsteigenden Mondknoten und setzt Ketu exakt 180° gegenüber.",
+};
+
 function isDistinctTerm(
   id: AstroTermId,
 ): id is keyof typeof DISTINCT_TERMS {
@@ -304,14 +431,33 @@ export function getLocalizedAstroGlossaryEntry(
   id: AstroTermId,
   locale: AppLocale,
 ): LocalizedAstroGlossaryEntry {
-  const sanskrit = SANSKRIT_NAMES[id]
-    ? readLocalized(SANSKRIT_NAMES[id], locale)
-    : undefined;
-  const calculation = CALCULATION_NOTES[id]
-    ? readLocalized(CALCULATION_NOTES[id], locale)
-    : undefined;
+  const sanskrit =
+    locale === "de"
+      ? GERMAN_SANSKRIT_NAMES[id]
+      : SANSKRIT_NAMES[id]
+        ? readLocalized(SANSKRIT_NAMES[id], locale)
+        : undefined;
+  const calculation =
+    locale === "de"
+      ? GERMAN_CALCULATION_NOTES[id]
+      : CALCULATION_NOTES[id]
+        ? readLocalized(CALCULATION_NOTES[id], locale)
+        : undefined;
 
   if (isDistinctTerm(id)) {
+    if (locale === "de") {
+      const term = GERMAN_DISTINCT_TERMS[id];
+      return {
+        id,
+        title: term.title,
+        sanskrit,
+        short: term.short,
+        detailed: term.detailed,
+        calculation,
+        readingTips: term.readingTips,
+      };
+    }
+
     const term = DISTINCT_TERMS[id];
     return {
       id,

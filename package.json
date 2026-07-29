@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Interactive 3D Lahiri-sidereal Jyotish visualizer with explainable transits and an AI-ready context pipeline.",
   "private": true,
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/diprajkadlag/VedicAstrologer.git"
@@ -39,6 +40,7 @@
     "sharp": "^0.35.3"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.5.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "astronomy-engine": "^2.1.19",

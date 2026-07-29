@@ -77,4 +77,37 @@ describe("multilingual Jyotish education", () => {
       }
     }
   });
+
+  it("uses explicit German education prose instead of English fallback", () => {
+    for (const term of EDUCATION_TERMS) {
+      expect(term.summary.de).not.toBe(term.summary.en);
+      expect(term.detail.de).not.toBe(term.detail.en);
+      expect(term.readingSequence.de).not.toBe(term.readingSequence.en);
+      expect(term.summary.de).not.toContain("ÜBERSETZUNG-FEHLT");
+    }
+
+    for (const graha of GRAHA_IDS) {
+      const profile = GRAHA_EDUCATION[graha];
+      expect(profile.astronomicalKind.de).not.toBe(
+        profile.astronomicalKind.en,
+      );
+      expect(profile.signifies.de).not.toBe(profile.signifies.en);
+      expect(profile.constructive.de).not.toBe(profile.constructive.en);
+      expect(profile.caution.de).not.toBe(profile.caution.en);
+      expect(profile.inquiry.de).not.toBe(profile.inquiry.en);
+    }
+
+    for (const profile of Object.values(BHAVA_EDUCATION)) {
+      expect(profile.domain.de).not.toBe(profile.domain.en);
+      expect(profile.constructive.de).not.toBe(profile.constructive.en);
+      expect(profile.caution.de).not.toBe(profile.caution.en);
+    }
+
+    for (const limitation of Object.values(
+      LOCALIZED_ANALYSIS_LIMITATIONS,
+    )) {
+      expect(limitation.de).not.toBe(limitation.en);
+      expect(limitation.de).not.toContain("ÜBERSETZUNG-FEHLT");
+    }
+  });
 });

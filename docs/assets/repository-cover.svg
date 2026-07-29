@@ -61,7 +61,7 @@
   </g>
 
   <g font-family="Inter, Segoe UI, Arial, sans-serif">
-    <text x="76" y="231" fill="#c4b5fd" font-size="18" font-weight="700" letter-spacing="4">ENGINEERING MILESTONE · V0.1.0</text>
+    <text x="76" y="231" fill="#c4b5fd" font-size="18" font-weight="700" letter-spacing="4">ENGINEERING PORTFOLIO · 2026</text>
     <text x="76" y="299" fill="#ffffff" font-size="48" font-weight="750">Vedic Celestial</text>
     <text x="76" y="354" fill="#ffffff" font-size="48" font-weight="750">Visualizer</text>
     <rect x="76" y="385" width="470" height="3" rx="1.5" fill="url(#accent)" opacity=".92"/>
@@ -79,7 +79,7 @@
       </g>
       <g transform="translate(380 505)">
         <rect width="166" height="38" rx="19" fill="#ffffff" fill-opacity=".055" stroke="#ffffff" stroke-opacity=".12"/>
-        <text x="83" y="24" text-anchor="middle" fill="#e2e8f0">3 locales · 2 themes</text>
+        <text x="83" y="24" text-anchor="middle" fill="#e2e8f0">4 locales · 2 themes</text>
       </g>
     </g>
   </g>
@@ -120,7 +120,7 @@
     <g fill="#c4b5fd" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="650" letter-spacing="1">
       <text x="-12" y="-212">27 NAKSHATRAS</text>
       <text x="-215" y="210">EXPLAINABLE TRANSITS</text>
-      <text x="79" y="219">142 TESTS</text>
+      <text x="79" y="219">CI-VALIDATED</text>
     </g>
   </g>
 

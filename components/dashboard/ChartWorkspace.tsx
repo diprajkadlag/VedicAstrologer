@@ -119,6 +119,38 @@ const WORKSPACE_MESSAGES = defineMessages({
     exploreHelp:
       "त्याची राशी आणि त्यातील ग्रह पाहण्यासाठी भाव निवडा. ग्रहाची निवड खगोलीय दृश्यातही लागू होते.",
   },
+  de: {
+    rasiChart: "Rāśi-Kundali",
+    natalMap: "Geburtskarte mit Ganzzeichen-Bhavas",
+    simulatedMap: "Simulierte Karte mit Ganzzeichen-Bhavas",
+    styleAria: "Stil der vedischen Kundali",
+    north: "Nordindisch",
+    south: "Südindisch",
+    northNatalAria: "Interaktive nordindische vedische Geburtskundali",
+    northSimulatedAria:
+      "Interaktive nordindische vedische Kundali für den ausgewählten Zeitpunkt",
+    southNatalAria: "Interaktive südindische vedische Geburtskundali",
+    southSimulatedAria:
+      "Interaktive südindische vedische Kundali für den ausgewählten Zeitpunkt",
+    selectedGraha: "Ausgewähltes Graha",
+    retrograde: "Rückläufig",
+    rasiPosition: "Position in der Rāśi",
+    nakshatra: "Nakshatra",
+    pada: "Pada",
+    bhava: "Bhava",
+    longitudinalMotion: "Längsbewegung",
+    direct: "Direktläufig",
+    stationary: "Stationär",
+    motionValue: "{motion} · {speed}°/Tag",
+    showBhavaDetails: "Bhava-Details anzeigen",
+    selectedBhava: "Ausgewähltes Bhava",
+    bhavaHeading: "Bhava {house}",
+    emptyBhava:
+      "In der ausgewählten Kundali befindet sich kein Graha in diesem Bhava.",
+    exploreBhava: "Bhava erkunden",
+    exploreHelp:
+      "Wähle ein Bhava aus, um seine Rāśi und die darin befindlichen Grahas zu sehen. Die Graha-Auswahl wird mit der Himmelsansicht geteilt.",
+  },
 });
 
 function formatChartNumber(

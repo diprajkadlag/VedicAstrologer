@@ -178,6 +178,51 @@ const COPY: Readonly<Record<AppLocale, MethodologyCopy>> = {
     siderealSource: "Swiss Ephemeris निरयन-पद्धत दस्तऐवज",
     evidenceSource: "खगोलशास्त्र व ज्योतिषावरील IAU शैक्षणिक विधान",
   },
+  de: {
+    tabTitle: "Methode & Grenzen",
+    eyebrow: "Transparente Methodik",
+    intro:
+      "Diese Seite trennt reproduzierbare astronomische Berechnungen von traditioneller Jyotish-Deutung. Ein bestandener Audit bedeutet, dass die Kundali ihren eigenen mathematischen Regeln entspricht; er beweist nicht, dass Astrologie Persönlichkeit oder Ereignisse vorhersagen kann.",
+    auditTitle: "Konsistenzprüfung der Kundali",
+    auditPass: "Interne Prüfungen bestanden",
+    auditFail: "Inkonsistenzen erkannt",
+    checks: "Prüfungen",
+    errors: "Fehler",
+    warnings: "Warnungen",
+    auditBoundary:
+      "Dies ist ein struktureller Software-Audit, kein Beleg für Vorhersagekraft. Weder diese App noch diese Sitzung hat einen unabhängigen Vergleich mit Swiss Ephemeris oder JPL durchgeführt. Prüfen Sie grenznahe Kundalis mit einer zertifizierten Ephemeride.",
+    technicalDiagnostics: "Entwicklerdiagnose",
+    diagnosticItem: "Befund der internen Konsistenzprüfung",
+    calculatedTitle: "Was die App berechnet",
+    calculated: [
+      "Scheinbare geozentrische Positionen von Surya, Chandra und den Grahas mit Astronomy Engine; deren angegebenes Genauigkeitsziel liegt bei ungefähr ±1 Bogenminute.",
+      "Eine eigene Lahiri-nahe siderische Umrechnung mit J2000-Anker, IAU-1976-Präzession und verkürzter Nutation. Sie ist dokumentiert, aber nicht durch Swiss Ephemeris zertifiziert.",
+      "Ein ortsabhängiges Lagna, Ganzzeichen-Bhavas, 27 Nakshatras und vier Padas.",
+      "Mittlere Positionen von Rahu und Ketu, stets einander gegenüber; nahe einer Grenze können Ergebnisse mit wahren Mondknoten abweichen.",
+      "Vimshottari-Mahadasha und -Antardasha nach der offengelegten Konvention eines Jahres mit 365,25 Tagen.",
+    ],
+    interpretationTitle: "Was traditionelle Deutung ist",
+    interpretation: [
+      "Texte zu Persönlichkeit, Bhava, Graha und Dasha sind regelbasierte symbolische Synthesen—keine gemessenen Tatsachen über eine Person.",
+      "Eine Platzierung kann mehrere Lesarten unterstützen. Die App soll konstruktive und schwierige Ausdrucksformen zeigen, statt ein einziges Urteil zu erzwingen.",
+      "Gochara-Werte sind transparente redaktionelle Zusammenfassungen, keine Wahrscheinlichkeiten, Risikoschätzungen oder Ereignisprognosen. Dasha-Zeiträume werden nicht bewertet.",
+    ],
+    omittedTitle: "Derzeit nicht berechnet",
+    omitted:
+      "Shadbala, Varga-Kundalis wie Navamsha, klassische Drishti, Yuti-Orben, Verbrennung, Yogas, Ashtakavarga, Geburtszeitkorrektur und Ereigniswahrscheinlichkeiten. Lehrtexte zu diesen Begriffen dürfen nicht mit Ergebnissen Ihrer Kundali verwechselt werden.",
+    criticalTitle: "Grundsätze für kritisches Lesen",
+    critical: [
+      "Keine garantierten Aussagen zu Ereignissen, Diagnosen, Lebensdauer, Fruchtbarkeit, Partnerschaft, Vermögen oder Karriere.",
+      "Kein schmeichelhaftes Ergebnis wird nur deshalb gewählt, weil es sich bestätigend anfühlt.",
+      "Widersprüchliche Hinweise, fehlende Methoden und Unsicherheit an Grenzen werden ausdrücklich benannt.",
+      "Eine unsichere Geburtszeit kann Lagna und Bhavas wesentlich verändern; gerundete Zeiten erfordern besondere Vorsicht.",
+      "Medizinische, rechtliche, finanzielle, sicherheitsbezogene und psychische Entscheidungen benötigen qualifizierte, evidenzbasierte Beratung.",
+    ],
+    sourcesTitle: "Quellen zu Berechnung und Evidenz",
+    astronomySource: "Validierung und Genauigkeit von Astronomy Engine",
+    siderealSource: "Dokumentation der siderischen Methoden von Swiss Ephemeris",
+    evidenceSource: "IAU-Bildungserklärung zu Astronomie und Astrologie",
+  },
 };
 
 function BulletList({ items }: { items: readonly string[] }) {

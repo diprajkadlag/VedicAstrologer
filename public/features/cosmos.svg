@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" role="img">
+  <defs>
+    <radialGradient id="sky" cx="52%" cy="44%" r="70%">
+      <stop offset="0" stop-color="#25224f"/>
+      <stop offset=".55" stop-color="#10142b"/>
+      <stop offset="1" stop-color="#050712"/>
+    </radialGradient>
+    <radialGradient id="earth" cx="38%" cy="32%">
+      <stop offset="0" stop-color="#c6f5ff"/>
+      <stop offset=".35" stop-color="#4ac1dc"/>
+      <stop offset="1" stop-color="#12668d"/>
+    </radialGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="8"/></filter>
+  </defs>
+  <rect width="800" height="520" rx="32" fill="url(#sky)"/>
+  <g fill="#fff">
+    <circle cx="75" cy="72" r="2"/><circle cx="146" cy="126" r="1.4"/><circle cx="224" cy="48" r="1.8"/>
+    <circle cx="658" cy="75" r="1.6"/><circle cx="727" cy="145" r="2"/><circle cx="91" cy="381" r="1.5"/>
+    <circle cx="704" cy="408" r="1.7"/><circle cx="585" cy="463" r="1.3"/><circle cx="308" cy="448" r="1.8"/>
+  </g>
+  <g transform="translate(405 267)" fill="none">
+    <ellipse rx="276" ry="124" stroke="#a78bfa" stroke-opacity=".25"/>
+    <ellipse rx="225" ry="101" stroke="#f7cc75" stroke-opacity=".28"/>
+    <ellipse rx="170" ry="76" stroke="#67e8f9" stroke-opacity=".24"/>
+    <circle r="142" stroke="#a78bfa" stroke-opacity=".3" stroke-dasharray="3 11"/>
+    <circle r="196" stroke="#f7cc75" stroke-opacity=".28" stroke-dasharray="4 13"/>
+    <g stroke="#c4b5fd" stroke-opacity=".2">
+      <path d="M0-220V220"/><path d="M-220 0H220"/><path d="M-156-156L156 156"/><path d="M156-156L-156 156"/>
+    </g>
+    <circle r="52" fill="#38bdf8" opacity=".22" filter="url(#glow)"/>
+    <circle r="38" fill="url(#earth)" stroke="#d6f6ff" stroke-opacity=".75"/>
+    <circle cx="-222" cy="-71" r="13" fill="#fbd56b"/>
+    <circle cx="-222" cy="-71" r="28" fill="#fbd56b" opacity=".18" filter="url(#glow)"/>
+    <circle cx="166" cy="-85" r="10" fill="#fb7185"/>
+    <circle cx="250" cy="61" r="15" fill="#e9d5ff"/>
+    <circle cx="-132" cy="101" r="9" fill="#5eead4"/>
+    <circle cx="76" cy="116" r="7" fill="#93c5fd"/>
+  </g>
+  <g fill="#ddd6fe" font-family="Arial,sans-serif" font-size="17" font-weight="700">
+    <text x="378" y="70">Mesha</text><text x="602" y="194">Karka</text>
+    <text x="568" y="388">Tula</text><text x="182" y="415">Makara</text>
+  </g>
+</svg>

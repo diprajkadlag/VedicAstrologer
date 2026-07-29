@@ -5,12 +5,15 @@
 Vedic Celestial Visualizer is a single Next.js App Router application that combines:
 
 - browser-side astronomical and Jyotish calculations;
+- a guided, stepwise birth-data workflow;
 - an interactive React Three Fiber celestial scene;
 - North and South Indian SVG Rasi charts;
 - deterministic natal, Vimshottari Dasha, and Gochara analysis;
 - an interactive multilingual Jyotish guide;
+- a localized client-side Kundali PDF summary;
+- an illustrated, keyboard-operable feature showcase;
 - a local AI-prompt preparation interface; and
-- a server-side place-search proxy backed by OpenStreetMap Nominatim.
+- deployment-aware place search backed by OpenStreetMap Nominatim.
 
 This document describes the implementation in the repository. It does not
 assume a database, authentication service, hosted LLM, analytics pipeline, or
@@ -24,6 +27,7 @@ flowchart LR
 
     subgraph Browser["Browser — Next.js client application"]
         PREF[AppPreferencesProvider<br/>locale and theme]
+        TOUR[FeatureShowcase<br/>illustrated product tour]
         FORM[BirthForm]
         CIVIL[civil-time.ts<br/>IANA civil time to UTC instant]
         APP[VedicAstrologyApp<br/>orchestration and shared selection]
@@ -36,6 +40,7 @@ flowchart LR
         TRANSIT[transits.ts<br/>deterministic Gochara]
         AUDIT[analysisAudit.ts<br/>structural consistency]
         GUIDE[Jyotish guide and glossary]
+        PDF[Kundali PDF<br/>localized natal summary]
         PROMPT[aiPromptBuilder.ts<br/>stable local prompt]
 
         PREF --> FORM
@@ -53,6 +58,8 @@ flowchart LR
         PANEL --> TRANSIT
         PANEL --> AUDIT
         PANEL --> GUIDE
+        PANEL --> PDF
+        AUDIT --> PDF
         PANEL --> PROMPT
         TRANSIT --> PROMPT
         WEBGL <-->|selected graha| APP
@@ -68,17 +75,21 @@ flowchart LR
 
     NOM[Nominatim API]
     CLIP[System clipboard]
+    FILE[Local PDF file]
 
+    U --> TOUR
     U --> FORM
-    FORM -->|place query only| GEOAPI
+        FORM -->|Node build: place query only| GEOAPI
     GEOAPI --> GATE
     GATE --> NOM
     GATE --> TZ
     GEOAPI -->|normalized places and IANA zones| FORM
+    FORM -.->|static export: place query only| NOM
     U --> TIME
     U --> WEBGL
     U --> SVG
     U --> PANEL
+    PDF -->|explicit download action| FILE
     PROMPT -->|explicit copy action| CLIP
 ```
 
@@ -99,22 +110,24 @@ calculation is deliberately local:
 - Dasha and interpretation assembly;
 - transit comparison and scoring;
 - structural chart audits;
-- SVG chart layout; and
+- SVG chart layout;
+- localized PDF assembly and download; and
 - AI context and prompt construction.
 
 Birth-chart state is held in React memory. A refresh does not restore a
 generated chart. Only locale and theme preferences are persisted in
-`localStorage`.
+`localStorage`. The generated PDF is assembled on demand and downloaded by the
+browser; the application does not upload or retain the report.
 
 The WebGL bundle is loaded with `next/dynamic` and `ssr: false`. This isolates
 browser-only Three.js APIs from server rendering and avoids putting the 3D
 renderer on the initial server path.
 
-### Server runtime
+### Server runtime and static export
 
 `app/api/geocode/route.ts` is explicitly a Node.js route. It is the only
-implemented application endpoint and the only built-in path to an external
-service. It:
+implemented application endpoint and, in the Node topology, the path to the
+external geocoding service. It:
 
 1. validates one `q` parameter;
 2. calls Nominatim with fixed search parameters and an identifying user agent;
@@ -124,23 +137,33 @@ service. It:
 
 No chart calculation or interpretation is sent to this route.
 
+The GitHub Pages build is a different, explicitly configured topology.
+`STATIC_EXPORT=1` excludes the route handler because no Node server exists. In
+that build, `lib/geocoding/client.ts` loads the browser transport on demand,
+calls Nominatim directly after explicit user input, and resolves timezones with
+bundled `tz-lookup` data. Both transports share validation and normalization
+logic. This means “birth data remains local” is accurate, while “the whole app
+is offline” would not be: place search is still a network operation.
+
 ## 4. Layer and module map
 
 | Layer | Primary modules | Responsibility |
 | --- | --- | --- |
 | App shell | `app/layout.tsx`, `app/page.tsx`, `app/globals.css` | Metadata, preference bootstrap, global theme tokens, responsive base styles |
 | Orchestration | `components/VedicAstrologyApp.tsx` | Owns natal/display chart state, time simulation, error state, and synchronized graha/Bhava selection |
-| Input and time | `components/ui/BirthForm.tsx`, `components/ui/TimeNavigator.tsx`, `lib/astro/civil-time.ts`, `lib/astro/instants.ts` | Form validation, place selection, IANA civil-time resolution, DST fold/gap handling, absolute-instant normalization |
+| Input and time | `components/ui/BirthForm.tsx`, `components/ui/TimeNavigator.tsx`, `lib/astro/civil-time.ts`, `lib/astro/instants.ts` | Six-step guided entry, per-step validation, place selection, optional seconds, IANA civil-time resolution, DST fold/gap handling, absolute-instant normalization |
 | Astronomy | `lib/astro/ephemeris.ts` | Lahiri sidereal conversion, apparent geocentric grahas, Lagna, mean nodes, motion, whole-sign houses, and trajectory samples |
 | Jyotish rules | `lib/astro/interpretations.ts`, `lib/astro/education.ts`, `lib/astro/glossary.ts` | House/graha/Nakshatra lookup data, personality synthesis, 108 graha-in-Bhava educational readings, and Vimshottari timelines |
 | Analysis integrity | `lib/astro/analysisAudit.ts` | Internal consistency checks and explicit methodological limitations |
 | Transit engine | `lib/transits.ts` | Recalculates a chart at an explicit instant and compares Gochara from natal Lagna and Janma Rasi |
 | AI handoff | `lib/aiPromptBuilder.ts`, `components/dashboard/AiAstrologerTab.tsx` | Validates and serializes chart context, separates system policy from user JSON, previews and copies a prompt |
+| Document export | `components/export/*`, `lib/export/*`, `public/fonts/*` | Builds a selected-language Kundali summary from the natal snapshot and downloads it locally with bundled fonts |
+| Product introduction | `components/marketing/FeatureShowcase.tsx`, `public/features/*` | Keyboard-operable visual tour with lightweight repository-owned SVG illustrations |
 | 3D presentation | `components/3d/*` | WebGL capability probe, responsive camera, Earth/celestial sphere, grahas, Nakshatras, trails, controls, and fullscreen |
 | 2D presentation | `components/chart/*`, `components/dashboard/ChartWorkspace.tsx` | Interactive North and South Indian SVG chart layouts |
 | Analysis UI | `components/analysis/*`, `components/dashboard/HoroscopeTab.tsx` | Overview, positions, Bhavas, Nakshatras, Dashas, Gochara, guide, methodology, and prompt tabs |
-| Localization | `lib/i18n.ts`, `lib/astro/localizedNames.ts`, `lib/astro/localizedGlossary.ts`, component dictionaries | English, Hindi, and Marathi text, names, glossary content, and locale-aware number/date display |
-| Geocoding | `app/api/geocode/route.ts`, `lib/geocoding/*` | Same-origin search API, Nominatim client, response normalization, timezone lookup, throttling, and HTTP errors |
+| Localization | `lib/i18n.ts`, `lib/astro/localizedNames.ts`, `lib/astro/localizedGlossary.ts`, component dictionaries | English, Hindi, Marathi, and German text, Sanskrit-first names, glossary content, and locale-aware number/date display |
+| Geocoding | `app/api/geocode/route.node.ts`, `lib/geocoding/*` | Deployment-selected proxy/browser Nominatim transport, response normalization, timezone lookup, throttling, and HTTP errors |
 
 ## 5. Astronomy and Jyotish are separate domains
 
@@ -197,6 +220,13 @@ means internal structural consistency only. The Methodology and Guide tabs
 state that this does not validate astrology as a scientific predictive method.
 
 ## 6. UI state and synchronization
+
+Before any chart exists, `BirthForm` owns a six-step wizard: name, optional
+addressing/gender, date, time, place/timezone, and confirmation. Each transition
+validates only the current responsibility, while Back and review-card Edit
+actions preserve prior inputs. Time entry defaults to minute precision and can
+be expanded to seconds. A final submission normalizes the civil time and hands
+one immutable request to the chart orchestrator.
 
 `VedicAstrologyApp` keeps two chart objects for two distinct purposes:
 
@@ -264,8 +294,8 @@ The renderer has several containment layers:
    vendor or renderer strings that report a disabled graphics provider.
 3. **Mount gate.** React Three Fiber's `Canvas` is not mounted until the probe
    returns a supported context. Unsupported browsers receive a localized
-   English/Hindi/Marathi explanation, recovery guidance, and retry action while
-   the SVG charts and analysis remain usable.
+   English/Hindi/Marathi/German explanation, recovery guidance, and retry
+   action while the SVG charts and analysis remain usable.
 4. **Runtime containment.** A React error boundary catches renderer
    initialization failures. A `webglcontextlost` listener replaces a failed
    scene with the same safe fallback.
@@ -284,15 +314,21 @@ The cosmos is intentionally a dark-sky surface in both application themes.
 
 ### Localization
 
-The supported application locales are `en`, `hi`, and `mr`.
+The supported application locales are `en`, `hi`, `mr`, and `de`.
 `defineMessages` uses the English dictionary as a TypeScript key contract, so
-Hindi and Marathi dictionaries must implement the same keys at compile time.
-Components own scoped dictionaries, while canonical graha, Rasi, Nakshatra,
+Hindi, Marathi, and German dictionaries must implement the same keys at compile
+time. A runtime English fallback also protects development hot reloads and
+persisted preferences while a new dictionary is temporarily incomplete; it is
+a resilience measure, not permission to ship untranslated user flows.
+Components own scoped dictionaries, while canonical Graha, Rasi, Nakshatra,
 glossary, and educational text live in shared localization modules.
 
-`INTL_LOCALES` maps the three application locales to `en-IN`, `hi-IN`, and
-`mr-IN` for locale-aware formatting. Sanskrit Rasi presentation is centralized
-rather than allowing each visual surface to invent its own labels.
+`INTL_LOCALES` maps the four application locales to `en-IN`, `hi-IN`, `mr-IN`,
+and `de-DE` for locale-aware formatting. User-facing terminology remains
+Sanskrit-first: names such as Mesha, Mithuna, Simha, Graha, Bhava, Nakshatra,
+and Pada are localized or explained without replacing them with Western zodiac
+names. The presentation mapping is centralized rather than allowing each
+visual surface to invent labels.
 
 `AstroTerm` exposes glossary entries through a native modal dialog rendered in
 a portal. The separate Jyotish Guide provides searchable core terms, all nine
@@ -305,10 +341,10 @@ therefore handled in component copy rather than by a localization service.
 
 ### Themes
 
-The application supports `dark` and `light` themes. A small inline bootstrap
+The application supports `light` and `dark` themes. A small inline bootstrap
 script in `app/layout.tsx` reads persisted preferences before React hydration,
-applies the HTML `lang`, `data-locale`, and `data-theme` attributes, and falls
-back to the operating-system color scheme when no theme is stored.
+applies the HTML `lang`, `data-locale`, and `data-theme` attributes, and uses
+light as the first-visit default when no explicit theme is stored.
 
 `AppPreferencesProvider` uses `useSyncExternalStore` to observe:
 
@@ -324,18 +360,25 @@ the semantic tokens directly.
 
 ## 9. Geocoding, privacy, and rate limiting
 
-The browser sends `GET /api/geocode?q=...`; it does not call Nominatim
-directly. Only the place-search text is included in this application request.
-The person's name, gender, birth date, birth time, selected timezone, and
-calculated chart are not sent to the geocoding route.
+Only an explicitly submitted place-search string enters the geocoding path.
+The person's name, addressing/gender choice, birth date, birth time, selected
+timezone, and calculated chart are not attached to that request.
 
-The server code does not forward client headers or add birth data to the
-Nominatim request. Nominatim receives the normalized place query, fixed search
-parameters, and the configured application user agent. Deployment-platform,
-proxy, or upstream logging policies are outside this repository and must be
-evaluated separately.
+Transport depends on the build:
 
-Defensive behavior in `lib/geocoding/nominatim.ts` includes:
+- Node development/production sends `GET /api/geocode?q=...`; server code
+  forwards only the normalized query and fixed parameters to Nominatim with the
+  configured application user agent.
+- The static GitHub Pages export has no route handler, so
+  `lib/geocoding/browser.ts` calls Nominatim directly from the visitor's browser
+  and resolves the timezone with bundled client data.
+
+Deployment-platform, proxy, browser, and upstream logging policies are outside
+this repository and must be evaluated separately. The application does not
+claim that a network place query is private from those operators.
+
+Shared defensive behavior in `lib/geocoding/shared.ts`, with server-specific
+handling in `lib/geocoding/nominatim.ts`, includes:
 
 - Unicode NFKC and whitespace normalization;
 - rejection of control characters, missing/duplicate parameters, and queries
@@ -346,21 +389,23 @@ Defensive behavior in `lib/geocoding/nominatim.ts` includes:
 - JSON content-type and 500,000-character response limits;
 - field whitelisting, coordinate validation, duplicate removal, and a maximum
   of five results;
-- no-store caching for errors and explicit public caching for successes;
+- no-store caching for server errors and explicit public caching for server
+  successes;
 - in-flight coalescing for identical normalized upstream URLs; and
-- a shared process-local request gate that spaces upstream starts by 1.1
+- a shared in-memory request gate that spaces upstream starts by 1.1
   seconds and rejects work when four requests are already pending.
 
-The Next.js fetch request also declares a seven-day revalidation interval.
-Successful API responses advertise one-day browser freshness, seven-day shared
-freshness, and stale-while-revalidate behavior. These layers reduce repeated
-Nominatim traffic.
+In the Node topology, the Next.js fetch request also declares a seven-day
+revalidation interval.
+Successful Node API responses advertise one-day browser freshness, seven-day
+shared freshness, and stale-while-revalidate behavior. These layers reduce
+repeated Nominatim traffic.
 
 The request gate is intentionally small and in-memory. It coordinates one
-Node.js process; it is not a distributed rate limiter, per-user quota, or
-complete abuse-prevention system across multiple deployment instances. A
-multi-instance public deployment would need infrastructure-level controls that
-are not implemented here.
+Node.js process or one browser tab, depending on the topology; it is not a
+distributed rate limiter, per-user quota, or complete abuse-prevention system
+across multiple deployment instances. A multi-instance public deployment would
+need infrastructure-level controls that are not implemented here.
 
 The form provides a manual coordinate and IANA-timezone path when place search
 is unavailable or unsuitable.
@@ -409,7 +454,7 @@ The tests emphasize pure boundaries and invariants:
 | Analysis audit | detection of inconsistent placements, houses, nodes, motion, coordinates, and model metadata |
 | Transits | whole-sign reference mapping, deterministic dates, named score arithmetic, Saturn/Jupiter notices, validation |
 | AI handoff | complete JSON-safe context, Sanskrit Rasi names, timestamp/reference consistency, stable serialization, localized safety policy, adversarial question separation |
-| Localization and education | language parity, Devanagari labels, clickable glossary coverage, nine grahas, twelve Bhavas, and all 108 educational combinations |
+| Localization and education | four-language key parity, Devanagari labels, Sanskrit-first names, clickable glossary coverage, nine grahas, twelve Bhavas, and all 108 educational combinations |
 | Geocoding | query and URL safety, upstream field whitelisting, timezone lookup, coalescing, request spacing, cache/error semantics |
 | Charts and 3D helpers | traditional SVG layout maps, localized accessibility text, responsive camera math, and WebGL disabled/lost/fallback classification |
 
@@ -469,6 +514,15 @@ birth-data transmission, and opaque server behavior. It does not deliver an
 in-app model response; the user must deliberately copy the payload and choose
 where to use it.
 
+### Client-side PDF instead of a report service
+
+Generating the Kundali summary in the browser keeps the report tied to the
+audited natal snapshot and avoids uploading birth data to a document service.
+Bundled Noto fonts make Latin and Devanagari output reproducible across the four
+locales. The tradeoffs are a larger on-demand client chunk, browser-dependent
+download behavior, and a deliberately bounded report rather than a
+server-rendered archival document.
+
 ## 13. Known model and product limitations
 
 The implemented engine does not calculate Shadbala, divisional/Varga charts,
@@ -489,6 +543,8 @@ Additional constraints exposed by the code are:
 - mean-node positions can differ from true-node results near boundaries;
 - Dasha dates depend on the disclosed 365.25-day-year convention;
 - transit scores are app-specific symbolic summaries, not probabilities;
+- the downloadable PDF is a presentation of the same application model, not
+  an independent ephemeris cross-check or professional certification;
 - all interpretive content is traditional and symbolic rather than
   scientifically validated personality or outcome prediction; and
 - medical, legal, financial, mental-health, safety, fertility, mortality, and

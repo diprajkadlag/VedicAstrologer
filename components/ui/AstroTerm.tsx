@@ -49,6 +49,16 @@ const messages = defineMessages({
     disclaimer:
       "या आत्मचिंतनासाठीच्या पारंपरिक प्रतीकात्मक संकल्पना आहेत—निश्चित दावे, वैज्ञानिकरीत्या प्रमाणित भविष्यवाणी किंवा महत्त्वाच्या निर्णयांचा सल्ला नव्हे.",
   },
+  de: {
+    learnAbout: "Mehr über {term} erfahren",
+    close: "Definition schließen",
+    glossary: "Jyotish-Glossar",
+    sanskrit: "Sanskrit",
+    calculation: "So berechnet die App diesen Wert",
+    reading: "So lässt sich der Begriff einordnen",
+    disclaimer:
+      "Dies sind traditionelle symbolische Konzepte zur persönlichen Reflexion – keine deterministischen Aussagen, wissenschaftlich bestätigten Vorhersagen oder Empfehlungen für folgenreiche Entscheidungen.",
+  },
 });
 
 export interface AstroTermProps {

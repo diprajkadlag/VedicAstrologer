@@ -522,6 +522,115 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "दशा ही पारंपरिक प्रतीकात्मक कालपद्धत आहे—संभाव्यता, निदान किंवा हमी नाही. दुसऱ्या परंपरेत तारखा बदलू शकतात.",
     tabPanel: "विश्लेषण",
   },
+  de: {
+    analysis: "Jyotish-Analyse",
+    sections: "Analysebereiche",
+    views: "Ansichten der Jyotish-Analyse",
+    overview: "Überblick",
+    positions: "Positionen",
+    houses: "Bhavas",
+    nakshatras: "Nakshatras",
+    dashas: "Dashas",
+    horoscope: "Gochara",
+    assistant: "KI-Astrologe",
+    guide: "Jyotish verstehen",
+    method: "Methode & Grenzen",
+    coreSynthesis: "Kernsynthese",
+    rising: "aufsteigend",
+    moon: "Chandra",
+    lagna: "Lagna",
+    padaShort: "P",
+    house: "Bhava",
+    symbolicReading: "Traditionelle symbolische Deutung",
+    computedPlacement: "Berechnete Position",
+    learnTerms: "Begriffe kennenlernen",
+    balancedSynthesis: "Ausgewogene Synthese",
+    synthesisIntro:
+      "Lagna beschreibt die äußere Ausrichtung des Horoskops. Chandra und sein Nakshatra ergänzen eine traditionelle Perspektive auf Gewohnheiten und Reaktionen. Übereinstimmungen und Spannungen sind Anregungen zur Reflexion, keine gemessenen Tatsachen über die Persönlichkeit.",
+    constructivePossibilities: "Konstruktive Möglichkeiten",
+    cautions: "Gegenmuster kritisch prüfen",
+    birthNakshatra: "Geburts-Nakshatra",
+    reflectionNotVerdict:
+      "Die Bildsprache der Nakshatras ist eine traditionelle symbolische Ebene. Sie ist weder eine psychologische Messung noch ein Urteil über den Charakter.",
+    planetaryPositions: "Graha-Positionen",
+    positionsIntro:
+      "Siderische Längen nach Lahiri-Art in Ganzzeichen-Bhavas. Die Werte sind Berechnungen; ihre interpretativen Bedeutungen sind davon zu unterscheiden.",
+    graha: "Graha",
+    rasi: "Rasi",
+    degree: "Grad",
+    nakshatra: "Nakshatra",
+    lord: "Herrscher",
+    motion: "Bewegung",
+    direct: "Direktläufig",
+    retrograde: "Vakri",
+    stationary: "Stationär",
+    boundaryNote:
+      "Eine Position nahe einer Rasi-, Nakshatra- oder Pada-Grenze kann sich bei einem anderen Ayanamsa oder kleinen Unterschieden in Eingabe und Modell ändern. Auch eine nahezu stationäre Bewegung ist empfindlich.",
+    houseByHouse: "Bhava-für-Bhava-Analyse",
+    housesIntro:
+      "Öffne einen Bhava, um sein Thema, den Rasi-Kontext, den Weg des Bhavesha und die dort stehenden Grahas zu betrachten. Jede Ebene kann die anderen qualifizieren; keine einzelne Position erlaubt ein abschließendes Urteil.",
+    readingSequence: "Lesereihenfolge",
+    houseTopic: "Thema des Bhava",
+    signContext: "Rasi-Kontext",
+    houseLord: "Bhavesha",
+    residentGrahas: "Grahas im Bhava",
+    bhavaFoundation: "Grundlage des Bhava",
+    domain: "Traditioneller Lebensbereich",
+    constructive: "Konstruktiver Ausdruck",
+    watchFor: "Kritisch beachten",
+    rasiContext: "Rasi-Kontext",
+    rasiContextBody:
+      "Dieser Rasi gibt dem Bhava eine traditionelle Stil- oder Bedingungsebene. Die App reduziert weder den gesamten Bhava noch die Person auf dieses einzelne Merkmal.",
+    lordPathway: "Weg des Bhavesha",
+    lordPathwayBody:
+      "Da dieser Rasi den Bhava einnimmt, wird sein Herrscher zum Bhavesha. Der natale Bhava dieses Herrschers verbindet die beiden Themenbereiche symbolisch; daraus folgt keine Ereignisprognose.",
+    noGrahas: "Keine Grahas im Bhava",
+    emptyHouseTitle: "Ein unbesetzter Bhava fehlt nicht",
+    emptyHouseBody:
+      "Ohne einen Graha im Bhava stützt sich die Deutung stärker auf Rasi, Bhavesha und zeitliche Modelle. Unbesetzt bedeutet nicht automatisch schwach oder inaktiv.",
+    residentTitle: "Grahas im Bhava: didaktische Synthese",
+    reflection: "Reflexionsfrage",
+    highlightHouse: "Diesen Bhava im Horoskop hervorheben",
+    mansionsTitle: "Die 27 Nakshatras",
+    mansionsIntro:
+      "Jedes Nakshatra ist ein siderischer Abschnitt von 13°20′ mit vier Padas. Die Belegung unten ist berechnet; die zugehörige Bildsprache bleibt traditionell.",
+    birthMoon: "Geburts-Chandra",
+    occupiedBy: "Besetzt durch",
+    notOccupied: "Kein nataler Graha in diesem Abschnitt",
+    timelineTitle: "Zeitachse der Vimshottari-Dasha",
+    timelineIntro:
+      "Berechnet aus Chandras Fortschritt durch das Geburts-Nakshatra. Die Datumswerte verwenden die offengelegte Konvention eines Jahres mit 365,25 Tagen.",
+    majorMeaningTitle: "Mahadasha · übergeordneter Abschnitt",
+    majorMeaningBody:
+      "Der Herrscher der Mahadasha liefert einen langfristigen symbolischen Kontext. Sein nataler Rasi und Bhava zeigen, wo die Themen verankert werden; sie garantieren kein Ereignis.",
+    minorMeaningTitle: "Antardasha · aktiver Kanal",
+    minorMeaningBody:
+      "Der Herrscher der Antardasha beschreibt innerhalb der Mahadasha einen zeitlich näheren symbolischen Kanal. Beide Grahas sollten gemeinsam und mit konstruktiven wie schwierigen Ausdrucksformen gelesen werden.",
+    currentPeriod: "Aktueller Vimshottari-Zeitraum",
+    asOf: "Stand",
+    remaining: "verbleibend",
+    major: "Mahadasha",
+    minor: "Antardasha",
+    natalAnchors: "Natale Bezugspunkte",
+    largerContext: "Kontext der Mahadasha",
+    activeChannel: "Fokus der Antardasha",
+    combinationCaution:
+      "Diese Synthese belegt nicht, dass ein bestimmtes Ereignis eintreten wird.",
+    birthMahadasha: "Mahadasha bei der Geburt",
+    moonProgress: "Chandras Fortschritt im Nakshatra",
+    birthBalance: "Verbleibende Zeit bei der Geburt",
+    years: "Jahre",
+    cycleTitle: "Mahadasha-Zyklus mit dem Referenzdatum",
+    starts: "Beginn",
+    ends: "Ende",
+    status: "Status",
+    current: "Aktuell",
+    atBirth: "Bei der Geburt",
+    antardashaList: "Antardashas der aktuellen Mahadasha",
+    methodNote:
+      "Dasha ist ein traditionelles symbolisches Zeitmodell, keine Wahrscheinlichkeit, Diagnose oder Zusage. Andere Konventionen können die Datumswerte verschieben.",
+    tabPanel: "Analyse",
+  },
 };
 
 const TAB_DEFINITIONS: readonly {
@@ -595,6 +704,12 @@ function remainingLabel(
     return months >= 2
       ? `${Math.floor(months)} महिने ${copy.remaining}`
       : `${Math.ceil(months * 30.4375)} दिवस ${copy.remaining}`;
+  }
+  if (locale === "de") {
+    const days = Math.ceil(months * 30.4375);
+    return months >= 2
+      ? `${Math.floor(months)} Monate ${copy.remaining}`
+      : `${days} ${days === 1 ? "Tag" : "Tage"} ${copy.remaining}`;
   }
   return months >= 2
     ? `${Math.floor(months)} months ${copy.remaining}`
@@ -1211,6 +1326,14 @@ function dashaSynthesis(
       summary: `${majorName}चा दीर्घ विषय—${readLocalized(majorProfile.signifies, locale)}—${minorName}च्या सक्रिय माध्यमातून—${readLocalized(minorProfile.signifies, locale)}—व्यक्त होऊ शकतो. हा दोन प्रतीकात्मक कार्यांचा संवाद आहे; घटनेचे भाकीत नाही.`,
       constructive: `${readLocalized(majorProfile.constructive, locale)} याला ${readLocalized(minorProfile.constructive, locale)}सोबत साधणे ही रचनात्मक दिशा ठरू शकते.`,
       caution: `${readLocalized(majorProfile.caution, locale)} आणि ${readLocalized(minorProfile.caution, locale)}—दोन्ही भीती किंवा निश्चित लेबल न लावता तपासा.`,
+      inquiry: readLocalized(minorProfile.inquiry, locale),
+    };
+  }
+  if (locale === "de") {
+    return {
+      summary: `${majorName}s langfristiges Thema – ${readLocalized(majorProfile.signifies, locale)} – kann sich durch den aktiven Kanal von ${minorName} – ${readLocalized(minorProfile.signifies, locale)} – ausdrücken. Dies beschreibt das Zusammenspiel zweier symbolischer Funktionen, keine Ereignisprognose.`,
+      constructive: `Eine mögliche konstruktive Richtung verbindet ${readLocalized(majorProfile.constructive, locale)} mit ${readLocalized(minorProfile.constructive, locale)}.`,
+      caution: `Prüfe sowohl ${readLocalized(majorProfile.caution, locale)} als auch ${readLocalized(minorProfile.caution, locale)} ohne Angst oder starre Zuschreibung.`,
       inquiry: readLocalized(minorProfile.inquiry, locale),
     };
   }

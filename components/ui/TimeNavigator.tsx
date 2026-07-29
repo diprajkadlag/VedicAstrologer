@@ -87,6 +87,28 @@ const messages = defineMessages({
     past: "भूतकाळ",
     future: "भविष्य",
   },
+  de: {
+    day: "Tag",
+    month: "Monat",
+    year: "Jahr",
+    decade: "Jahrzehnt",
+    birthMoment: "Geburtszeitpunkt",
+    before: "vor der Geburt",
+    after: "nach der Geburt",
+    hoursFromBirth: "{value} Stunden {direction}",
+    daysFromBirth: "{value} Tage {direction}",
+    yearsFromBirth: "{value} Jahre {direction}",
+    title: "Astronomische Zeitnavigation",
+    backward: "Um {minutes} Minuten zurückgehen",
+    forward: "Um {minutes} Minuten vorgehen",
+    pause: "Zeitsimulation anhalten",
+    play: "Zeitsimulation starten",
+    slider: "Simulierte Zeit relativ zur Geburt",
+    returnBirth: "Zum Geburtszeitpunkt zurückkehren",
+    birth: "Geburt",
+    past: "Vergangenheit",
+    future: "Zukunft",
+  },
 });
 
 export interface TimeNavigatorProps {

@@ -206,16 +206,22 @@ Two honesty constraints follow from this separation:
    The payload therefore carries the Ayanamsa model, house system, node model,
    timestamps, and coordinates instead of hiding those choices.
 
+The localized Kundali PDF is a separate deterministic presentation surface. It
+formats the audited chart snapshot and declared rule output; it does not call a
+model or turn symbolic interpretation into AI-generated evidence. Keeping that
+boundary explicit prevents a polished report from being mistaken for an
+independent prediction or scientific validation.
+
 ## Multilingual prompting
 
-The AI workspace supports English, Hindi, and Marathi. Localization is not
-limited to a one-line request at the bottom of an English system prompt. Each
-locale has a complete system policy in its own language, including safety,
+The AI workspace supports English, Hindi, Marathi, and German. Localization is
+not limited to a one-line request at the bottom of an English system prompt.
+Each locale has a complete system policy in its own language, including safety,
 uncertainty, Sanskrit terminology, injection resistance, and answer-language
 requirements.
 
 The JSON schema deliberately keeps stable English field names and enum
-identifiers for API compatibility. The interface discloses this in all three
+identifiers for API compatibility. The interface discloses this in all four
 languages, and the system policy tells a future model to treat those identifiers
 as data rather than as an instruction to answer in English. User-facing chart
 summaries localize graha, Rasi, and Nakshatra names independently of the machine
@@ -237,7 +243,7 @@ expanded into a claim that the entire web application is offline.
 
 ## Validation already present
 
-The focused test file currently contains 15 tests covering:
+The focused `v0.1.0` prompt-builder test file covered:
 
 - completeness of natal, Dasha, and transit context;
 - classical whole-sign Bhava-lord mapping;
@@ -255,7 +261,7 @@ The focused test file currently contains 15 tests covering:
 - fully localized Marathi system policy;
 - separation of adversarial question text from system policy.
 
-Point-in-time repository validation on 23 July 2026:
+Point-in-time `v0.1.0` repository validation on 23 July 2026:
 
 | Command | Observed result |
 | --- | --- |
@@ -263,6 +269,10 @@ Point-in-time repository validation on 23 July 2026:
 | `npm test -- lib/aiPromptBuilder.test.ts` | 1 test file passed; 15 tests passed |
 | `npm run typecheck` | Passed |
 | `npm run lint -- --no-warn-ignored lib/aiPromptBuilder.ts lib/aiPromptBuilder.test.ts components/dashboard/AiAstrologerTab.tsx` | Passed |
+
+The active four-language milestone adds German through the same typed locale
+contract and app-wide localization suites. Exact current totals belong to the
+latest CI run rather than this narrative case study.
 
 These are functional and contract checks. They are not model benchmarks. There
 is currently no measured hallucination rate, faithfulness score, answer-quality
@@ -341,7 +351,8 @@ inference.
 
 ### 4. Build a multilingual and adversarial evaluation dataset
 
-Create de-identified cases across English, Hindi, and Marathi, including:
+Create de-identified cases across English, Hindi, Marathi, and German,
+including:
 
 - ordinary preset questions;
 - Rasi and Nakshatra boundary cases;
@@ -466,9 +477,9 @@ debugging, and prevents the current UI from pretending it generated an AI
 answer.
 
 **What does multilingual support involve?**  
-English, Hindi, and Marathi each have a complete system policy, not merely a
-translated button or an appended language sentence. Stable machine identifiers
-remain explicit and are disclosed as such.
+English, Hindi, Marathi, and German each have a complete system policy, not
+merely a translated button or an appended language sentence. Stable machine
+identifiers remain explicit and are disclosed as such.
 
 **How is truthfulness handled in a non-scientific domain?**  
 The system distinguishes calculation from traditional interpretation and model

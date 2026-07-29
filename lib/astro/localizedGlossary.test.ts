@@ -58,5 +58,26 @@ describe("localized AstroTerm glossary", () => {
       }
     }
   });
-});
 
+  it("provides German explanatory prose without English fallback", () => {
+    for (const id of ASTRO_TERM_IDS) {
+      const german = getLocalizedAstroGlossaryEntry(id, "de");
+      const english = getLocalizedAstroGlossaryEntry(id, "en");
+
+      expect(german.short).not.toBe(english.short);
+      expect(german.detailed).not.toBe(english.detailed);
+      expect(german.short).not.toContain("ÜBERSETZUNG-FEHLT");
+      expect(german.detailed).not.toContain("ÜBERSETZUNG-FEHLT");
+      expect(
+        german.readingTips.every(
+          (tip) => !tip.includes("ÜBERSETZUNG-FEHLT"),
+        ),
+      ).toBe(true);
+
+      if (english.calculation) {
+        expect(german.calculation).toBeTruthy();
+        expect(german.calculation).not.toBe(english.calculation);
+      }
+    }
+  });
+});

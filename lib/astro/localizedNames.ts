@@ -44,6 +44,7 @@ export const LOCALIZED_RASI_NAMES: Readonly<
     Aquarius: "कुंभ",
     Pisces: "मीन",
   },
+  de: RASI_DISPLAY_NAMES,
 };
 
 export const LOCALIZED_GRAHA_NAMES: Readonly<
@@ -81,6 +82,17 @@ export const LOCALIZED_GRAHA_NAMES: Readonly<
     saturn: "शनि",
     rahu: "राहू",
     ketu: "केतू",
+  },
+  de: {
+    sun: "Surya",
+    moon: "Chandra",
+    mercury: "Budha",
+    venus: "Shukra",
+    mars: "Mangala",
+    jupiter: "Guru",
+    saturn: "Shani",
+    rahu: "Rahu",
+    ketu: "Ketu",
   },
 };
 
@@ -132,6 +144,7 @@ export const LOCALIZED_NAKSHATRA_NAMES: Readonly<
   en: recordFromOrder(NAKSHATRAS, NAKSHATRAS),
   hi: recordFromOrder(NAKSHATRAS, DEVANAGARI_NAKSHATRAS),
   mr: recordFromOrder(NAKSHATRAS, DEVANAGARI_NAKSHATRAS),
+  de: recordFromOrder(NAKSHATRAS, NAKSHATRAS),
 };
 
 export function getLocalizedRasiName(

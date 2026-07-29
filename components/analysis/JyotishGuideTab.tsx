@@ -219,6 +219,65 @@ const COPY = {
     fairness:
       "संतुलित वाचनाचे मानक: रचनात्मक व कठीण दोन्ही अभिव्यक्ती सांगा, वगळलेले घटक स्पष्ट करा, भीती निर्माण करू नका आणि प्रतीकात्मक मजकुराला वैद्यकीय, कायदेशीर, आर्थिक किंवा मानसशास्त्रीय निदान मानू नका.",
   },
+  de: {
+    eyebrow: "INTERAKTIVER JYOTISH-LEITFADEN",
+    title: "Erst die Sprache lernen, dann die Kundali lesen",
+    subtitle:
+      "Erkunde die wenigen Grundbegriffe, die den größten Teil dieser App erklären. Jede Deutung wird als traditionelle symbolische Perspektive formuliert — nicht als wissenschaftliche Vorhersage oder festes Urteil.",
+    terms: "Schlüsselbegriffe",
+    grahas: "Grahas",
+    explorer: "Graha × Bhava",
+    integrity: "Methode & Grenzen",
+    search: "Begriffe suchen",
+    searchPlaceholder: "Zum Beispiel Lagna, Pada, Dasha …",
+    resultCount: "Begriffe",
+    noResults:
+      "Kein passender Begriff gefunden. Versuche einen allgemeineren Suchbegriff.",
+    howToRead: "So wird es gelesen",
+    calculated: "Hier berechnet",
+    partlyCalculated: "Teilweise berechnet",
+    notCalculated: "Nicht berechnet",
+    concept: "Konzept",
+    statusIntro:
+      "Das Kennzeichen zeigt, ob die App diesen Faktor tatsächlich berechnet. Ein Lerntext allein ist noch kein Ergebnis der Kundali.",
+    grahaIntro:
+      "Wähle einen Graha, um seinen traditionellen Bedeutungsrahmen zu erkunden. Ein Graha ist nicht einfach gut oder schlecht; sein Ausdruck verändert sich mit Kontext und menschlichen Entscheidungen.",
+    astronomicalIdentity: "Astronomische Einordnung",
+    signifies: "Symbolische Karakatvas",
+    constructive: "Konstruktiver Ausdruck",
+    caution: "Mögliches Ungleichgewicht",
+    inquiry: "Reflexionsfrage",
+    openInChart: "In der Kundali hervorheben",
+    explorerIntro:
+      "Dieser Explorer legt die Regel für alle 108 Kombinationen offen: Graha = Funktion, Bhava = Lebensfeld. Wähle beides, um zu sehen, wie sich der Schwerpunkt verändert.",
+    chooseGraha: "1 · Graha wählen",
+    chooseBhava: "2 · Bhava wählen",
+    selectedReading: "3 · Synthese lesen",
+    bhava: "Bhava",
+    methodNote:
+      "Was diese Deutung berechnet hat — und was nicht",
+    inspectBhava: "Diesen Bhava hervorheben",
+    traditionalLabel: "Traditionelle symbolische Deutung",
+    integrityIntro:
+      "Genauigkeit hat hier zwei verschiedene Bedeutungen: Die interne Konsistenz der Berechnung ist prüfbar; astrologische Deutungsansprüche dürfen nicht als wissenschaftlich vorhersagefähig dargestellt werden.",
+    chartAudit: "Integritätsprüfung der aktuellen Kundali",
+    noChart:
+      "Erstelle eine Kundali, um strukturelle Prüfungen auszuführen. Die folgenden Grenzen gelten mit und ohne berechnete Kundali.",
+    consistent: "Intern konsistent",
+    inconsistent: "Überprüfung erforderlich",
+    checks: "Strukturprüfungen",
+    errors: "Fehler",
+    warnings: "Warnungen",
+    whatWasChecked: "Was die Prüfung kontrolliert",
+    checkedText:
+      "Ableitung von Rasi, Nakshatra und Pada; Ganzzeichen-Abfolge der Bhavas; Zuordnung von Grahas zu Bhavas; Bewegungskennzeichen; unterstützte Grahas; Opposition von Rahu und Ketu; Koordinaten- und Modelldeklarationen.",
+    whatItCannotProve: "Transparente Grenzen",
+    finding: "Strukturelle Inkonsistenz",
+    technicalDiagnostics: "Technische Diagnostik",
+    diagnosticItem: "Befund zur internen Konsistenz",
+    fairness:
+      "Standard für ausgewogene Deutungen: konstruktive und schwierige Ausdrucksformen benennen, fehlende Faktoren offenlegen, keine Angst erzeugen und symbolische Texte niemals als medizinische, rechtliche, finanzielle oder psychologische Diagnose behandeln.",
+  },
 } as const;
 
 const STATUS_TONE: Record<CalculationStatus, string> = {

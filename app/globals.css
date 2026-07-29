@@ -2,19 +2,6 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  color-scheme: dark;
-  --background: #070914;
-  --foreground: #f7f3e9;
-  --surface: rgb(13 15 29 / 0.9);
-  --surface-soft: rgb(255 255 255 / 0.035);
-  --surface-muted: rgb(255 255 255 / 0.055);
-  --border: rgb(255 255 255 / 0.1);
-  --muted: #94a3b8;
-  --accent: #a78bfa;
-  --focus: rgb(196 181 253 / 0.9);
-}
-
-:root[data-theme="light"] {
   color-scheme: light;
   --background: #f6f5f1;
   --foreground: #172033;
@@ -25,6 +12,19 @@
   --muted: #526174;
   --accent: #6d28d9;
   --focus: rgb(109 40 217 / 0.72);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #070914;
+  --foreground: #f7f3e9;
+  --surface: rgb(13 15 29 / 0.9);
+  --surface-soft: rgb(255 255 255 / 0.035);
+  --surface-muted: rgb(255 255 255 / 0.055);
+  --border: rgb(255 255 255 / 0.1);
+  --muted: #94a3b8;
+  --accent: #a78bfa;
+  --focus: rgb(196 181 253 / 0.9);
 }
 
 * {

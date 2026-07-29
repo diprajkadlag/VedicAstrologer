@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520" role="img">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#f7f3e8"/><stop offset="1" stop-color="#eee9ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="520" rx="32" fill="url(#bg)"/>
+  <rect x="44" y="54" width="332" height="408" rx="22" fill="#fff" stroke="#d8d1ef"/>
+  <rect x="424" y="54" width="332" height="408" rx="22" fill="#fff" stroke="#d8d1ef"/>
+  <g transform="translate(78 92)" fill="none" stroke="#6d5b95" stroke-width="2">
+    <rect width="264" height="330" rx="4"/>
+    <path d="M132 0L264 165 132 330 0 165Z"/>
+    <path d="M0 0L264 330M264 0L0 330"/>
+  </g>
+  <g fill="#6d28d9" font-family="Arial,sans-serif" font-size="14" font-weight="700">
+    <text x="191" y="139">1</text><text x="111" y="217">2</text><text x="270" y="217">12</text>
+    <text x="188" y="299">7</text><text x="177" y="177">La</text>
+  </g>
+  <g transform="translate(458 92)" fill="none" stroke="#6d5b95" stroke-width="2">
+    <rect width="264" height="330" rx="4"/>
+    <path d="M66 0V330M132 0V330M198 0V330M0 82.5H264M0 165H264M0 247.5H264"/>
+  </g>
+  <g fill="#7c3aed" font-family="Arial,sans-serif" font-size="14" font-weight="700">
+    <text x="481" y="126">Mesha</text><text x="612" y="208">Karka</text>
+    <text x="548" y="373">Tula</text><text x="675" y="452">Meena</text>
+  </g>
+  <g fill="#f59e0b"><circle cx="201" cy="356" r="6"/><circle cx="610" cy="122" r="6"/></g>
+  <g fill="#ef4444"><circle cx="288" cy="275" r="6"/><circle cx="676" cy="287" r="6"/></g>
+</svg>

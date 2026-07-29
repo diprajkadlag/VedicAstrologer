@@ -1,4 +1,4 @@
-export const APP_LOCALES = ["en", "hi", "mr"] as const;
+export const APP_LOCALES = ["en", "hi", "mr", "de"] as const;
 export type AppLocale = (typeof APP_LOCALES)[number];
 
 export const APP_THEMES = ["dark", "light"] as const;
@@ -23,14 +23,15 @@ export function isAppTheme(value: unknown): value is AppTheme {
 }
 
 /**
- * Defines a scoped, type-safe dictionary. Hindi and Marathi must implement
- * every key declared by the English source dictionary.
+ * Defines a scoped, type-safe dictionary. Every supported language must
+ * implement every key declared by the English source dictionary.
  */
 export function defineMessages<const English extends MessageRecord>(
   messages: Readonly<{
     en: English;
     hi: Readonly<Record<keyof English, string>>;
     mr: Readonly<Record<keyof English, string>>;
+    de: Readonly<Record<keyof English, string>>;
   }>,
 ): LocalizedMessages<Extract<keyof English, string>> {
   return messages;
@@ -53,5 +54,5 @@ export const INTL_LOCALES: Readonly<Record<AppLocale, string>> = {
   en: "en-IN",
   hi: "hi-IN",
   mr: "mr-IN",
+  de: "de-DE",
 };
-

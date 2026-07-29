@@ -15,6 +15,7 @@ const messages = defineMessages({
     english: "English",
     hindi: "हिन्दी",
     marathi: "मराठी",
+    german: "Deutsch",
     lightTheme: "Use light theme",
     darkTheme: "Use dark theme",
     currentLight: "Light theme",
@@ -26,6 +27,7 @@ const messages = defineMessages({
     english: "English",
     hindi: "हिन्दी",
     marathi: "मराठी",
+    german: "Deutsch",
     lightTheme: "हल्की थीम अपनाएँ",
     darkTheme: "गहरी थीम अपनाएँ",
     currentLight: "हल्की थीम",
@@ -37,10 +39,23 @@ const messages = defineMessages({
     english: "English",
     hindi: "हिन्दी",
     marathi: "मराठी",
+    german: "Deutsch",
     lightTheme: "फिकट थीम वापरा",
     darkTheme: "गडद थीम वापरा",
     currentLight: "फिकट थीम",
     currentDark: "गडद थीम",
+  },
+  de: {
+    preferences: "Anzeigeeinstellungen",
+    language: "Sprache",
+    english: "English",
+    hindi: "हिन्दी",
+    marathi: "मराठी",
+    german: "Deutsch",
+    lightTheme: "Helles Design verwenden",
+    darkTheme: "Dunkles Design verwenden",
+    currentLight: "Helles Design",
+    currentDark: "Dunkles Design",
   },
 });
 
@@ -48,6 +63,7 @@ const localeLabels: Readonly<Record<AppLocale, keyof typeof messages.en>> = {
   en: "english",
   hi: "hindi",
   mr: "marathi",
+  de: "german",
 };
 
 export default function AppPreferencesControls() {

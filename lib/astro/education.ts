@@ -1,7 +1,8 @@
-import type {
-  GrahaId,
-  HouseNumber,
-  NakshatraName,
+import {
+  GRAHA_IDS,
+  type GrahaId,
+  type HouseNumber,
+  type NakshatraName,
 } from "./ephemeris";
 import type { AnalysisLimitationId } from "./analysisAudit";
 import type { AstroTermId } from "./glossary";
@@ -10,12 +11,15 @@ import type { AppLocale } from "../i18n";
 
 export type LocalizedText = Readonly<Record<AppLocale, string>>;
 
+const MISSING_GERMAN_TRANSLATION = "⟦DE-ÜBERSETZUNG-FEHLT⟧";
+
 export function localized(
   en: string,
   hi: string,
   mr: string,
+  de: string = MISSING_GERMAN_TRANSLATION,
 ): LocalizedText {
-  return { en, hi, mr };
+  return { en, hi, mr, de };
 }
 
 export function readLocalized(
@@ -67,7 +71,7 @@ export interface EducationTerm {
   calculationStatus: CalculationStatus;
 }
 
-export const EDUCATION_TERMS: readonly EducationTerm[] = [
+const BASE_EDUCATION_TERMS: readonly EducationTerm[] = [
   {
     id: "lagna",
     category: "foundation",
@@ -544,6 +548,259 @@ export const EDUCATION_TERMS: readonly EducationTerm[] = [
   },
 ] as const;
 
+type GermanEducationTerm = Readonly<
+  Pick<EducationTerm, "id"> & {
+    name: string;
+    summary: string;
+    detail: string;
+    readingSequence: string;
+  }
+>;
+
+const GERMAN_EDUCATION_TERMS: Readonly<
+  Record<EducationTermId, GermanEducationTerm>
+> = {
+  lagna: {
+    id: "lagna",
+    name: "Lagna",
+    summary:
+      "Der siderische Grad, der zur eingegebenen Zeit am angegebenen Ort am östlichen Horizont aufsteigt.",
+    detail:
+      "Das Lagna verankert die zwölf Bhavas. Im Jyotish dient es als symbolische Perspektive auf Verkörperung, Temperament und die Art, dem Leben zu begegnen. Es bewegt sich schnell; eine gerundete oder unsichere Geburtszeit kann daher das Lagna und alle Bhavas verändern.",
+    readingSequence:
+      "Zuerst seine Rasi und deren Herrscher, dann Grahas im ersten Bhava und schließlich die relevanten Zeitfaktoren lesen. Kein Einzelfaktor ist ein Urteil.",
+  },
+  rasi: {
+    id: "rasi",
+    name: "Rasi",
+    summary:
+      "Einer von zwölf gleich großen 30°-Abschnitten des siderischen Tierkreises.",
+    detail:
+      "Eine Rasi beschreibt traditionell Stil und Bedingungen, durch die ein Graha oder Bhava interpretiert wird. Eine Rasi ist weder ein Planet noch ein Sternbild oder ein Etikett für die gesamte Persönlichkeit.",
+    readingSequence:
+      "Zuerst den Graha oder Bhava bestimmen; danach mit der Rasi präzisieren, auf welche Weise er sich ausdrückt.",
+  },
+  bhava: {
+    id: "bhava",
+    name: "Bhava / Ghara",
+    summary:
+      "Eines von zwölf symbolischen Lebensfeldern, die vom Lagna aus gezählt werden.",
+    detail:
+      "Bhavas ordnen Themen wie Körper, Ressourcen, Lernen, Zuhause, Partnerschaft und Arbeit. Gelesen werden Thema, Rasi, Bhavesha, anwesende Grahas und Zeitfaktoren gemeinsam. Ein leerer Bhava ist nicht inaktiv; sein Herrscher verbindet ihn weiterhin mit der Kundali.",
+    readingSequence:
+      "Mit dem Thema des Bhava beginnen, dann seine Rasi und deren Herrscher sowie die anwesenden Grahas ergänzen. Diese App verwendet Ganzzeichen-Bhavas.",
+  },
+  graha: {
+    id: "graha",
+    name: "Graha",
+    summary:
+      "Ein symbolischer Akteur des Jyotish, der eine Erfahrungsfunktion verkörpert.",
+    detail:
+      "Die neun Grahas sind hier Surya, Chandra, Mangala, Budha, Guru, Shukra, Shani, Rahu und Ketu. Surya und Chandra sind Lichter; Rahu und Ketu sind mathematische Mondknoten. Alle neun als „Planeten“ zu bezeichnen ist eine traditionelle Vereinfachung, keine astronomische Behauptung.",
+    readingSequence:
+      "Der Graha beschreibt welche Funktion, die Rasi wie und der Bhava wo. Zustand und Zeitfaktoren liefern den weiteren Kontext.",
+  },
+  nakshatra: {
+    id: "nakshatra",
+    name: "Nakshatra",
+    summary:
+      "Einer von 27 gleich großen Mondstations-Abschnitten mit jeweils 13°20′.",
+    detail:
+      "Nakshatras bilden eine feinere traditionelle Symbolebene. Chandras Geburts-Nakshatra bestimmt den Beginn der Vimshottari-Abfolge. Bilder und Persönlichkeitsbeschreibungen der Mondstationen sind Auslegungstraditionen, keine gemessenen psychologischen Eigenschaften.",
+    readingSequence:
+      "Nach Graha, Rasi und Bhava lesen; ein einzelnes Bild oder eine Gottheit niemals in eine wörtliche Vorhersage verwandeln.",
+  },
+  pada: {
+    id: "pada",
+    name: "Pada",
+    summary:
+      "Eines von vier gleich großen Vierteln zu je 3°20′ innerhalb eines Nakshatra.",
+    detail:
+      "Ein Pada verfeinert eine Nakshatra-Position und verbindet sie mit einer Navamsha-Unterteilung. Diese App berechnet die Pada-Nummer, erstellt oder interpretiert derzeit jedoch keine Navamsha-Kundali.",
+    readingSequence:
+      "Das Pada als Verfeinerung lesen, nicht als Ersatz für die gesamte Kundali.",
+  },
+  "nakshatra-lord": {
+    id: "nakshatra-lord",
+    name: "Nakshatra-Herrscher",
+    summary:
+      "Der Graha, der einem Nakshatra in der wiederkehrenden Vimshottari-Abfolge zugeordnet ist.",
+    detail:
+      "Die Reihenfolge Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani und Budha wiederholt sich über alle 27 Nakshatras. Der Herrscher schafft eine traditionelle Deutungsverbindung zu seiner Stellung in der Geburtskundali; er ist nicht mit dem Rasi-Herrscher oder Bhavesha gleichzusetzen.",
+    readingSequence:
+      "Zuerst den Graha im Nakshatra bestimmen; anschließend Rasi und Bhava des Nakshatra-Herrschers aufsuchen.",
+  },
+  "bhava-lord": {
+    id: "bhava-lord",
+    name: "Bhavesha",
+    summary:
+      "Der Graha, der die Rasi beherrscht, die einen Bhava einnimmt.",
+    detail:
+      "Bhavesha verbindet seinen Ausgangs-Bhava mit dem Bhava, in dem dieser Graha steht. Das ist eine traditionelle thematische Verbindung und kein Beleg dafür, dass ein bestimmtes Ereignis eintreten wird.",
+    readingSequence:
+      "Die Rasi des Bhava und deren Herrscher bestimmen; danach Stellung und Zustand dieses Herrschers untersuchen.",
+  },
+  "lagna-lord": {
+    id: "lagna-lord",
+    name: "Lagnesha",
+    summary:
+      "Der Graha, der die Rasi des Lagna beherrscht.",
+    detail:
+      "Lagnesha gilt symbolisch als Träger von Lebenskraft und Lebensorientierung. Seine Bhava-Stellung verbindet Themen des ersten Bhava mit einem weiteren Lebensfeld; seine Rasi beschreibt den Stil. Aussagen über Stärke erfordern Methoden, die diese App teilweise nicht berechnet.",
+    readingSequence:
+      "Lagna und Lagnesha gemeinsam lesen; eine Person niemals allein aus einem der beiden Faktoren ableiten.",
+  },
+  "janma-rasi": {
+    id: "janma-rasi",
+    name: "Janma Rasi",
+    summary:
+      "Die Rasi, in der Chandra zum Zeitpunkt der Geburt steht.",
+    detail:
+      "Janma Rasi dient als Bezugspunkt für emotionale Symbolik und für die Zählung von Gochara relativ zu Chandra. Sie ergänzt das Lagna, ersetzt es jedoch nicht.",
+    readingSequence:
+      "Chandra-bezogene Themen mit den vom Lagna gezählten Bhavas vergleichen. Unterschiede zeigen verschiedene Perspektiven, nicht zwangsläufig einen Fehler.",
+  },
+  drishti: {
+    id: "drishti",
+    name: "Drishti",
+    summary:
+      "Eine traditionelle Aspektregel, nach der ein Graha oder eine Rasi auf einen anderen beziehungsweise eine andere einwirkt.",
+    detail:
+      "Jyotish kennt Systeme der Graha-Drishti und Rasi-Drishti; Traditionen gewichten sie unterschiedlich. Diese App berechnet derzeit keine klassischen Aspekte, Aspektstärken oder Orben. Hinweise darauf sind daher Lerninhalte und keine Befunde der Kundali.",
+    readingSequence:
+      "Vor jeder Interpretation ein Drishti-System auswählen und transparent benennen.",
+  },
+  yuti: {
+    id: "yuti",
+    name: "Yuti",
+    summary:
+      "Zwei oder mehr Grahas in derselben Rasi oder innerhalb eines festgelegten Winkelabstands.",
+    detail:
+      "Eine Yuti in derselben Rasi ist eine breite Definition; enger Gradkontakt ist spezifischer. Verschiedene Schulen verwenden unterschiedliche Orben. Die App zeigt Längengrade, bewertet jedoch weder die Stärke einer Yuti noch eine Konjunktion automatisch als förderlich oder schwierig.",
+    readingSequence:
+      "Vor der Synthese den tatsächlichen Winkelabstand und die jeweilige Rolle jedes Graha prüfen.",
+  },
+  dignity: {
+    id: "dignity",
+    name: "Graha Avastha / Würde",
+    summary:
+      "Traditionelle Kategorien dafür, wie stimmig oder wirksam sich ein Graha in einer Rasi ausdrücken kann.",
+    detail:
+      "Dazu gehören eigene Rasi, Erhöhung, Schwächung, Freundschaft und Feindschaft. Würde modifiziert die Ausdrucksweise; sie macht weder eine Person noch ein Lebensfeld einfach gut oder schlecht. Diese App berechnet noch kein vollständiges Würdemodell.",
+    readingSequence:
+      "Würde als einen Modifikator neben Bhava, Herrschaft, Bewegung, Aspekten und Zeitfaktoren behandeln.",
+  },
+  vakri: {
+    id: "vakri",
+    name: "Vakri",
+    summary:
+      "Die scheinbare Rückwärtsbewegung im geozentrischen Tierkreis-Längengrad.",
+    detail:
+      "Vakri-Bewegung ist ein astronomischer Perspektiveffekt. Traditionelle Deutungen verbinden sie teils mit Überprüfung, Intensität oder nichtlinearem Ausdruck; sie kehrt einen Graha jedoch nicht automatisch um und macht ihn nicht automatisch schädlich.",
+    readingSequence:
+      "Zuerst Graha, Rasi, Bhava und Herrschaft lesen; Vakri ist ein zusätzlicher Modifikator.",
+  },
+  "rahu-ketu": {
+    id: "rahu-ketu",
+    name: "Rahu–Ketu",
+    summary:
+      "Die einander gegenüberliegenden aufsteigenden und absteigenden Knoten der Chandra-Bahn.",
+    detail:
+      "Sie sind mathematische Punkte der Finsternisgeometrie und keine physischen Planeten. Jyotish verbindet Rahu häufig mit Verstärkung und ungewohntem Begehren, Ketu mit Trennung und nach innen gerichteter Unterscheidung. Das sind symbolische Perspektiven, keine Diagnosen.",
+    readingSequence:
+      "Diese App verwendet mittlere Knoten; Positionen wahrer Knoten können nahe einer Grenze abweichen.",
+  },
+  dasha: {
+    id: "dasha",
+    name: "Dasha",
+    summary:
+      "Ein traditionelles System planetarer Perioden zur Gliederung symbolischer Zeit.",
+    detail:
+      "Eine Dasha betont die Geburtsthemen ihres Herrschers. Sie ist kein Gochara und garantiert kein Ereignis. Diese App verwendet Vimshottari-Zeitperioden aus Chandras Nakshatra; daneben bestehen weitere Dasha-Systeme.",
+    readingSequence:
+      "Den Periodenherrscher in der Geburtskundali lokalisieren und danach Unterperiode sowie aktuellen Gochara-Kontext ergänzen.",
+  },
+  "mahadasha-antardasha": {
+    id: "mahadasha-antardasha",
+    name: "Mahadasha–Antardasha",
+    summary:
+      "Ein umfassendes planetares Kapitel und seine kürzere, darin verschachtelte Unterperiode.",
+    detail:
+      "Mahadasha liefert das Hintergrundthema; Antardasha verschiebt den näheren Fokus. Die Kombination wird über Geburtsstellungen und Herrschaften beider Grahas gelesen. Ein allgemeiner Text über ein Herrscherpaar kann diesen Kundali-Kontext nicht ersetzen.",
+    readingSequence:
+      "Fragen, was der Mahadasha-Herrscher langfristig trägt und was der Antardasha-Herrscher aktuell aktiviert.",
+  },
+  gochara: {
+    id: "gochara",
+    name: "Gochara",
+    summary:
+      "Aktuelle Graha-Positionen im Vergleich mit einer Geburtskundali.",
+    detail:
+      "Gochara beschreibt eine vorübergehende symbolische Betonung. Im Jyotish wird häufig sowohl vom Lagna als auch von Janma Rasi gezählt. Ein Gochara-Wert dieser App ist eine offengelegte Regelzusammenfassung, keine Wahrscheinlichkeit, Tatsache oder Zusage.",
+    readingSequence:
+      "Bezugspunkt und ausgewähltes Datum nennen; langsame und schnelle Grahas nur mit Vorsicht zusammenführen.",
+  },
+  ayanamsa: {
+    id: "ayanamsa",
+    name: "Ayanamsa",
+    summary:
+      "Der Winkelversatz zur Umrechnung tropischer Längengrade in einen siderischen Bezugsrahmen.",
+    detail:
+      "Verschiedene Ayanamsa-Konventionen können Positionen nahe einer Grenze verschieben. Diese App wendet ihr dokumentiertes Lahiri-Modell einheitlich auf Lagna, Grahas, Rasis und Nakshatras an.",
+    readingSequence:
+      "Kundalis erst vergleichen, nachdem dasselbe Ayanamsa- und Knotenmodell bestätigt wurde.",
+  },
+  "whole-sign": {
+    id: "whole-sign",
+    name: "Ganzzeichen-Bhavas",
+    summary:
+      "Die gesamte Lagna-Rasi bildet Bhava 1; jede folgende Rasi bildet den nächsten Bhava.",
+    detail:
+      "Damit entspricht jede Bhava-Grenze einer Rasi-Grenze. Der genaue Lagna-Grad bleibt ein wichtiger Winkel, ist in diesem System aber keine Häuserspitze. Andere Bhava-Systeme können Grahas anderen Häusern zuordnen.",
+    readingSequence:
+      "Beim Vergleich von Geburts- und Gochara-Deutungen durchgehend dasselbe Häusersystem verwenden.",
+  },
+  shadbala: {
+    id: "shadbala",
+    name: "Shadbala",
+    summary:
+      "Ein klassisches mehrteiliges System zur Quantifizierung von sechs Kategorien der Graha-Stärke.",
+    detail:
+      "Shadbala kombiniert positions-, richtungs-, zeit-, bewegungs-, natur- und aspektbezogene Komponenten mit bestimmten Einheiten und Schwellenwerten. Diese App berechnet Shadbala nicht und darf deshalb keinen Graha aufgrund von Shadbala als „stark“ bezeichnen.",
+    readingSequence:
+      "Vor jeder Aussage zu Shadbala eine transparente Berechnung jeder einzelnen Komponente verlangen.",
+  },
+  varga: {
+    id: "varga",
+    name: "Varga",
+    summary:
+      "Eine Teilkundali, die Abschnitte jeder Rasi einem weiteren Tierkreis zuordnet.",
+    detail:
+      "Vargas werden für fokussierte traditionelle Analysen verwendet; Navamsha ist ein Beispiel. Exakte Grenzbehandlung und präzise Geburtszeit sind wichtig. Diese App zeigt das Nakshatra-Pada, berechnet oder interpretiert derzeit jedoch keine Varga-Kundalis.",
+    readingSequence:
+      "Aus dem Pada allein keine vollständige Navamsha-Deutung ableiten.",
+  },
+};
+
+function addGerman(value: LocalizedText, de: string): LocalizedText {
+  return { ...value, de };
+}
+
+export const EDUCATION_TERMS: readonly EducationTerm[] =
+  BASE_EDUCATION_TERMS.map((term) => {
+    const german = GERMAN_EDUCATION_TERMS[term.id];
+    return {
+      ...term,
+      name: addGerman(term.name, german.name),
+      summary: addGerman(term.summary, german.summary),
+      detail: addGerman(term.detail, german.detail),
+      readingSequence: addGerman(
+        term.readingSequence,
+        german.readingSequence,
+      ),
+    };
+  });
+
 const ASTRO_TERM_TO_EDUCATION: Readonly<
   Record<AstroTermId, EducationTermId>
 > = {
@@ -594,7 +851,7 @@ export interface GrahaEducationProfile {
   inquiry: LocalizedText;
 }
 
-export const GRAHA_EDUCATION: Readonly<
+const BASE_GRAHA_EDUCATION: Readonly<
   Record<GrahaId, GrahaEducationProfile>
 > = {
   sun: {
@@ -824,6 +1081,155 @@ export const GRAHA_EDUCATION: Readonly<
   },
 };
 
+type GermanGrahaProfile = Readonly<{
+  name: string;
+  astronomicalKind: string;
+  signifies: string;
+  constructive: string;
+  caution: string;
+  inquiry: string;
+}>;
+
+const GERMAN_GRAHA_EDUCATION: Readonly<
+  Record<GrahaId, GermanGrahaProfile>
+> = {
+  sun: {
+    name: "Surya",
+    astronomicalKind: "Leuchtkörper: Stern",
+    signifies:
+      "Identität, Lebenskraft, Sichtbarkeit, Autorität und Zielorientierung",
+    constructive:
+      "klare Ausrichtung, verantwortliche Führung und stimmiger Selbstausdruck",
+    caution:
+      "Überidentifikation, Stolz, Dominanz oder Abhängigkeit von Anerkennung",
+    inquiry:
+      "Wo kann ich integer handeln, ohne das Ergebnis kontrollieren zu müssen?",
+  },
+  moon: {
+    name: "Chandra",
+    astronomicalKind: "Leuchtkörper: natürlicher Satellit",
+    signifies:
+      "Geist, Gefühl, Gewohnheit, Fürsorge, Erinnerung und Reaktionsfähigkeit",
+    constructive:
+      "emotionale Feinabstimmung, Anpassungsfähigkeit, Zugehörigkeit und erholsamer Rhythmus",
+    caution:
+      "Reaktivität, stimmungsgeleitete Entscheidungen, übermäßige Anpassung oder Festhalten",
+    inquiry:
+      "Welcher Rhythmus hilft mir zu antworten, statt nur zu reagieren?",
+  },
+  mars: {
+    name: "Mangala",
+    astronomicalKind: "physischer Planet",
+    signifies:
+      "Handlung, Mut, Grenzen, Wettbewerb, Hitze und technische Kraft",
+    constructive:
+      "entschlossener Einsatz, Schutz, Ausdauer und direkte Problemlösung",
+    caution:
+      "Hast, Konflikt, verletzungsträchtige Übersteuerung oder jedes Problem als Wettkampf zu behandeln",
+    inquiry:
+      "Was verlangt direkte Handlung, und wo ist Zurückhaltung angemessen?",
+  },
+  mercury: {
+    name: "Budha",
+    astronomicalKind: "physischer Planet",
+    signifies:
+      "Vernunft, Sprache, Lernen, Austausch, Einordnung und Anpassung",
+    constructive:
+      "Neugier, präzise Kommunikation, nützliche Analyse und flexible Fähigkeiten",
+    caution:
+      "Überanalyse, zerstreute Aufmerksamkeit, Schläue ohne Ethik oder nervöse Hast",
+    inquiry:
+      "Welche Fakten muss ich prüfen, bevor ich eine Schlussfolgerung bilde?",
+  },
+  jupiter: {
+    name: "Guru",
+    astronomicalKind: "physischer Planet",
+    signifies:
+      "Sinn, Ethik, Beratung, Wachstum, Lehren und Zuversicht",
+    constructive:
+      "Perspektive, Großzügigkeit, prinzipiengeleitetes Wachstum und weise Orientierung",
+    caution:
+      "Übermaß, Selbstüberschätzung, Dogmatismus, Moralisieren oder Versprechen jenseits der eigenen Möglichkeiten",
+    inquiry:
+      "Welche Überzeugung wird sowohl durch Belege als auch durch gelebte Ethik gestützt?",
+  },
+  venus: {
+    name: "Shukra",
+    astronomicalKind: "physischer Planet",
+    signifies:
+      "Beziehung, Anziehung, Werte, Genuss, Kunst und Übereinkunft",
+    constructive:
+      "Gegenseitigkeit, ästhetische Intelligenz, Diplomatie und nachhaltiger Genuss",
+    caution:
+      "Beschwichtigung, Maßlosigkeit, Vermeidung notwendiger Konflikte oder Schein über Substanz zu stellen",
+    inquiry:
+      "Was schafft gegenseitigen Wert statt nur kurzfristiger Zustimmung?",
+  },
+  saturn: {
+    name: "Shani",
+    astronomicalKind: "physischer Planet",
+    signifies:
+      "Zeit, Pflicht, Begrenzung, Ausdauer, Struktur und Konsequenz",
+    constructive:
+      "Geduld, Verantwortlichkeit, belastbare Systeme und erworbene Kompetenz",
+    caution:
+      "Angst, Starrheit, Mangelgeschichten, Verzögerung oder strafende Selbstbeurteilung",
+    inquiry:
+      "Welche kleine, konsequent wiederholte Pflicht würde echte Stabilität schaffen?",
+  },
+  rahu: {
+    name: "Rahu",
+    astronomicalKind: "mittlerer aufsteigender Mondknoten",
+    signifies:
+      "Verstärkung, Begehren, Neuheit, Fremdheit, Störung und weltliches Experimentieren",
+    constructive:
+      "Innovation, überholte Grenzen überschreiten und durch unvertraute Erfahrung lernen",
+    caution:
+      "Besessenheit, Verzerrung, endlose Steigerung, Abkürzungen oder Neuheit mit Wert zu verwechseln",
+    inquiry:
+      "Erweitert dieses Begehren meine Fähigkeiten oder verstärkt es nur die Unruhe?",
+  },
+  ketu: {
+    name: "Ketu",
+    astronomicalKind: "mittlerer absteigender Mondknoten",
+    signifies:
+      "Trennung, Innerlichkeit, Mustererkennung, Unterbrechung und Loslassen",
+    constructive:
+      "Unterscheidungsvermögen, Vereinfachung, konzentrierte Einsicht und Freiheit von überholter Identifikation",
+    caution:
+      "Rückzug, Fragmentierung, Abwertung, Kontextverlust oder voreilige Loslösung",
+    inquiry:
+      "Was kann ich loslassen, ohne notwendige Verantwortung aufzugeben?",
+  },
+};
+
+export const GRAHA_EDUCATION: Readonly<
+  Record<GrahaId, GrahaEducationProfile>
+> = Object.fromEntries(
+  GRAHA_IDS.map((id) => {
+    const profile = BASE_GRAHA_EDUCATION[id];
+    const german = GERMAN_GRAHA_EDUCATION[id];
+    return [
+      id,
+      {
+        ...profile,
+        name: addGerman(profile.name, german.name),
+        astronomicalKind: addGerman(
+          profile.astronomicalKind,
+          german.astronomicalKind,
+        ),
+        signifies: addGerman(profile.signifies, german.signifies),
+        constructive: addGerman(
+          profile.constructive,
+          german.constructive,
+        ),
+        caution: addGerman(profile.caution, german.caution),
+        inquiry: addGerman(profile.inquiry, german.inquiry),
+      },
+    ];
+  }),
+) as Record<GrahaId, GrahaEducationProfile>;
+
 export interface BhavaEducationProfile {
   number: HouseNumber;
   name: LocalizedText;
@@ -853,13 +1259,154 @@ const BHAVA_ROWS: readonly [
   [12, localized("Vyaya Bhava", "व्यय भाव", "व्यय भाव"), localized("expense, retreat, sleep, distance, institutions and release", "व्यय, एकांत, निद्रा, दूरी, संस्थान और मुक्ति", "व्यय, एकांत, झोप, अंतर, संस्था आणि मुक्तता"), localized("conscious closure, restorative solitude and wise allocation", "सचेत समापन, पुनर्स्थापक एकांत और विवेकपूर्ण आवंटन", "जाणीवपूर्वक समाप्ती, पुनर्स्थापक एकांत आणि सुज्ञ वाटप"), localized("avoidance, leakage, isolation or romanticizing loss", "पलायन, रिसाव, अलगाव या हानि का रोमानीकरण", "पलायन, गळती, एकाकीपणा किंवा हानीचे रोमँटीकरण")],
 ] as const;
 
-export const BHAVA_EDUCATION: Readonly<
+const BASE_BHAVA_EDUCATION: Readonly<
   Record<HouseNumber, BhavaEducationProfile>
 > = Object.fromEntries(
   BHAVA_ROWS.map(([number, name, domain, constructive, caution]) => [
     number,
     { number, name, domain, constructive, caution },
   ]),
+) as Record<HouseNumber, BhavaEducationProfile>;
+
+type GermanBhavaProfile = Readonly<{
+  name: string;
+  domain: string;
+  constructive: string;
+  caution: string;
+}>;
+
+const GERMAN_BHAVA_EDUCATION: Readonly<
+  Record<HouseNumber, GermanBhavaProfile>
+> = {
+  1: {
+    name: "Tanu Bhava",
+    domain: "Körper, Identität, Lebenskraft und Herangehensweise",
+    constructive:
+      "verkörperte Selbstwahrnehmung und angemessene Eigeninitiative",
+    caution:
+      "Selbstbezogenheit oder die ganze Person über ihr Erscheinungsbild zu definieren",
+  },
+  2: {
+    name: "Dhana Bhava",
+    domain:
+      "Ressourcen, Sprache, familiäre Kontinuität, Nahrung und Werte",
+    constructive:
+      "sorgfältiger Umgang, wahrhaftige Sprache und stabile Prioritäten",
+    caution:
+      "Besitzdenken, verletzende Sprache oder den eigenen Wert mit Vermögen gleichzusetzen",
+  },
+  3: {
+    name: "Sahaja Bhava",
+    domain:
+      "Anstrengung, Mut, Fertigkeiten, Kommunikation und Geschwister",
+    constructive:
+      "eingeübte Fertigkeit, mutige Kommunikation und selbstbestimmter Einsatz",
+    caution:
+      "ruheloser Vergleich, Provokation oder Aktivität ohne klare Richtung",
+  },
+  4: {
+    name: "Sukha Bhava",
+    domain:
+      "Zuhause, Fürsorge, emotionale Verwurzelung, Land und Privatleben",
+    constructive:
+      "sichere Grundlagen, erholsamer Raum und reife Fürsorge",
+    caution:
+      "Rückzug in Bequemlichkeit, familiäre Projektion oder vereinnahmende Fürsorge",
+  },
+  5: {
+    name: "Putra Bhava",
+    domain:
+      "Lernen, Kreativität, Unterscheidung, Kinder und Beratung",
+    constructive:
+      "verantwortliche Kreativität, freudiges Lernen und umsichtige Begleitung",
+    caution:
+      "Selbstdarstellung für Zustimmung, Spekulation oder Erwartungen auf Kinder zu projizieren",
+  },
+  6: {
+    name: "Ari Bhava",
+    domain:
+      "Dienst, Routine, Hindernisse, Krankheit, Schulden und Konflikte",
+    constructive:
+      "praktischer Dienst, tragfähige Routinen und geschickte Problemlösung",
+    caution:
+      "chronischer Konflikt, Überarbeitung, Selbstdiagnose oder Belastung als Schicksal zu behandeln",
+  },
+  7: {
+    name: "Yuvati Bhava",
+    domain:
+      "Partnerschaft, Verträge, Klienten und Begegnung mit anderen",
+    constructive:
+      "Gegenseitigkeit, ausdrückliche Vereinbarungen und respektierter Unterschied",
+    caution:
+      "Projektion, Abhängigkeit oder für Harmonie die eigene Handlungsfähigkeit aufzugeben",
+  },
+  8: {
+    name: "Randhra Bhava",
+    domain:
+      "gemeinsame Ressourcen, Verletzlichkeit, Geheimnisse, Verlust und Wandlung",
+    constructive:
+      "ehrliches Risikobewusstsein, ethisches Teilen und Widerstandskraft im Wandel",
+    caution:
+      "Katastrophisieren, Geheimhaltung, Zwang oder den Tod vorherzusagen",
+  },
+  9: {
+    name: "Dharma Bhava",
+    domain:
+      "Ethik, Weltbild, Lehrende, höhere Bildung und Pilgerreise",
+    constructive:
+      "geprüfte Grundsätze, Demut beim Lernen und sinnstiftende Perspektive",
+    caution:
+      "Dogmatismus, geliehene Gewissheit oder Glauben zur Vermeidung von Belegen einzusetzen",
+  },
+  10: {
+    name: "Karma Bhava",
+    domain:
+      "Arbeit, Verantwortung, öffentliches Handeln, Berufung und Beitrag",
+    constructive:
+      "kompetenter Beitrag, verantwortbare Autorität und nützliche Arbeit",
+    caution:
+      "Statusfixierung, Erschöpfung oder eine Rolle mit der gesamten Identität zu verwechseln",
+  },
+  11: {
+    name: "Labha Bhava",
+    domain:
+      "Gewinne, Netzwerke, Bestrebungen, Gemeinschaft und Erfüllung",
+    constructive:
+      "wechselseitige Netzwerke, realistische Ziele und gemeinsamer Nutzen",
+    caution:
+      "instrumentelle Beziehungen, endloses Wollen oder Gruppenkonformität",
+  },
+  12: {
+    name: "Vyaya Bhava",
+    domain:
+      "Ausgaben, Rückzug, Schlaf, Ferne, Institutionen und Loslassen",
+    constructive:
+      "bewusster Abschluss, erholsame Zurückgezogenheit und kluge Zuteilung",
+    caution:
+      "Vermeidung, Ressourcenverlust, Isolation oder Verlust zu romantisieren",
+  },
+};
+
+export const BHAVA_EDUCATION: Readonly<
+  Record<HouseNumber, BhavaEducationProfile>
+> = Object.fromEntries(
+  BHAVA_ROWS.map(([number]) => {
+    const profile = BASE_BHAVA_EDUCATION[number];
+    const german = GERMAN_BHAVA_EDUCATION[number];
+    return [
+      number,
+      {
+        ...profile,
+        name: addGerman(profile.name, german.name),
+        domain: addGerman(profile.domain, german.domain),
+        constructive: addGerman(
+          profile.constructive,
+          german.constructive,
+        ),
+        caution: addGerman(profile.caution, german.caution),
+      },
+    ];
+  }),
 ) as Record<HouseNumber, BhavaEducationProfile>;
 
 export interface GrahaInBhavaReading {
@@ -888,6 +1435,20 @@ export function buildGrahaInBhavaReading(
   const bhavaName = readLocalized(bhava.name, locale);
   const grahaFunction = readLocalized(graha.signifies, locale);
   const bhavaDomain = readLocalized(bhava.domain, locale);
+
+  if (locale === "de") {
+    return {
+      graha: grahaId,
+      bhava: bhavaNumber,
+      title: `${grahaName} — ${bhavaName}`,
+      summary: `Im traditionellen Jyotish wird die Funktion von ${grahaName} — ${grahaFunction} — durch das Feld von ${bhavaName} gelesen: ${bhavaDomain}. Das deutet auf eine Betonung dieses Lebensfelds hin, nicht auf ein garantiertes Ereignis.`,
+      constructive: `${readLocalized(graha.constructive, locale)} kann sich stimmiger entfalten, wenn es mit ${readLocalized(bhava.constructive, locale)} verbunden wird.`,
+      caution: `Sowohl ${readLocalized(graha.caution, locale)} als auch ${readLocalized(bhava.caution, locale)} ohne Angst und ohne festes Etikett prüfen.`,
+      inquiry: readLocalized(graha.inquiry, locale),
+      methodNote:
+        "Diese pädagogische 9×12-Synthese verbindet ausschließlich Graha-Karakatvas mit Bhava-Themen. Rasi, Bhavesha, Drishti, Yuti, Würde, Dasha und Gochara wurden dabei nicht bewertet.",
+    };
+  }
 
   if (locale === "hi") {
     return {
@@ -942,6 +1503,7 @@ export function getGenericNakshatraReading(locale: AppLocale): string {
     en: "A Nakshatra is a fine symbolic qualifier. Read its graha, Rasi, Bhava and lord before using mansion imagery; the imagery is traditional, not a measured trait or prediction.",
     hi: "नक्षत्र एक सूक्ष्म प्रतीकात्मक विशेषता है। नक्षत्र-चित्र से पहले ग्रह, राशि, भाव और नक्षत्र-स्वामी पढ़ें; चित्र परंपरागत है, मापा हुआ गुण या भविष्यवाणी नहीं।",
     mr: "नक्षत्र हा सूक्ष्म प्रतीकात्मक विशेषक आहे. नक्षत्रप्रतिमेआधी ग्रह, राशी, भाव व नक्षत्रस्वामी वाचा; प्रतिमा पारंपरिक आहे, मोजलेला गुण किंवा भविष्यवाणी नाही.",
+    de: "Ein Nakshatra ist eine feine symbolische Präzisierung. Vor der Bildsprache der Mondstation zuerst Graha, Rasi, Bhava und Herrscher lesen; die Bilder sind traditionell, keine gemessene Eigenschaft oder Vorhersage.",
   }[locale];
 }
 
@@ -952,40 +1514,48 @@ export const LOCALIZED_ANALYSIS_LIMITATIONS: Readonly<
     "Jyotish readings here are traditional and symbolic. Astrology has not been scientifically validated as a reliable way to predict events, personality, health or outcomes.",
     "यहाँ ज्योतिषीय पाठ पारंपरिक और प्रतीकात्मक हैं। घटनाओं, व्यक्तित्व, स्वास्थ्य या परिणामों की विश्वसनीय भविष्यवाणी के रूप में ज्योतिष वैज्ञानिक रूप से प्रमाणित नहीं है।",
     "येथील ज्योतिषवाचन पारंपरिक व प्रतीकात्मक आहे. घटना, व्यक्तिमत्त्व, आरोग्य किंवा परिणाम यांचे विश्वासार्ह भाकीत म्हणून ज्योतिष वैज्ञानिकदृष्ट्या प्रमाणित नाही.",
+    "Die Jyotish-Deutungen hier sind traditionell und symbolisch. Astrologie ist wissenschaftlich nicht als zuverlässige Methode zur Vorhersage von Ereignissen, Persönlichkeit, Gesundheit oder Ergebnissen validiert.",
   ),
   "birth-time-sensitivity": localized(
     "Lagna and Bhavas are sensitive to birth time and place. Rounded or uncertain input can materially change them.",
     "लग्न और भाव जन्म-समय व स्थान के प्रति संवेदनशील हैं। अनुमानित या अनिश्चित जानकारी इन्हें महत्वपूर्ण रूप से बदल सकती है।",
     "लग्न व भाव जन्मवेळ व स्थळाबाबत संवेदनशील आहेत. अंदाजे किंवा अनिश्चित माहितीमुळे ते लक्षणीय बदलू शकतात.",
+    "Lagna und Bhavas reagieren empfindlich auf Geburtszeit und -ort. Gerundete oder unsichere Eingaben können sie wesentlich verändern.",
   ),
   "model-dependence": localized(
     "Results depend on convention. This app uses its documented Lahiri Ayanamsha and whole-sign Bhavas; another model may differ near boundaries.",
     "परिणाम पद्धति पर निर्भर हैं। यह ऐप दस्तावेजित लाहिड़ी अयनांश और पूर्ण-राशि भाव उपयोग करता है; दूसरी पद्धति सीमा के पास अलग परिणाम दे सकती है।",
     "निष्कर्ष पद्धतीवर अवलंबून असतात. हे अ‍ॅप दस्तऐवजीकृत लाहिरी अयनांश व पूर्ण-राशी भाव वापरते; दुसरी पद्धत सीमेजवळ वेगळा निष्कर्ष देऊ शकते.",
+    "Ergebnisse hängen von der Konvention ab. Diese App verwendet ihr dokumentiertes Lahiri-Ayanamsa und Ganzzeichen-Bhavas; andere Modelle können nahe Grenzen abweichen.",
   ),
   "mean-node-model": localized(
     "Rahu and Ketu use mean nodes. True-node positions may differ, especially near a boundary.",
     "राहु और केतु के लिए मध्यम नोड उपयोग होते हैं। विशेषकर सीमा के पास वास्तविक नोड अलग हो सकता है।",
     "राहू व केतूसाठी मध्यम नोड वापरले आहेत. विशेषतः सीमेजवळ खरा नोड वेगळा असू शकतो.",
+    "Für Rahu und Ketu werden mittlere Mondknoten verwendet. Positionen wahrer Knoten können insbesondere nahe einer Grenze abweichen.",
   ),
   "feature-scope": localized(
     "Shadbala, varga charts, combustion, classical Drishti, Yuti strength, yogas and event probabilities are not calculated. Mention of them is educational only.",
     "षड्बल, वर्ग-कुंडली, अस्तता, शास्त्रीय दृष्टि, युति-बल, योग और घटना-संभाव्यता की गणना नहीं होती। उनका उल्लेख केवल शैक्षिक है।",
     "षड्बल, वर्गकुंडली, अस्तता, शास्त्रीय दृष्टी, युतीबळ, योग व घटनासंभाव्यता मोजली जात नाही. त्यांचा उल्लेख फक्त शैक्षणिक आहे.",
+    "Shadbala, Varga-Kundalis, Verbrennung, klassische Drishti, Yuti-Stärke, Yogas und Ereigniswahrscheinlichkeiten werden nicht berechnet. Erwähnungen dienen ausschließlich der Bildung.",
   ),
   "ephemeris-tolerance": localized(
     "The approximately one-arcminute figure is an engineering target, not independent certification against Swiss Ephemeris or JPL for every date, place, body and boundary.",
     "लगभग एक चाप-मिनट का आँकड़ा इंजीनियरिंग लक्ष्य है; हर तारीख, स्थान, पिंड और सीमा के लिए स्विस एफेमेरिस या JPL के विरुद्ध स्वतंत्र प्रमाणन नहीं।",
     "सुमारे एक चाप-मिनिट हा अभियांत्रिकी उद्देश आहे; प्रत्येक तारीख, स्थळ, पिंड व सीमेसाठी स्विस एफेमेरिस किंवा JPL विरुद्ध स्वतंत्र प्रमाणपत्र नाही.",
+    "Die Angabe von ungefähr einer Bogenminute ist ein Entwicklungsziel, keine unabhängige Zertifizierung gegenüber Swiss Ephemeris oder JPL für jedes Datum, jeden Ort, Himmelskörper und jede Grenze.",
   ),
   "dasha-convention": localized(
     "Vimshottari dates use a disclosed 365.25-day year. Traditions or software using another year length or boundary rule can produce different dates.",
     "विम्शोत्तरी तिथियाँ घोषित 365.25-दिन वर्ष उपयोग करती हैं। दूसरी वर्ष-लंबाई या सीमा-नियम वाली परंपरा अथवा सॉफ्टवेयर अलग तारीख दे सकता है।",
     "विंशोत्तरी तारखा स्पष्ट केलेले 365.25-दिवस वर्ष वापरतात. वेगळे वर्षमान किंवा सीमेनियम वापरणारी परंपरा अथवा सॉफ्टवेअर वेगळ्या तारखा देऊ शकते.",
+    "Vimshottari-Daten beruhen auf der offengelegten Konvention eines Jahres mit 365,25 Tagen. Traditionen oder Programme mit anderer Jahreslänge oder Grenzregel können andere Daten ergeben.",
   ),
   "transit-score-method": localized(
     "Daily and monthly Gochara scores are app-specific weighted rule summaries—not a universal Jyotish measure, probability, scientific forecast or outcome rating.",
     "दैनिक और मासिक गोचर-अंक ऐप के अपने भारित नियमों का सार हैं—सार्वभौमिक ज्योतिषीय माप, संभाव्यता, वैज्ञानिक पूर्वानुमान या परिणाम-रेटिंग नहीं।",
     "दैनिक व मासिक गोचर गुण हे अ‍ॅपच्या स्वतःच्या भारित नियमांचे सार आहेत—सार्वत्रिक ज्योतिषमापन, संभाव्यता, वैज्ञानिक अंदाज किंवा परिणामगुणांकन नाही.",
+    "Tägliche und monatliche Gochara-Werte sind app-spezifische, gewichtete Regelzusammenfassungen — kein universelles Jyotish-Maß, keine Wahrscheinlichkeit, wissenschaftliche Prognose oder Ergebnisbewertung.",
   ),
 };

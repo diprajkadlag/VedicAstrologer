@@ -70,6 +70,22 @@ const SOUTH_CHART_MESSAGES = defineMessages({
     figcaption:
       "दक्षिण भारतीय कुंडली. राशी स्थिर असतात; लग्न राशीपासून पहिला भाव सुरू होतो.",
   },
+  de: {
+    ariaLabel: "Südindische vedische Geburtskundali",
+    description:
+      "Zwölf feste Rāśis um ein südindisches Vier-mal-vier-Raster. Das Lagna kennzeichnet Bhava eins. Wähle eine Rāśi-Bhava-Zelle oder ein Graha aus, um Details anzuzeigen.",
+    rasi: "RĀŚI",
+    lahiri: "D1 · LĀHIRI",
+    chartTitle: "Südindische Kundali",
+    selectedGraha: "{glyph} {planet} · {rasi}",
+    selectedBhava: "Bhava {house} · {rasi}",
+    lagnaSummary: "Lagna · {rasi}",
+    signsFixed: "Rāśis fest · Bhavas ab Lagna",
+    bhavaShort: "B",
+    lagnaShort: "LAGNA",
+    figcaption:
+      "Südindische Kundali. Die Rāśis sind fest angeordnet; mit der Lagna-Rāśi beginnt Bhava eins.",
+  },
 });
 
 function activateCell(

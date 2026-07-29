@@ -41,6 +41,11 @@ const documentCopy: Readonly<
     description:
       "3D खगोलीय गोल, वैदिक कुंडल्या आणि पारदर्शक ज्योतिष विश्लेषणातून लाहिरी निरयन जन्मकुंडली पाहा.",
   },
+  de: {
+    title: "Jyotish-Observatorium",
+    description:
+      "Erkunde ein siderisches Lahiri-Geburtshoroskop mit einer interaktiven 3D-Himmelssphäre, vedischen Horoskopdarstellungen und transparenter Jyotish-Analyse.",
+  },
 };
 
 interface AppPreferencesValue {
@@ -104,9 +109,7 @@ function getThemeSnapshot(): AppTheme {
   if (isAppTheme(storedTheme)) return storedTheme;
   const documentTheme = document.documentElement.dataset.theme;
   if (isAppTheme(documentTheme)) return documentTheme;
-  return window.matchMedia("(prefers-color-scheme: light)").matches
-    ? "light"
-    : "dark";
+  return "light";
 }
 
 function getServerLocaleSnapshot(): AppLocale {
@@ -114,7 +117,7 @@ function getServerLocaleSnapshot(): AppLocale {
 }
 
 function getServerThemeSnapshot(): AppTheme {
-  return "dark";
+  return "light";
 }
 
 function emitPreferenceChange() {
@@ -158,7 +161,7 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
       nextLocale,
       isAppTheme(document.documentElement.dataset.theme)
         ? document.documentElement.dataset.theme
-        : "dark",
+        : "light",
     );
     emitPreferenceChange();
   }, []);
@@ -206,7 +209,7 @@ export function useScopedTranslations<Key extends string>(
   const { locale } = useAppPreferences();
   return useCallback(
     (key: Key, values?: TranslationValues) =>
-      formatMessage(messages[locale][key], values),
+      formatMessage(messages[locale]?.[key] ?? messages.en[key], values),
     [locale, messages],
   );
 }

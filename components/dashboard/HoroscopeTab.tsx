@@ -315,6 +315,90 @@ const HOROSCOPE_MESSAGES = defineMessages({
     disclaimer:
       "ही सामग्री चिंतन आणि अभ्यासासाठी वापरा. वैद्यकीय, कायदेशीर, आर्थिक, सुरक्षितता, नातेसंबंध किंवा इतर महत्त्वाचे निर्णय केवळ यावर आधारित घेऊ नका.",
   },
+  de: {
+    eyebrow: "Gochara · Transit-Observatorium",
+    title: "Täglicher und monatlicher Gochara-Fokus",
+    intro:
+      "Aktuelle siderische Lahiri-Positionen werden mit dem Geburts-Lagna und der Janma Rasi verglichen. Das Ergebnis ist eine transparente Zusammenfassung traditioneller Regeln, keine Ereignisprognose.",
+    dateLabel: "Gochara-Datum",
+    today: "Heute",
+    calculatedAt: "Berechnet für {date}",
+    dailyTitle: "Täglicher Chandra-Fokus",
+    monthlyTitle: "Monatlicher Surya–Budha-Fokus",
+    majorTitle: "Hinweise zu langsam laufenden Grahas",
+    dailyHeadline:
+      "{nakshatra} Chandra · Bhava {house} von der Janma Rasi",
+    dailySummary:
+      "Chandra steht in {rasi}, {nakshatra}, Pada {pada}, regiert von {lord}. Er befindet sich in Bhava {lagnaHouse} vom Lagna und Bhava {moonHouse} von der Janma Rasi.",
+    monthlyHeadline: "Surya in {sunRasi} · Budha in {mercuryRasi}",
+    monthlySummary:
+      "Surya aktiviert Bhava {sunHouse} vom Lagna. Budha aktiviert Bhava {mercuryHouse} von der Janma Rasi und ist {motion}.",
+    rasi: "Rasi",
+    nakshatraPada: "Nakshatra und Pada",
+    nakshatraLord: "Nakshatra-Herrscher",
+    fromLagna: "Vom Lagna",
+    fromJanmaRasi: "Von der Janma Rasi",
+    bhavaValue: "Bhava {house}",
+    direct: "direktläufig",
+    retrograde: "Vakri",
+    focusTitle: "Praktische Reflexion",
+    dailyFocus:
+      "Beobachten Sie {theme}. Setzen Sie die Qualitäten des Nakshatra-Herrschers—{lordQuality}—bewusst ein.",
+    monthlyFocus:
+      "Surya lenkt Aufmerksamkeit auf {sunTheme}; Budha regt zur durchdachten Verarbeitung von {mercuryTheme} an.",
+    noticeTitle: "{planet}-Gochara",
+    noticeSummary:
+      "{planet} steht in {rasi}: Bhava {lagnaHouse} vom Lagna und Bhava {moonHouse} von der Janma Rasi.",
+    lagnaTheme: "Lagna-Bezug",
+    moonTheme: "Janma-Rasi-Bezug",
+    intensity: "Hinweisstufe",
+    intensityBackground: "Hintergrund",
+    intensityNotable: "Beachtenswert",
+    intensityMajor: "Bedeutend",
+    score: "Reflexionswert",
+    scoreAria: "Reflexionswert {score} von 100, {band}",
+    bandIntensive: "Intensiv",
+    bandReflective: "Reflexiv",
+    bandSteady: "Stetig",
+    bandSupportive: "Unterstützend",
+    bandHighlySupportive: "Stark unterstützend",
+    whyScore: "Berechnung des Werts anzeigen",
+    baseline: "Veröffentlichter Ausgangswert",
+    contribution: "{amount} Punkte",
+    finalScore: "Begrenzter Endwert",
+    clampNote:
+      "Zum Ausgangswert werden die aufgeführten Anpassungen fester Regeln addiert; das Ergebnis wird gerundet und auf den Bereich 0–100 begrenzt.",
+    methodologyTitle: "Was dieser Wert bedeutet—und was nicht",
+    methodologyIntro:
+      "Der Wert fasst die festen Gochara-Regeln dieser App zusammen. Er ist weder Wahrscheinlichkeit noch wissenschaftliche Messung, Sicherheitsgrad oder Prognose eines konkreten Ereignisses.",
+    methodologyOne:
+      "Astronomische Eingaben: scheinbare geozentrische Positionen, Lahiri-Ayanamsa und Ganzzeichen-Zählung vom Geburts-Lagna und von der Janma Rasi.",
+    methodologyTwo:
+      "Deutungsgrundlage: ein Ausgangswert von 50 plus die in jeder Karte offengelegten, berechneten Regelbeiträge.",
+    methodologyThree:
+      "Niedrige Werte bedeuten, dass die Regeln Anstrengung, Überprüfung oder Komplexität hervorheben; hohe Werte betonen Unterstützung. Keiner davon garantiert gute oder schlechte Ergebnisse.",
+    ruleMoonHouse:
+      "Chandras Bhava {house} von der Janma Rasi wendet die veröffentlichte tägliche Bhava-Anpassung an.",
+    ruleNakshatraLord:
+      "Das von {lord} regierte Nakshatra wendet die feste Herrscher-Anpassung an.",
+    rulePada:
+      "Pada {pada} wendet seine veröffentlichte feste Anpassung an.",
+    ruleSunHouse:
+      "Suryas Bhava {house} vom Lagna wendet die monatliche Surya-Anpassung an.",
+    ruleMercuryHouse:
+      "Budhas Bhava {house} von der Janma Rasi wendet die monatliche Budha-Anpassung an.",
+    ruleMercuryMotion:
+      "Budhas scheinbare Bewegung ({motion}) wendet die veröffentlichte Bewegungsanpassung an.",
+    ruleMajorMoon:
+      "{planet} in Bhava {house} von der Janma Rasi wendet die Chandra-bezogene Anpassung für langsame Gochara an.",
+    ruleMajorLagna:
+      "{planet} in Bhava {house} vom Lagna wird anhand der Regel für Kendra- und Trikona-Bhavas geprüft.",
+    ruleSadeSati:
+      "Shani befindet sich in der traditionellen Drei-Rasi-Zone Sade Sati um den Geburts-Chandra; dies markiert anhaltende Verantwortung, nicht garantierten Schaden.",
+    ruleFallback: "Eine feste Regel trägt die angezeigte Anpassung bei.",
+    disclaimer:
+      "Nutzen Sie dieses Material zur Reflexion und zum Lernen. Treffen Sie medizinische, rechtliche, finanzielle, sicherheitsbezogene, partnerschaftliche oder andere folgenreiche Entscheidungen nicht allein auf dieser Grundlage.",
+  },
 });
 
 const HOUSE_THEMES: Readonly<Record<AppLocale, readonly string[]>> = {
@@ -360,6 +444,20 @@ const HOUSE_THEMES: Readonly<Record<AppLocale, readonly string[]>> = {
     "लाभ आणि समुदाय",
     "विश्रांती आणि मुक्तता",
   ],
+  de: [
+    "Selbstbild und Vitalität",
+    "Ressourcen und Stimme",
+    "Mut und Fähigkeiten",
+    "Zuhause und Grundlagen",
+    "Kreativität und Urteilsvermögen",
+    "Dienst und Problemlösung",
+    "Partnerschaft und Austausch",
+    "Tiefe und Wandlung",
+    "Sinn und Orientierung",
+    "Arbeit und Beitrag",
+    "Gewinne und Gemeinschaft",
+    "Ruhe und Loslassen",
+  ],
 };
 
 const GRAHA_QUALITIES: Readonly<
@@ -397,6 +495,17 @@ const GRAHA_QUALITIES: Readonly<
     saturn: "संयम आणि रचना",
     rahu: "पडताळणीसह प्रयोग",
     ketu: "सुलभीकरण आणि विवेक",
+  },
+  de: {
+    sun: "Zweck und Klarheit",
+    moon: "Fürsorge und Reaktionsfähigkeit",
+    mercury: "Analyse und Kommunikation",
+    venus: "Harmonie und Empfänglichkeit",
+    mars: "entschlossenes und geschütztes Handeln",
+    jupiter: "Lernen und Perspektive",
+    saturn: "Geduld und Struktur",
+    rahu: "Experimentieren mit Überprüfung",
+    ketu: "Vereinfachung und Unterscheidungsvermögen",
   },
 };
 

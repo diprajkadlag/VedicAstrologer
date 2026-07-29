@@ -10,7 +10,9 @@ import {
   useState,
 } from "react";
 import {
+  ArrowLeft,
   CalendarDays,
+  Check,
   ChevronRight,
   Clock3,
   Compass,
@@ -241,9 +243,193 @@ const messages = defineMessages({
     later: "नंतरचा",
     generate: "कुंडली तयार करा",
   },
+  de: {
+    invalidLocalTime: "Die lokale Geburtszeit oder Zeitzone ist ungültig.",
+    selectedPlace: "{place} wurde ausgewählt.",
+    minSearch: "Gib mindestens drei Zeichen ein und starte dann die Suche.",
+    searching: "OpenStreetMap wird durchsucht…",
+    searchUnavailable: "Die Ortssuche ist vorübergehend nicht verfügbar.",
+    invalidSearchResponse: "Die Ortssuche hat eine ungültige Antwort geliefert.",
+    noPlaces: "Keine passenden Orte gefunden. Versuche Stadt und Land.",
+    onePlace: "1 Ort gefunden.",
+    manyPlaces: "{count} Orte gefunden.",
+    invalidLatitude: "Der Breitengrad muss zwischen -90 und 90 liegen.",
+    invalidLongitude: "Der Längengrad muss zwischen -180 und 180 liegen.",
+    missingManualTimezone: "Gib eine IANA-Zeitzone wie Europe/Berlin ein.",
+    usingCoordinates: "Manuelle Koordinaten werden für {place} verwendet.",
+    invalidName: "Gib einen Namen mit 1 bis 100 Zeichen ein.",
+    missingGender: "Wähle eine Geschlechtsoption.",
+    invalidBirthDate: "Gib ein gültiges Geburtsdatum ein, das nicht in der Zukunft liegt.",
+    birthTimeSeconds: "Gib eine vollständige Geburtszeit ein.",
+    missingPlace: "Suche und wähle einen Geburtsort oder verwende manuelle Koordinaten.",
+    missingTimezone: "Bestätige die IANA-Zeitzone für diesen Geburtsort.",
+    nonexistentTime: "Diese lokale Uhrzeit existierte wegen einer Zeitumstellung nicht. Gib eine andere dokumentierte Zeit ein.",
+    chooseAmbiguous: "Diese Uhrzeit trat zweimal auf. Wähle das frühere oder spätere Vorkommen.",
+    incompleteTime: "Gib ein vollständiges Datum, eine Uhrzeit und eine gültige Zeitzone ein.",
+    resolvedFuture: "Der aufgelöste Geburtszeitpunkt darf nicht in der Zukunft liegen.",
+    birthCoordinates: "Geburtsdaten",
+    title: "Erstelle deine Kundali",
+    intro: "Geburtszeit und historische Zeitzone können Lagna und Bhavas verändern. Prüfe die Angaben sorgfältig.",
+    fullName: "Vollständiger Name",
+    namePlaceholder: "Name für diese Kundali",
+    gender: "Geschlecht",
+    male: "Männlich",
+    female: "Weiblich",
+    other: "Divers",
+    dateOfBirth: "Geburtsdatum",
+    timeOfBirth: "Geburtszeit",
+    placeOfBirth: "Geburtsort",
+    placePlaceholder: "Stadt, Region, Land",
+    search: "Suchen",
+    searchResults: "Ergebnisse der Geburtsortsuche",
+    searchHelp: "Drücke Suchen oder Enter für Vorschläge; das öffentliche Nominatim erlaubt keine Live-Autovervollständigung.",
+    osmAttribution: "© OpenStreetMap-Mitwirkende",
+    manualSummary: "Ort nicht gefunden? Koordinaten manuell eingeben",
+    locationLabel: "Bezeichnung des Ortes",
+    manualLocationLabel: "Manuelle Ortsbezeichnung",
+    latitude: "Breitengrad",
+    manualLatitude: "Manueller Breitengrad",
+    longitude: "Längengrad",
+    manualLongitude: "Manueller Längengrad",
+    timezoneExample: "IANA-Zeitzone, z. B. Europe/Berlin",
+    manualTimezone: "Manuelle IANA-Zeitzone",
+    useCoordinates: "Koordinaten verwenden",
+    historicalTimezone: "Historische Zeitzone",
+    timezonePlaceholder: "Ort wählen oder IANA-Zeitzone eingeben",
+    timezoneHelp: "Der UTC-Versatz wird für das Geburtsdatum einschließlich historischer Sommerzeitregeln bestimmt.",
+    resolvedAs: "Aufgelöst als {candidate}",
+    occurredTwice: "Diese lokale Uhrzeit trat zweimal auf",
+    occurrenceHelp: "Wähle das im Geburtsnachweis dokumentierte Vorkommen.",
+    earlier: "Früher",
+    later: "Später",
+    generate: "Kundali erstellen",
+  },
 });
 
-export type Gender = "male" | "female" | "other";
+const wizardMessages = defineMessages({
+  en: {
+    step: "Step {current} of {total}",
+    progress: "Birth-data progress",
+    nameQuestion: "What should we call this Kundali?",
+    nameHelp: "This name appears only in your chart and downloaded PDF.",
+    genderQuestion: "How would you like to be addressed?",
+    genderHelp: "Optional. Gender does not change the astronomical calculation.",
+    preferNot: "Prefer not to say",
+    dateQuestion: "When were you born?",
+    dateHelp: "Use the date recorded on the birth certificate when available.",
+    timeQuestion: "What time were you born?",
+    timeHelp: "Do not guess. Lagna and Bhavas can change quickly; an uncertain time should be checked before relying on them.",
+    knowSeconds: "I know the exact seconds",
+    minutePrecision: "Minute precision",
+    secondPrecision: "Second precision",
+    placeQuestion: "Where were you born?",
+    placeHelp: "Choose the matching place so latitude, longitude, and historical timezone can be resolved.",
+    reviewQuestion: "Please confirm your birth details",
+    reviewHelp: "The calculation starts only after you confirm. You can go back and correct any item.",
+    back: "Back",
+    continue: "Continue",
+    change: "Change",
+    optional: "Optional",
+    nameSummary: "Name",
+    genderSummary: "Addressing",
+    dateSummary: "Date",
+    timeSummary: "Time",
+    placeSummary: "Place",
+    privacy: "Calculation happens in your browser. Only the city search is sent to OpenStreetMap.",
+  },
+  hi: {
+    step: "चरण {current} / {total}",
+    progress: "जन्म-विवरण प्रगति",
+    nameQuestion: "इस कुंडली को किस नाम से रखें?",
+    nameHelp: "यह नाम केवल आपकी कुंडली और डाउनलोड की गई PDF में दिखेगा।",
+    genderQuestion: "आपको किस प्रकार संबोधित किया जाए?",
+    genderHelp: "वैकल्पिक। इससे खगोलीय गणना नहीं बदलती।",
+    preferNot: "नहीं बताना चाहते",
+    dateQuestion: "आपका जन्म कब हुआ?",
+    dateHelp: "जहाँ संभव हो, जन्म प्रमाणपत्र में दर्ज तारीख उपयोग करें।",
+    timeQuestion: "आपका जन्म किस समय हुआ?",
+    timeHelp: "अनुमान न लगाएँ। लग्न और भाव जल्दी बदल सकते हैं; अनिश्चित समय पर निर्भर होने से पहले उसे जाँचें।",
+    knowSeconds: "मुझे सटीक सेकंड पता हैं",
+    minutePrecision: "मिनट तक सटीक",
+    secondPrecision: "सेकंड तक सटीक",
+    placeQuestion: "आपका जन्म कहाँ हुआ?",
+    placeHelp: "सही स्थान चुनें ताकि अक्षांश, देशांतर और ऐतिहासिक समय-क्षेत्र मिल सके।",
+    reviewQuestion: "कृपया जन्म-विवरण की पुष्टि करें",
+    reviewHelp: "पुष्टि के बाद ही गणना शुरू होगी। किसी भी जानकारी को वापस जाकर बदल सकते हैं।",
+    back: "पीछे",
+    continue: "आगे",
+    change: "बदलें",
+    optional: "वैकल्पिक",
+    nameSummary: "नाम",
+    genderSummary: "संबोधन",
+    dateSummary: "तारीख",
+    timeSummary: "समय",
+    placeSummary: "स्थान",
+    privacy: "गणना आपके ब्राउज़र में होती है। केवल शहर की खोज OpenStreetMap को भेजी जाती है।",
+  },
+  mr: {
+    step: "पायरी {current} / {total}",
+    progress: "जन्ममाहिती प्रगती",
+    nameQuestion: "या कुंडलीला कोणते नाव द्यायचे?",
+    nameHelp: "हे नाव फक्त तुमच्या कुंडलीत आणि डाउनलोड केलेल्या PDF मध्ये दिसेल.",
+    genderQuestion: "तुम्हाला कसे संबोधावे?",
+    genderHelp: "ऐच्छिक. यामुळे खगोलीय गणना बदलत नाही.",
+    preferNot: "सांगायचे नाही",
+    dateQuestion: "तुमचा जन्म कधी झाला?",
+    dateHelp: "शक्य असल्यास जन्मदाखल्यावरील तारीख वापरा.",
+    timeQuestion: "तुमचा जन्म किती वाजता झाला?",
+    timeHelp: "अंदाज लावू नका. लग्न आणि भाव वेगाने बदलू शकतात; अनिश्चित वेळेवर अवलंबून राहण्यापूर्वी ती तपासा.",
+    knowSeconds: "मला अचूक सेकंद माहीत आहेत",
+    minutePrecision: "मिनिटांपर्यंत अचूक",
+    secondPrecision: "सेकंदांपर्यंत अचूक",
+    placeQuestion: "तुमचा जन्म कुठे झाला?",
+    placeHelp: "अक्षांश, रेखांश आणि ऐतिहासिक कालविभाग मिळण्यासाठी योग्य स्थळ निवडा.",
+    reviewQuestion: "कृपया जन्ममाहिती निश्चित करा",
+    reviewHelp: "निश्चित केल्यानंतरच गणना सुरू होईल. कोणतीही माहिती मागे जाऊन बदलता येते.",
+    back: "मागे",
+    continue: "पुढे",
+    change: "बदला",
+    optional: "ऐच्छिक",
+    nameSummary: "नाव",
+    genderSummary: "संबोधन",
+    dateSummary: "तारीख",
+    timeSummary: "वेळ",
+    placeSummary: "स्थळ",
+    privacy: "गणना तुमच्या ब्राउझरमध्ये होते. फक्त शहराचा शोध OpenStreetMap कडे पाठवला जातो.",
+  },
+  de: {
+    step: "Schritt {current} von {total}",
+    progress: "Fortschritt der Geburtsdaten",
+    nameQuestion: "Wie sollen wir diese Kundali nennen?",
+    nameHelp: "Der Name erscheint nur in deiner Kundali und der heruntergeladenen PDF.",
+    genderQuestion: "Wie möchtest du angesprochen werden?",
+    genderHelp: "Optional. Diese Angabe verändert die astronomische Berechnung nicht.",
+    preferNot: "Keine Angabe",
+    dateQuestion: "Wann wurdest du geboren?",
+    dateHelp: "Verwende nach Möglichkeit das Datum aus der Geburtsurkunde.",
+    timeQuestion: "Um welche Uhrzeit wurdest du geboren?",
+    timeHelp: "Bitte nicht raten. Lagna und Bhavas können sich schnell ändern; eine unsichere Zeit sollte vor der Deutung geprüft werden.",
+    knowSeconds: "Ich kenne die genauen Sekunden",
+    minutePrecision: "Minutengenau",
+    secondPrecision: "Sekundengenau",
+    placeQuestion: "Wo wurdest du geboren?",
+    placeHelp: "Wähle den passenden Ort, damit Koordinaten und historische Zeitzone bestimmt werden können.",
+    reviewQuestion: "Bitte bestätige deine Geburtsdaten",
+    reviewHelp: "Die Berechnung beginnt erst nach deiner Bestätigung. Du kannst jede Angabe vorher ändern.",
+    back: "Zurück",
+    continue: "Weiter",
+    change: "Ändern",
+    optional: "Optional",
+    nameSummary: "Name",
+    genderSummary: "Anrede",
+    dateSummary: "Datum",
+    timeSummary: "Zeit",
+    placeSummary: "Ort",
+    privacy: "Die Berechnung erfolgt in deinem Browser. Nur die Stadtanfrage wird an OpenStreetMap gesendet.",
+  },
+});
+
+export type Gender = "male" | "female" | "other" | "unspecified";
 export type TimeDisambiguation = "earlier" | "later";
 
 export interface HoroscopeRequest {
@@ -256,6 +442,7 @@ export interface HoroscopeRequest {
     localTime: string;
     timeZone: string;
     utcOffset: string;
+    precision: "minute" | "second";
     disambiguation: "compatible" | TimeDisambiguation;
     instant: Date;
   };
@@ -312,6 +499,7 @@ function normalizeName(value: string): string {
 export default function BirthForm({ isGenerating = false, onGenerate }: BirthFormProps) {
   const { locale } = useAppPreferences();
   const t = useScopedTranslations(messages);
+  const tw = useScopedTranslations(wizardMessages);
   const listboxId = useId();
   const requestSequence = useRef(0);
   const activeRequest = useRef<AbortController | null>(null);
@@ -319,7 +507,9 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
   const [fullName, setFullName] = useState("");
   const [gender, setGender] = useState<Gender | "">("");
   const [birthDate, setBirthDate] = useState("");
-  const [birthTime, setBirthTime] = useState("12:00:00");
+  const [birthTime, setBirthTime] = useState("");
+  const [showSeconds, setShowSeconds] = useState(false);
+  const [step, setStep] = useState(0);
   const [placeQuery, setPlaceQuery] = useState("");
   const [results, setResults] = useState<PlaceSearchResult[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(null);
@@ -336,6 +526,9 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
   const [manualTimeZone, setManualTimeZone] = useState("");
 
   const today = new Date().toISOString().slice(0, 10);
+  const totalSteps = 6;
+  const normalizedBirthTime =
+    birthTime.length === 5 ? `${birthTime}:00` : birthTime;
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -348,7 +541,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
   const civilTime = useMemo<
     { resolution: CivilTimeResolution | null; error: string | null }
   >(() => {
-    if (!birthDate || !birthTime || !timeZone.trim()) {
+    if (!birthDate || !normalizedBirthTime || !timeZone.trim()) {
       return { resolution: null, error: null };
     }
 
@@ -356,7 +549,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
       return {
         resolution: analyzeCivilTime({
           date: birthDate,
-          time: birthTime,
+          time: normalizedBirthTime,
           timeZone: timeZone.trim(),
         }),
         error: null,
@@ -367,7 +560,62 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
         error: t("invalidLocalTime"),
       };
     }
-  }, [birthDate, birthTime, t, timeZone]);
+  }, [birthDate, normalizedBirthTime, t, timeZone]);
+
+  function validateStep(currentStep: number): boolean {
+    const nextErrors: FormErrors = {};
+    if (currentStep === 0) {
+      const name = normalizeName(fullName);
+      if (name.length < 1 || name.length > 100) {
+        nextErrors.fullName = t("invalidName");
+      }
+    }
+    if (currentStep === 2 && (!birthDate || birthDate > today)) {
+      nextErrors.birthDate = t("invalidBirthDate");
+    }
+    if (
+      currentStep === 3 &&
+      !/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(birthTime)
+    ) {
+      nextErrors.birthTime = t("birthTimeSeconds");
+    }
+    if (currentStep === 4) {
+      if (!selectedPlace) nextErrors.place = t("missingPlace");
+      if (!timeZone.trim()) nextErrors.timeZone = t("missingTimezone");
+      if (civilTime.error) nextErrors.birthTime = t("invalidLocalTime");
+      if (civilTime.resolution?.status === "nonexistent") {
+        nextErrors.birthTime = t("nonexistentTime");
+      }
+      if (civilTime.resolution?.status === "ambiguous" && !disambiguation) {
+        nextErrors.birthTime = t("chooseAmbiguous");
+      }
+      const chosen = selectedCandidate();
+      if (!chosen.candidate && !nextErrors.birthTime) {
+        nextErrors.birthTime = t("incompleteTime");
+      }
+      if (chosen.candidate && chosen.candidate.instant.getTime() > Date.now()) {
+        nextErrors.birthDate = t("resolvedFuture");
+      }
+    }
+    setErrors((current) => ({ ...current, ...nextErrors }));
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  function goNext() {
+    if (!validateStep(step)) return;
+    if (step === 1 && !gender) setGender("unspecified");
+    setStep((current) => Math.min(totalSteps - 1, current + 1));
+    window.requestAnimationFrame(() => {
+      document.getElementById("guided-birth-heading")?.focus();
+    });
+  }
+
+  function goBack() {
+    setStep((current) => Math.max(0, current - 1));
+    window.requestAnimationFrame(() => {
+      document.getElementById("guided-birth-heading")?.focus();
+    });
+  }
 
   function clearFieldError(field: keyof FormErrors) {
     setErrors((current) => ({ ...current, [field]: undefined, form: undefined }));
@@ -538,11 +786,10 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     if (name.length < 1 || name.length > 100) {
       nextErrors.fullName = t("invalidName");
     }
-    if (!gender) nextErrors.gender = t("missingGender");
     if (!birthDate || birthDate > today) {
       nextErrors.birthDate = t("invalidBirthDate");
     }
-    if (!/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(birthTime)) {
+    if (!/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(birthTime)) {
       nextErrors.birthTime = t("birthTimeSeconds");
     }
     if (!selectedPlace) nextErrors.place = t("missingPlace");
@@ -564,15 +811,16 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     }
 
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0 || !gender || !selectedPlace || !chosen.candidate) return;
+    if (Object.keys(nextErrors).length > 0 || !selectedPlace || !chosen.candidate) return;
 
     onGenerate({
-      person: { fullName: name, gender },
+      person: { fullName: name, gender: gender || "unspecified" },
       birth: {
         localDate: birthDate,
-        localTime: birthTime,
+        localTime: normalizedBirthTime,
         timeZone: timeZone.trim(),
         utcOffset: chosen.candidate.offset,
+        precision: showSeconds ? "second" : "minute",
         disambiguation: chosen.disambiguation,
         instant: chosen.candidate.instant,
       },
@@ -594,23 +842,80 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     civilTime.resolution?.status === "ambiguous"
       ? civilTime.resolution
       : null;
+  const stepCopy = [
+    [tw("nameQuestion"), tw("nameHelp")],
+    [tw("genderQuestion"), tw("genderHelp")],
+    [tw("dateQuestion"), tw("dateHelp")],
+    [tw("timeQuestion"), tw("timeHelp")],
+    [tw("placeQuestion"), tw("placeHelp")],
+    [tw("reviewQuestion"), tw("reviewHelp")],
+  ] as const;
+  const genderLabel =
+    gender === "unspecified"
+      ? tw("preferNot")
+      : gender
+        ? t(gender)
+        : tw("preferNot");
 
   return (
-    <form noValidate onSubmit={handleSubmit} className="space-y-6">
+    <form
+      noValidate
+      onSubmit={handleSubmit}
+      onKeyDown={(event) => {
+        if (
+          event.key === "Enter" &&
+          step < totalSteps - 1 &&
+          !event.defaultPrevented &&
+          !(event.target instanceof HTMLButtonElement)
+        ) {
+          event.preventDefault();
+          goNext();
+        }
+      }}
+      className="space-y-6"
+    >
       <div>
-        <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300">
-          <Compass aria-hidden="true" className="size-4" />
-          <span className="text-xs font-semibold uppercase tracking-[0.24em]">
-            {t("birthCoordinates")}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300">
+            <Compass aria-hidden="true" className="size-4" />
+            <span className="text-xs font-semibold uppercase tracking-[0.24em]">
+              {t("birthCoordinates")}
+            </span>
+          </div>
+          <span className="text-xs font-medium text-[var(--muted)]">
+            {tw("step", { current: step + 1, total: totalSteps })}
           </span>
         </div>
-        <h2 className="mt-2 text-2xl font-semibold text-white">{t("title")}</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-400">
-          {t("intro")}
+        <div
+          role="progressbar"
+          aria-label={tw("progress")}
+          aria-valuemin={1}
+          aria-valuemax={totalSteps}
+          aria-valuenow={step + 1}
+          className="mt-4 grid grid-cols-6 gap-1.5"
+        >
+          {Array.from({ length: totalSteps }, (_, index) => (
+            <span
+              key={index}
+              className={`h-1.5 rounded-full transition ${
+                index <= step ? "bg-violet-600" : "bg-[var(--border)]"
+              }`}
+            />
+          ))}
+        </div>
+        <h2
+          id="guided-birth-heading"
+          tabIndex={-1}
+          className="mt-5 text-2xl font-semibold text-[var(--foreground)] outline-none"
+        >
+          {stepCopy[step][0]}
+        </h2>
+        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+          {stepCopy[step][1]}
         </p>
       </div>
 
-      <div>
+      {step === 0 ? <div>
         <label htmlFor="full-name" className={labelClass}>
           <span className="flex items-center gap-2">
             <UserRound aria-hidden="true" className="size-4 text-slate-500" />
@@ -632,15 +937,27 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           className={inputClass}
         />
         <ErrorMessage id="full-name-error">{errors.fullName}</ErrorMessage>
-      </div>
+      </div> : null}
 
-      <fieldset
+      {step === 1 ? <fieldset
         aria-invalid={Boolean(errors.gender)}
         aria-describedby={errors.gender ? "gender-error" : undefined}
       >
-        <legend className={labelClass}>{t("gender")}</legend>
-        <div className="mt-2 grid grid-cols-3 gap-2">
-          {(["male", "female", "other"] as const).map((option) => (
+        <legend className={`${labelClass} flex items-center gap-2`}>
+          {t("gender")}
+          <span className="text-xs font-normal text-[var(--muted)]">
+            · {tw("optional")}
+          </span>
+        </legend>
+        <div className="mt-2 grid grid-cols-2 gap-2">
+          {(
+            [
+              ["male", t("male")],
+              ["female", t("female")],
+              ["other", t("other")],
+              ["unspecified", tw("preferNot")],
+            ] as const
+          ).map(([option, label]) => (
             <label
               key={option}
               className={`rounded-xl border px-3 py-2.5 text-center text-sm capitalize transition focus-within:ring-2 focus-within:ring-violet-300/60 focus-within:ring-offset-2 focus-within:ring-offset-[#0d0f1d] ${
@@ -660,14 +977,14 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
                 }}
                 className="sr-only"
               />
-              {t(option)}
+              {label}
             </label>
           ))}
         </div>
         <ErrorMessage id="gender-error">{errors.gender}</ErrorMessage>
-      </fieldset>
+      </fieldset> : null}
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      {step === 2 ? (
         <div>
           <label htmlFor="birth-date" className={labelClass}>
             <span className="flex items-center gap-2">
@@ -691,6 +1008,8 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           />
           <ErrorMessage id="birth-date-error">{errors.birthDate}</ErrorMessage>
         </div>
+      ) : null}
+      {step === 3 ? (
         <div>
           <label htmlFor="birth-time" className={labelClass}>
             <span className="flex items-center gap-2">
@@ -701,7 +1020,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           <input
             id="birth-time"
             type="time"
-            step="1"
+            step={showSeconds ? 1 : 60}
             value={birthTime}
             onChange={(event) => {
               setBirthTime(event.target.value);
@@ -713,9 +1032,33 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
             className={inputClass}
           />
           <ErrorMessage id="birth-time-error">{errors.birthTime}</ErrorMessage>
+          <label className="mt-4 flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3 text-sm text-[var(--foreground)]">
+            <input
+              type="checkbox"
+              checked={showSeconds}
+              onChange={(event) => {
+                const enabled = event.target.checked;
+                setShowSeconds(enabled);
+                setBirthTime((current) =>
+                  enabled && current.length === 5
+                    ? `${current}:00`
+                    : !enabled && current.length === 8
+                      ? current.slice(0, 5)
+                      : current,
+                );
+              }}
+            />
+            <span>
+              <span className="block font-medium">{tw("knowSeconds")}</span>
+              <span className="mt-0.5 block text-xs text-[var(--muted)]">
+                {showSeconds ? tw("secondPrecision") : tw("minutePrecision")}
+              </span>
+            </span>
+          </label>
         </div>
-      </div>
+      ) : null}
 
+      {step === 4 ? <div className="space-y-5">
       <div>
         <label htmlFor="place-search" className={labelClass}>
           <span className="flex items-center gap-2">
@@ -934,18 +1277,91 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           {t("invalidLocalTime")}
         </div>
       ) : null}
+      </div> : null}
+
+      {step === 5 ? (
+        <div className="space-y-3">
+          {[
+            [tw("nameSummary"), fullName, 0],
+            [tw("genderSummary"), genderLabel, 1],
+            [tw("dateSummary"), birthDate, 2],
+            [
+              tw("timeSummary"),
+              `${normalizedBirthTime} · ${
+                showSeconds ? tw("secondPrecision") : tw("minutePrecision")
+              }`,
+              3,
+            ],
+            [
+              tw("placeSummary"),
+              selectedPlace
+                ? `${selectedPlace.label} · ${timeZone}`
+                : t("missingPlace"),
+              4,
+            ],
+          ].map(([label, value, target]) => (
+            <div
+              key={String(label)}
+              className="flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3.5"
+            >
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+                  {String(label)}
+                </p>
+                <p className="mt-1 break-words text-sm font-medium text-[var(--foreground)]">
+                  {String(value)}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setStep(Number(target))}
+                className="shrink-0 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs text-[var(--accent)]"
+              >
+                {tw("change")}
+              </button>
+            </div>
+          ))}
+          <p className="flex items-start gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.055] p-3 text-xs leading-5 text-[var(--muted)]">
+            <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+            {tw("privacy")}
+          </p>
+        </div>
+      ) : null}
 
       <ErrorMessage id="form-error">{errors.form}</ErrorMessage>
 
-      <button
-        type="submit"
-        disabled={isGenerating}
-        className="group flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-500 to-indigo-500 px-4 py-3.5 text-sm font-semibold text-white shadow-lg shadow-violet-950/30 transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60"
-      >
-        {isGenerating ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : <Sparkles aria-hidden="true" className="size-4" />}
-        {t("generate")}
-        <ChevronRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
-      </button>
+      <div className="flex gap-2 border-t border-[var(--border)] pt-5">
+        {step > 0 ? (
+          <button
+            type="button"
+            onClick={goBack}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 text-sm font-semibold text-[var(--foreground)]"
+          >
+            <ArrowLeft aria-hidden="true" className="size-4" />
+            {tw("back")}
+          </button>
+        ) : null}
+        {step < totalSteps - 1 ? (
+          <button
+            type="button"
+            onClick={goNext}
+            className="group flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg shadow-violet-950/20 transition hover:brightness-110"
+          >
+            {tw("continue")}
+            <ChevronRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </button>
+        ) : (
+          <button
+            type="submit"
+            disabled={isGenerating}
+            className="group flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg shadow-violet-950/20 transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60"
+          >
+            {isGenerating ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : <Sparkles aria-hidden="true" className="size-4" />}
+            {t("generate")}
+            <ChevronRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </button>
+        )}
+      </div>
     </form>
   );
 }

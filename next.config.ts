@@ -43,6 +43,7 @@ const nextConfig: NextConfig = {
     : ["node.ts", "ts", "tsx"],
   env: {
     NEXT_PUBLIC_STATIC_EXPORT: isStaticExport ? "1" : "0",
+    NEXT_PUBLIC_BASE_PATH: basePath,
   },
 };
 

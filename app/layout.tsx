@@ -30,8 +30,8 @@ const preferenceBootScript = `
     const storedTheme = localStorage.getItem("jyotish-observatory-theme");
     const theme = storedTheme === "light" || storedTheme === "dark"
       ? storedTheme
-      : (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    if (locale === "en" || locale === "hi" || locale === "mr") {
+      : "light";
+    if (locale === "en" || locale === "hi" || locale === "mr" || locale === "de") {
       root.lang = locale;
       root.dataset.locale = locale;
     }
@@ -47,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="dark" data-locale="en" suppressHydrationWarning>
+    <html lang="en" data-theme="light" data-locale="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: preferenceBootScript }} />
       </head>

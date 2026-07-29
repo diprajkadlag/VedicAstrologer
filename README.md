@@ -15,8 +15,8 @@
   <img alt="Next.js 16" src="https://img.shields.io/badge/Next.js-16-111827?logo=nextdotjs">
   <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-6-2563eb?logo=typescript&logoColor=white">
   <img alt="Three.js" src="https://img.shields.io/badge/Three.js-WebGL-111827?logo=threedotjs">
-  <img alt="Tests" src="https://img.shields.io/badge/tests-142%20passing-16a34a">
-  <img alt="Milestone" src="https://img.shields.io/badge/milestone-v0.1.0-7c3aed">
+  <img alt="Tests" src="https://img.shields.io/badge/tests-CI%20validated-16a34a">
+  <img alt="Milestone" src="https://img.shields.io/badge/milestone-active-7c3aed">
 </p>
 
 ## Try it — nothing to install
@@ -52,7 +52,7 @@ study in:
 - schema-oriented context and prompt construction;
 - transparent, inspectable rule contributions;
 - real-time 3D rendering with graceful capability degradation;
-- multilingual product design in English, हिन्दी, and मराठी;
+- multilingual product design in English, हिन्दी, मराठी, and Deutsch;
 - responsible communication of calculated, interpreted, and omitted data.
 
 ## Project at a glance
@@ -63,11 +63,60 @@ study in:
 | Visualization | Responsive React Three Fiber celestial sphere plus North and South Indian SVG Rasi charts |
 | Explainability | Inspectable Gochara score arithmetic, structural chart audits, calculation-status badges, methodology and limitation disclosures |
 | AI engineering | Validated structured context, localized system policies, prompt-injection resistance, anti-fabrication constraints, and a local prompt preview/copy workflow |
-| Product quality | Three languages, two themes, responsive layouts, keyboard-oriented controls, WebGL failure recovery, civil-time/DST handling |
-| Verification | 17 Vitest files, 142 passing tests, TypeScript checks, ESLint, production build, and continuous integration |
-| Privacy | Birth data stays in the browser; only a submitted place query reaches the server-side Nominatim proxy; no hidden LLM request |
+| Product quality | Four languages, light-by-default plus dark theme, guided birth entry, responsive layouts, keyboard-oriented controls, WebGL failure recovery, and civil-time/DST handling |
+| Export | Client-side Kundali summary PDF in the selected app language, built from the calculated natal snapshot |
+| Verification | Vitest, TypeScript, ESLint, production-build gates, and continuous integration; exact current totals are reported by CI |
+| Privacy | Birth data stays in browser memory; only an explicit place query uses geocoding, through the Node proxy or directly from the static GitHub Pages build |
 
 ## Feature tour
+
+The landing experience includes a keyboard-operable visual showcase with
+purpose-built illustrations for the cosmos, Rasi charts, analysis, time
+navigation, and PDF export. It sits beside the guided entry so visitors can
+understand the workflow before submitting birth data.
+
+<table>
+  <tr>
+    <td width="50%">
+      <img width="100%" src="public/features/cosmos.svg" alt="Illustrated geocentric cosmos feature card">
+      <br><strong>Spatial astronomy</strong> — inspect the sidereal sky in an
+      orbitable, fullscreen WebGL scene.
+    </td>
+    <td width="50%">
+      <img width="100%" src="public/features/charts.svg" alt="Illustrated North and South Indian Rasi chart feature card">
+      <br><strong>Traditional chart views</strong> — keep one calculated chart
+      synchronized across North and South Indian layouts.
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <img width="100%" src="public/features/analysis.svg" alt="Illustrated explainable Jyotish analysis feature card">
+      <br><strong>Explainable analysis</strong> — move from placements to
+      inspectable Bhava, Nakshatra, Dasha, and Gochara rules.
+    </td>
+    <td width="50%">
+      <img width="100%" src="public/features/timing.svg" alt="Illustrated celestial time navigator feature card">
+      <br><strong>Time navigation</strong> — compare the fixed natal chart with
+      an explicitly selected astronomical instant.
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <img width="50%" src="public/features/pdf.svg" alt="Illustrated localized Kundali PDF feature card">
+      <br><strong>Portable summary</strong> — download the audited natal
+      snapshot in the chosen interface language without uploading the report.
+    </td>
+  </tr>
+</table>
+
+### Guided birth-data entry
+
+- one focused question at a time across name, optional form of address, date,
+  time, place, and confirmation
+- visible progress, Back/Edit controls, per-step validation, and an optional
+  seconds-level time field
+- place search with automatic coordinates and timezone plus a manual fallback
+- clear privacy and civil-time guidance before chart generation
 
 ### 3D geocentric cosmos
 
@@ -87,6 +136,17 @@ study in:
   Mahadasha/Antardasha timelines
 - interactive 22-term guide, nine Graha profiles, and all 108
   Graha-in-Bhava educational combinations
+- Sanskrit-first Rasi, Graha, Bhava, Nakshatra, and Pada terminology across all
+  supported languages instead of Western zodiac substitutions
+
+### Localized Kundali summary
+
+- explicit, on-demand PDF generation after the natal chart passes its
+  structural audit
+- selected-language output in English, हिन्दी, मराठी, or Deutsch
+- calculated placements, Bhavas, current Vimshottari periods, methodology, and
+  limitation disclosures in one portable summary
+- browser-side generation with no PDF upload or report-storage service
 
 ### Gochara and AI-ready reasoning
 
@@ -103,7 +163,7 @@ study in:
 ```mermaid
 flowchart LR
     A[Birth data] --> B[Civil-time and DST validation]
-    P[Place query] --> G[Server-side geocoding proxy]
+    PQ[Place query] --> G[Server-side geocoding proxy]
     G --> B
     B --> E[Ephemeris and sidereal engine]
     E --> C[Typed VedicChart]
@@ -113,6 +173,7 @@ flowchart LR
     C --> T[Gochara engine]
     C --> D[Vimshottari engine]
     C --> Q[Structural audit]
+    C --> PDF[Localized Kundali PDF]
     C --> X[AI context builder]
     T --> X
     D --> X
@@ -158,6 +219,7 @@ dataset are documented as the next milestone rather than simulated in the UI.
 - **UI:** Tailwind CSS, Framer Motion, Lucide
 - **Astronomy:** Astronomy Engine
 - **Time and location:** Temporal polyfill, geo-tz, OpenStreetMap Nominatim
+- **Document export:** React PDF with bundled Noto Sans and Devanagari fonts
 - **Quality:** Vitest, ESLint, TypeScript, GitHub Actions
 
 ## Run locally
@@ -214,12 +276,14 @@ npm run build
 Current milestone result:
 
 ```text
-17 test files
-142 tests passed
 TypeScript passed
 ESLint passed
+Vitest passed
 Next.js production build passed
 ```
+
+The exact file and test totals evolve with the milestone and are visible in the
+latest CI run; dated baseline results remain in the changelog.
 
 Test coverage focuses on the failure-prone boundaries rather than only UI
 snapshots:
@@ -227,7 +291,7 @@ snapshots:
 - Rasi, Nakshatra, Pada, house, node, and Dasha invariants
 - civil-time ambiguity and daylight-saving transitions
 - deterministic transit-score arithmetic
-- context and prompt validation in all three languages
+- context and prompt validation across all four application languages
 - chart geometry and responsive camera framing
 - WebGL capability classification and graceful fallback
 - structural chart consistency audits
@@ -291,22 +355,27 @@ components/3d/                WebGL scene, Grahas, Nakshatras, capability guard
 components/chart/             North/South Indian SVG renderers
 components/analysis/          Jyotish dashboard, guide, methodology, audit UI
 components/dashboard/         Rasi workspace, Gochara, AI prompt workspace
+components/export/            Client-only localized Kundali PDF generation
+components/marketing/         Interactive illustrated feature showcase
 components/providers/         Locale and theme preferences
-components/ui/                Birth form, term dialog, time navigator
+components/ui/                Guided birth form, term dialog, time navigator
 lib/astro/                    Ephemeris, civil time, Dashas, education, audits
 lib/transits.ts               Explainable Gochara rules
 lib/aiPromptBuilder.ts        Validated structured context and prompt policies
+public/features/              Lightweight feature-tour illustrations
+public/fonts/                 Bundled Noto fonts and license for PDF output
 docs/                         Architecture and AI-engineering case study
 .github/workflows/ci.yml      Reproducible pull-request and push validation
 ```
 
 ## Milestone and roadmap
 
-See [CHANGELOG.md](CHANGELOG.md) for the complete `v0.1.0` milestone.
+See [CHANGELOG.md](CHANGELOG.md) for the current multilingual onboarding/PDF
+milestone and the complete `v0.1.0` baseline.
 
 Priorities for the next iteration:
 
-- deploy a public demo and add real desktop/mobile screenshots;
+- add real desktop/mobile screenshots and browser-level visual regression;
 - add Playwright accessibility and end-to-end browser coverage;
 - independently cross-check boundary-sensitive calculations;
 - introduce an opt-in server-side LLM gateway with structured outputs;
@@ -320,8 +389,8 @@ This is an active portfolio and learning project. The code is suitable for
 technical review, experimentation, and discussion; it is not professional
 astrological, medical, legal, or financial advice.
 
-No open-source license has been selected yet. Public visibility does not by
-itself grant permission to copy, modify, or redistribute the code. A license
-should be chosen deliberately before accepting external reuse or contributions.
+The source is available under the [MIT License](LICENSE). Astrological
+interpretations remain cultural and symbolic material; the license is not a
+claim of scientific validation or professional certification.
 
 Built and maintained by [@diprajkadlag](https://github.com/diprajkadlag).

@@ -30,4 +30,14 @@ describe("localized astronomical names", () => {
     expect(getLocalizedGrahaName("mars", "mr")).toBe("मंगळ");
     expect(getLocalizedNakshatraName("Shatabhisha", "hi")).toBe("शतभिषा");
   });
+
+  it("uses Sanskrit transliterations rather than Western zodiac names in German", () => {
+    expect(getLocalizedRasiName("Aries", "de")).toBe("Mesha");
+    expect(getLocalizedRasiName("Gemini", "de")).toBe("Mithuna");
+    expect(getLocalizedRasiName("Leo", "de")).toBe("Simha");
+    expect(getLocalizedGrahaName("jupiter", "de")).toBe("Guru");
+    expect(getLocalizedNakshatraName("Shatabhisha", "de")).toBe(
+      "Shatabhisha",
+    );
+  });
 });
