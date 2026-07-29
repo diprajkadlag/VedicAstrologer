@@ -315,6 +315,9 @@ The cosmos is intentionally a dark-sky surface in both application themes.
 ### Localization
 
 The supported application locales are `en`, `hi`, `mr`, and `de`.
+English is the first-visit default. A valid language explicitly selected by the
+user is persisted and restored; absent, obsolete, or invalid values resolve to
+English.
 `defineMessages` uses the English dictionary as a TypeScript key contract, so
 Hindi, Marathi, and German dictionaries must implement the same keys at compile
 time. A runtime English fallback also protects development hot reloads and

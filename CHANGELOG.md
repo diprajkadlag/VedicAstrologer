@@ -29,6 +29,8 @@ professional astrological certification.
   names.
 - Localization lookups now retain a safe English fallback during partial
   development updates instead of crashing on a newly selected locale.
+- English is explicitly encoded and regression-tested as the first-visit
+  language while valid returning-user language choices remain persisted.
 - Portfolio documentation now distinguishes browser-local chart/PDF work,
   deployment-specific geocoding transport, deterministic calculations,
   traditional interpretation, and scientific evidence more explicitly.

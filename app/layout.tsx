@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 
 import { AppPreferencesProvider } from "@/components/providers/AppPreferencesProvider";
+import { DEFAULT_APP_LOCALE } from "@/lib/i18n";
 
 import "./globals.css";
 
@@ -31,10 +32,12 @@ const preferenceBootScript = `
     const theme = storedTheme === "light" || storedTheme === "dark"
       ? storedTheme
       : "light";
-    if (locale === "en" || locale === "hi" || locale === "mr" || locale === "de") {
-      root.lang = locale;
-      root.dataset.locale = locale;
-    }
+    const resolvedLocale =
+      locale === "en" || locale === "hi" || locale === "mr" || locale === "de"
+        ? locale
+        : "en";
+    root.lang = resolvedLocale;
+    root.dataset.locale = resolvedLocale;
     root.dataset.theme = theme;
     root.style.colorScheme = theme;
   } catch {}
@@ -47,7 +50,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-theme="light" data-locale="en" suppressHydrationWarning>
+    <html
+      lang={DEFAULT_APP_LOCALE}
+      data-theme="light"
+      data-locale={DEFAULT_APP_LOCALE}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: preferenceBootScript }} />
       </head>

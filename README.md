@@ -138,6 +138,8 @@ understand the workflow before submitting birth data.
   Graha-in-Bhava educational combinations
 - Sanskrit-first Rasi, Graha, Bhava, Nakshatra, and Pada terminology across all
   supported languages instead of Western zodiac substitutions
+- English as the first-visit interface language; a language explicitly chosen
+  by a returning user remains saved on that browser
 
 ### Localized Kundali summary
 

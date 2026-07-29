@@ -1,5 +1,6 @@
 export const APP_LOCALES = ["en", "hi", "mr", "de"] as const;
 export type AppLocale = (typeof APP_LOCALES)[number];
+export const DEFAULT_APP_LOCALE: AppLocale = "en";
 
 export const APP_THEMES = ["dark", "light"] as const;
 export type AppTheme = (typeof APP_THEMES)[number];
@@ -16,6 +17,15 @@ export type LocalizedMessages<Key extends string> = Readonly<
 
 export function isAppLocale(value: unknown): value is AppLocale {
   return typeof value === "string" && APP_LOCALES.includes(value as AppLocale);
+}
+
+export function resolveAppLocale(
+  storedLocale: unknown,
+  documentLocale: unknown,
+): AppLocale {
+  if (isAppLocale(storedLocale)) return storedLocale;
+  if (isAppLocale(documentLocale)) return documentLocale;
+  return DEFAULT_APP_LOCALE;
 }
 
 export function isAppTheme(value: unknown): value is AppTheme {

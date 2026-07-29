@@ -11,9 +11,11 @@ import {
 } from "react";
 
 import {
+  DEFAULT_APP_LOCALE,
   formatMessage,
   isAppLocale,
   isAppTheme,
+  resolveAppLocale,
   type AppLocale,
   type AppTheme,
   type LocalizedMessages,
@@ -97,11 +99,10 @@ function writePreference(key: string, value: string) {
 }
 
 function getLocaleSnapshot(): AppLocale {
-  const storedLocale = readPreference(LOCALE_STORAGE_KEY);
-  if (isAppLocale(storedLocale)) return storedLocale;
-  return isAppLocale(document.documentElement.lang)
-    ? document.documentElement.lang
-    : "en";
+  return resolveAppLocale(
+    readPreference(LOCALE_STORAGE_KEY),
+    document.documentElement.lang,
+  );
 }
 
 function getThemeSnapshot(): AppTheme {
@@ -113,7 +114,7 @@ function getThemeSnapshot(): AppTheme {
 }
 
 function getServerLocaleSnapshot(): AppLocale {
-  return "en";
+  return DEFAULT_APP_LOCALE;
 }
 
 function getServerThemeSnapshot(): AppTheme {
@@ -171,7 +172,7 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
     applyDocumentPreferences(
       isAppLocale(document.documentElement.lang)
         ? document.documentElement.lang
-        : "en",
+        : DEFAULT_APP_LOCALE,
       nextTheme,
     );
     emitPreferenceChange();

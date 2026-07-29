@@ -1,13 +1,23 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  DEFAULT_APP_LOCALE,
   defineMessages,
   formatMessage,
   isAppLocale,
   isAppTheme,
+  resolveAppLocale,
 } from "./i18n";
 
 describe("app internationalization primitives", () => {
+  it("defaults first-time visitors to English and preserves valid choices", () => {
+    expect(DEFAULT_APP_LOCALE).toBe("en");
+    expect(resolveAppLocale(null, null)).toBe("en");
+    expect(resolveAppLocale("unsupported", "unsupported")).toBe("en");
+    expect(resolveAppLocale("de", "en")).toBe("de");
+    expect(resolveAppLocale(null, "mr")).toBe("mr");
+  });
+
   it("recognizes only supported persisted preferences", () => {
     expect(["en", "hi", "mr", "de"].every(isAppLocale)).toBe(true);
     expect(isAppLocale("fr")).toBe(false);
