@@ -21,3 +21,7 @@
 Thumbs.db
 *.tsbuildinfo
 next-env.d.ts
+
+# Local working notes: reasoning behind decisions, kept for future sessions.
+# Useful to whoever maintains this, noise to whoever is just reading the code.
+/context/

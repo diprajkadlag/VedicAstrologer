@@ -37,6 +37,8 @@ import type {
   PlaceSearchResponse,
   PlaceSearchResult,
 } from "@/lib/geocoding/types";
+import { searchPlaces as requestPlaceSearch } from "@/lib/geocoding/client";
+import { GeocodeServiceError } from "@/lib/geocoding/shared";
 import { defineMessages } from "@/lib/i18n";
 
 const messages = defineMessages({
@@ -421,40 +423,24 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     clearFieldError("place");
 
     try {
-      const response = await fetch(`/api/geocode?q=${encodeURIComponent(query)}`, {
-        signal: controller.signal,
-      });
-      const payload = (await response.json()) as
-        | PlaceSearchResponse
-        | GeocodeErrorResponse;
-
-      if (!response.ok) {
-        throw new Error(
-          "error" in payload
-            ? t("searchUnavailable")
-            : t("searchUnavailable"),
-        );
-      }
-
-      if (!("results" in payload)) {
-        throw new Error(t("invalidSearchResponse"));
-      }
+      const found = await requestPlaceSearch(query, controller.signal);
 
       if (sequence !== requestSequence.current) return;
-      setResults(payload.results);
+      setResults(found);
       setSearchMessage(
-        payload.results.length === 0
+        found.length === 0
           ? t("noPlaces")
-          : payload.results.length === 1
+          : found.length === 1
             ? t("onePlace")
-            : t("manyPlaces", { count: payload.results.length }),
+            : t("manyPlaces", { count: found.length }),
       );
     } catch (reason) {
       if (controller.signal.aborted || sequence !== requestSequence.current) return;
+      // A malformed payload is worth naming; everything else — offline, rate
+      // limited, upstream down — is the same thing to the person searching.
       const message =
-        reason instanceof Error &&
-        reason.message === t("invalidSearchResponse")
-          ? reason.message
+        reason instanceof GeocodeServiceError && reason.kind === "invalid-response"
+          ? t("invalidSearchResponse")
           : t("searchUnavailable");
       setErrors((current) => ({ ...current, place: message }));
       setSearchMessage(message);

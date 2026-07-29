@@ -19,6 +19,19 @@
   <img alt="Milestone" src="https://img.shields.io/badge/milestone-v0.1.0-7c3aed">
 </p>
 
+## Try it — nothing to install
+
+**<https://diprajkadlag.github.io/VedicAstrologer/>**
+
+Runs entirely in the browser, on a phone as well as a desktop. There is no
+server and no account: your birth details never leave the device. Place search
+is the one network call, and it goes straight from your browser to
+[Nominatim](https://nominatim.openstreetmap.org/) (© OpenStreetMap
+contributors); the timezone for a place is resolved on-device.
+
+To run it locally instead, double-click `start-VedicAstrologer.bat` on Windows,
+or see [Development](#development).
+
 > **Portfolio milestone:** this project explores how deterministic domain
 > calculations, explainable rule systems, immersive visualization, multilingual
 > UX, and safety-bounded LLM context construction can coexist without presenting
@@ -165,7 +178,14 @@ npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>.
+Open <http://localhost:3737>.
+
+> **Why 3737 and not 3000?** A service worker claims a whole origin — scheme,
+> host *and* port. Any other PWA you have ever opened on `http://localhost:3000`
+> keeps answering navigations there and will show you its cached page instead of
+> this app, whatever server is actually listening. If you have hit that already:
+> open `http://localhost:3000`, press F12, then **Application → Service Workers
+> → Unregister**, and hard-reload.
 
 On Windows, if PowerShell blocks `npm.ps1`, use:
 
