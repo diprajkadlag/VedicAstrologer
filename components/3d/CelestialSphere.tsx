@@ -54,6 +54,7 @@ import {
 import {
   defineMessages,
   type AppLocale,
+  type AppTheme,
   type TranslationValues,
 } from "@/lib/i18n";
 
@@ -372,10 +373,12 @@ function WebGLUnavailableView({
   capability,
   onRetry,
   t,
+  theme,
 }: {
   capability: WebGLCapability;
   onRetry: () => void;
   t: CosmosTranslate;
+  theme: AppTheme;
 }) {
   const checking = capability.status === "checking";
   const reason =
@@ -391,7 +394,13 @@ function WebGLUnavailableView({
 
   return (
     <div
-      className="absolute inset-0 z-50 grid place-items-center overflow-y-auto bg-[radial-gradient(circle_at_50%_35%,rgba(76,56,130,0.2),transparent_42%),#050611] p-4 sm:p-8"
+      className="absolute inset-0 z-50 grid place-items-center overflow-y-auto p-4 sm:p-8"
+      style={{
+        background:
+          theme === "light"
+            ? "radial-gradient(circle at 50% 35%, rgba(124, 99, 188, 0.16), transparent 44%), #eef2f8"
+            : "radial-gradient(circle at 50% 35%, rgba(76, 56, 130, 0.2), transparent 42%), #050611",
+      }}
       role={checking ? "status" : "alert"}
       aria-live="polite"
     >
@@ -488,14 +497,17 @@ function Earth({
   instant,
   ayanamsaDeg,
   animate,
+  theme,
 }: {
   latitude: number;
   longitude: number;
   instant: string;
   ayanamsaDeg: number;
   animate: boolean;
+  theme: AppTheme;
 }) {
   const atmosphereRef = useRef<THREE.Mesh>(null);
+  const isLight = theme === "light";
   const location = useMemo(() => {
     const latitudeRad = latitude * DEG_TO_RAD;
     // Greenwich sidereal time rotates the terrestrial location against the
@@ -523,9 +535,9 @@ function Earth({
       <mesh>
         <sphereGeometry args={[0.72, 48, 32]} />
         <meshStandardMaterial
-          color="#123b62"
-          emissive="#071b33"
-          emissiveIntensity={0.7}
+          color={isLight ? "#22658f" : "#123b62"}
+          emissive={isLight ? "#0b2942" : "#071b33"}
+          emissiveIntensity={isLight ? 0.28 : 0.7}
           roughness={0.72}
           metalness={0.06}
         />
@@ -534,10 +546,10 @@ function Earth({
       <mesh renderOrder={2}>
         <sphereGeometry args={[0.728, 24, 16]} />
         <meshBasicMaterial
-          color="#7ac9df"
+          color={isLight ? "#0f6077" : "#7ac9df"}
           wireframe
           transparent
-          opacity={0.18}
+          opacity={isLight ? 0.34 : 0.18}
           depthWrite={false}
         />
       </mesh>
@@ -545,18 +557,20 @@ function Earth({
       <mesh ref={atmosphereRef} renderOrder={1}>
         <sphereGeometry args={[0.78, 32, 20]} />
         <meshBasicMaterial
-          color="#5bc8ff"
+          color={isLight ? "#3f87a6" : "#5bc8ff"}
           side={THREE.DoubleSide}
           transparent
-          opacity={0.14}
-          blending={THREE.AdditiveBlending}
+          opacity={isLight ? 0.16 : 0.14}
+          blending={
+            isLight ? THREE.NormalBlending : THREE.AdditiveBlending
+          }
           depthWrite={false}
         />
       </mesh>
 
       <Line
         points={circlePoints(0.735)}
-        color="#8be4eb"
+        color={isLight ? "#0e6672" : "#8be4eb"}
         lineWidth={0.7}
         transparent
         opacity={0.45}
@@ -573,10 +587,17 @@ function Earth({
   );
 }
 
-function ZodiacBand({ locale }: { locale: AppLocale }) {
+function ZodiacBand({
+  locale,
+  theme,
+}: {
+  locale: AppLocale;
+  theme: AppTheme;
+}) {
   const innerRadius = 6.3;
   const outerRadius = 6.74;
   const segmentAngle = TAU / RASIS.length;
+  const isLight = theme === "light";
 
   return (
     <group name="sidereal-zodiac">
@@ -605,16 +626,24 @@ function ZodiacBand({ locale }: { locale: AppLocale }) {
                 color={ZODIAC_COLORS[index]}
                 side={THREE.DoubleSide}
                 transparent
-                opacity={index % 2 === 0 ? 0.12 : 0.075}
+                opacity={
+                  isLight
+                    ? index % 2 === 0
+                      ? 0.24
+                      : 0.16
+                    : index % 2 === 0
+                      ? 0.12
+                      : 0.075
+                }
                 depthWrite={false}
               />
             </mesh>
             <Line
               points={boundary}
-              color="#dbe4f5"
+              color={isLight ? "#475569" : "#dbe4f5"}
               lineWidth={0.65}
               transparent
-              opacity={0.26}
+              opacity={isLight ? 0.42 : 0.26}
               depthWrite={false}
             />
             <Html
@@ -634,17 +663,17 @@ function ZodiacBand({ locale }: { locale: AppLocale }) {
       })}
       <Line
         points={circlePoints(innerRadius)}
-        color="#d4c27e"
+        color={isLight ? "#7c6a2e" : "#d4c27e"}
         lineWidth={0.9}
         transparent
-        opacity={0.35}
+        opacity={isLight ? 0.55 : 0.35}
       />
       <Line
         points={circlePoints(outerRadius)}
-        color="#d4c27e"
+        color={isLight ? "#7c6a2e" : "#d4c27e"}
         lineWidth={0.9}
         transparent
-        opacity={0.35}
+        opacity={isLight ? 0.55 : 0.35}
       />
     </group>
   );
@@ -654,21 +683,24 @@ function AscendantMarker({
   chart,
   locale,
   lagnaLabel,
+  theme,
 }: {
   chart: VedicChart;
   locale: AppLocale;
   lagnaLabel: string;
+  theme: AppTheme;
 }) {
   const longitude = chart.ascendant.siderealLongitudeDeg;
   const line = [scenePoint(longitude, 6.18, 0.025), scenePoint(longitude, 7.34, 0.025)];
   const labelPosition = scenePoint(longitude, 7.62, 0.08);
+  const markerColor = theme === "light" ? "#8a5b00" : "#ffe08a";
 
   return (
     <group name="ascendant-marker">
-      <Line points={line} color="#ffe08a" lineWidth={2} transparent opacity={0.9} />
+      <Line points={line} color={markerColor} lineWidth={2} transparent opacity={0.9} />
       <mesh position={line[0]}>
         <sphereGeometry args={[0.065, 12, 8]} />
-        <meshBasicMaterial color="#ffe08a" />
+        <meshBasicMaterial color={markerColor} />
       </mesh>
       <Html
         position={labelPosition}
@@ -689,6 +721,7 @@ function AscendantMarker({
 interface SceneProps {
   chart: VedicChart;
   locale: AppLocale;
+  theme: AppTheme;
   text: Readonly<{
     lagna: string;
     bhava: string;
@@ -826,9 +859,49 @@ function CelestialOrbitControls({
   );
 }
 
+function LightStarField() {
+  const positions = useMemo(() => {
+    const count = 950;
+    const values = new Float32Array(count * 3);
+    let seed = 0x5f3759df;
+    const random = () => {
+      seed = (seed * 1664525 + 1013904223) >>> 0;
+      return seed / 0xffffffff;
+    };
+
+    for (let index = 0; index < count; index += 1) {
+      const radius = 22 + random() * 40;
+      const polar = Math.acos(1 - 2 * random());
+      const azimuth = random() * TAU;
+      values[index * 3] = radius * Math.sin(polar) * Math.cos(azimuth);
+      values[index * 3 + 1] = radius * Math.cos(polar);
+      values[index * 3 + 2] = radius * Math.sin(polar) * Math.sin(azimuth);
+    }
+
+    return values;
+  }, []);
+
+  return (
+    <points>
+      <bufferGeometry>
+        <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+      </bufferGeometry>
+      <pointsMaterial
+        color="#42516e"
+        size={0.08}
+        sizeAttenuation
+        transparent
+        opacity={0.5}
+        depthWrite={false}
+      />
+    </points>
+  );
+}
+
 function Scene({
   chart,
   locale,
+  theme,
   text,
   selectedPlanetId,
   onSelectPlanet,
@@ -838,24 +911,48 @@ function Scene({
   reduceMotion,
   trajectories,
 }: SceneProps) {
+  const isLight = theme === "light";
+  const background = isLight ? "#e9eef7" : "#050611";
+
   return (
     <>
-      <color attach="background" args={["#050611"]} />
-      <fog attach="fog" args={["#050611", 18, 62]} />
-      <ambientLight intensity={0.72} />
-      <directionalLight position={[5, 8, 6]} intensity={1.65} color="#d7e5ff" />
-      <pointLight position={[-5, -2, -4]} intensity={12} distance={16} color="#6747be" />
+      <color attach="background" args={[background]} />
+      <fog attach="fog" args={[background, 18, 62]} />
+      <ambientLight intensity={isLight ? 1.05 : 0.72} />
+      <directionalLight
+        position={[5, 8, 6]}
+        intensity={isLight ? 1.35 : 1.65}
+        color={isLight ? "#fffdf8" : "#d7e5ff"}
+      />
+      <pointLight
+        position={[-5, -2, -4]}
+        intensity={isLight ? 6 : 12}
+        distance={16}
+        color={isLight ? "#7c5ac4" : "#6747be"}
+      />
 
-      <Stars radius={62} depth={36} count={1500} factor={3} saturation={0.3} fade speed={reduceMotion ? 0 : 0.2} />
+      {isLight ? (
+        <LightStarField />
+      ) : (
+        <Stars
+          radius={62}
+          depth={36}
+          count={1500}
+          factor={3}
+          saturation={0.3}
+          fade
+          speed={reduceMotion ? 0 : 0.2}
+        />
+      )}
 
       <mesh renderOrder={-2}>
         <sphereGeometry args={[7.75, 32, 18]} />
         <meshBasicMaterial
-          color="#6c79ad"
+          color={isLight ? "#52627f" : "#6c79ad"}
           wireframe
           side={THREE.DoubleSide}
           transparent
-          opacity={0.035}
+          opacity={isLight ? 0.09 : 0.035}
           depthWrite={false}
         />
       </mesh>
@@ -866,13 +963,19 @@ function Scene({
         instant={chart.instant}
         ayanamsaDeg={chart.ayanamsa.trueDegrees}
         animate={!reduceMotion}
+        theme={theme}
       />
-      <ZodiacBand locale={locale} />
-      <Nakshatras3D showLabels={showNakshatraLabels} locale={locale} />
+      <ZodiacBand locale={locale} theme={theme} />
+      <Nakshatras3D
+        showLabels={showNakshatraLabels}
+        locale={locale}
+        theme={theme}
+      />
       <AscendantMarker
         chart={chart}
         locale={locale}
         lagnaLabel={text.lagna}
+        theme={theme}
       />
       <Planets3D
         planets={chart.planets}
@@ -882,6 +985,7 @@ function Scene({
         trajectories={trajectories}
         locale={locale}
         text={text}
+        theme={theme}
       />
 
       <CanvasHostResizeSync />
@@ -917,7 +1021,8 @@ export default function CelestialSphere({
   autoRotate = false,
 }: CelestialSphereProps) {
   const containerRef = useRef<HTMLElement>(null);
-  const { locale } = useAppPreferences();
+  const { locale, theme } = useAppPreferences();
+  const isLight = theme === "light";
   const t = useScopedTranslations(COSMOS_MESSAGES);
   const [webglProbeAttempt, setWebglProbeAttempt] = useState(0);
   const [webglCapability, setWebglCapability] =
@@ -1042,10 +1147,11 @@ export default function CelestialSphere({
     <section
       ref={containerRef}
       data-cosmos-ui
+      data-cosmos-theme={theme}
       aria-label={t("sectionAria")}
       className={`relative isolate h-[clamp(620px,78vh,920px)] min-h-[620px] overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-black/40 ${isFullscreen ? "!h-[100dvh] !min-h-0 !w-screen !max-w-none !rounded-none !border-0" : ""} ${className}`}
       style={{
-        backgroundColor: "#050611",
+        backgroundColor: isLight ? "#e9eef7" : "#050611",
         ...(isFullscreen ? { height: "100dvh", width: "100vw" } : {}),
       }}
     >
@@ -1054,6 +1160,7 @@ export default function CelestialSphere({
           capability={webglCapability}
           onRetry={retryWebGL}
           t={t}
+          theme={theme}
         />
       ) : (
         <WebGLRuntimeBoundary
@@ -1063,6 +1170,7 @@ export default function CelestialSphere({
               capability={{ status: "unsupported", reason: "runtime-error" }}
               onRetry={retryWebGL}
               t={t}
+              theme={theme}
             />
           }
         >
@@ -1107,6 +1215,7 @@ export default function CelestialSphere({
                   <Scene
                     chart={chart}
                     locale={locale}
+                    theme={theme}
                     text={sceneText}
                     selectedPlanetId={activePlanetId ?? null}
                     onSelectPlanet={selectPlanet}
@@ -1120,7 +1229,15 @@ export default function CelestialSphere({
               </Canvas>
             </div>
 
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_45%,transparent_35%,rgba(2,3,10,0.62)_100%)]" />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-10"
+        style={{
+          background: isLight
+            ? "radial-gradient(circle at 50% 45%, transparent 38%, rgba(70, 83, 112, 0.16) 100%)"
+            : "radial-gradient(circle at 50% 45%, transparent 35%, rgba(2, 3, 10, 0.62) 100%)",
+        }}
+      />
 
       <div className="absolute left-4 top-4 z-20 max-w-[calc(100%-5.5rem)] rounded-2xl border border-white/10 bg-[#080a15]/75 px-3 py-2 backdrop-blur-md sm:left-5 sm:top-5 sm:max-w-[calc(100%-12rem)]">
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200">
@@ -1254,9 +1371,23 @@ export default function CelestialSphere({
                 onClick={() => selectPlanet(selected ? null : planet)}
                 className="flex shrink-0 items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-[10px] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 sm:text-[11px]"
                 style={{
-                  borderColor: selected ? visual.color : "rgba(255,255,255,0.08)",
-                  backgroundColor: selected ? `${visual.color}1f` : "rgba(255,255,255,0.025)",
-                  color: selected ? "#ffffff" : "#aeb5c7",
+                  borderColor: selected
+                    ? visual.color
+                    : isLight
+                      ? "rgba(71,85,105,0.2)"
+                      : "rgba(255,255,255,0.08)",
+                  backgroundColor: selected
+                    ? `${visual.color}${isLight ? "36" : "1f"}`
+                    : isLight
+                      ? "rgba(255,255,255,0.72)"
+                      : "rgba(255,255,255,0.025)",
+                  color: isLight
+                    ? selected
+                      ? "#172033"
+                      : "#526174"
+                    : selected
+                      ? "#ffffff"
+                      : "#aeb5c7",
                 }}
               >
                 <span

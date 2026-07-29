@@ -6,12 +6,13 @@ import * as THREE from "three";
 
 import { NAKSHATRAS } from "@/lib/astro/ephemeris";
 import { getLocalizedNakshatraName } from "@/lib/astro/localizedNames";
-import type { AppLocale } from "@/lib/i18n";
+import type { AppLocale, AppTheme } from "@/lib/i18n";
 
 export interface Nakshatras3DProps {
   showLabels?: boolean;
   radius?: number;
   locale?: AppLocale;
+  theme?: AppTheme;
 }
 
 const TAU = Math.PI * 2;
@@ -56,7 +57,13 @@ function buildSegments(radius: number): NakshatraSegment[] {
   });
 }
 
-function NakshatraStars({ segments }: { segments: NakshatraSegment[] }) {
+function NakshatraStars({
+  segments,
+  theme,
+}: {
+  segments: NakshatraSegment[];
+  theme: AppTheme;
+}) {
   const meshRef = useRef<THREE.InstancedMesh>(null);
 
   useLayoutEffect(() => {
@@ -82,10 +89,12 @@ function NakshatraStars({ segments }: { segments: NakshatraSegment[] }) {
     >
       <sphereGeometry args={[0.026, 8, 6]} />
       <meshBasicMaterial
-        color="#d9e8ff"
+        color={theme === "light" ? "#485875" : "#d9e8ff"}
         transparent
-        opacity={0.9}
-        blending={THREE.AdditiveBlending}
+        opacity={theme === "light" ? 0.72 : 0.9}
+        blending={
+          theme === "light" ? THREE.NormalBlending : THREE.AdditiveBlending
+        }
         depthWrite={false}
       />
     </instancedMesh>
@@ -96,15 +105,27 @@ export default function Nakshatras3D({
   showLabels = true,
   radius = 7.08,
   locale = "en",
+  theme = "dark",
 }: Nakshatras3DProps) {
   const segments = useMemo(() => buildSegments(radius), [radius]);
+  const isLight = theme === "light";
 
   return (
     <group name="nakshatra-mansions">
-      <NakshatraStars segments={segments} />
+      <NakshatraStars segments={segments} theme={theme} />
 
       {segments.map((segment) => {
-        const accent = segment.index % 3 === 0 ? "#bda7ff" : segment.index % 3 === 1 ? "#79cbea" : "#e6c77a";
+        const accent = isLight
+          ? segment.index % 3 === 0
+            ? "#6245ad"
+            : segment.index % 3 === 1
+              ? "#267c98"
+              : "#8c6718"
+          : segment.index % 3 === 0
+            ? "#bda7ff"
+            : segment.index % 3 === 1
+              ? "#79cbea"
+              : "#e6c77a";
         const labelPosition = pointOnEcliptic(
           segment.midpoint,
           radius + 0.42,
@@ -118,15 +139,15 @@ export default function Nakshatras3D({
               color={accent}
               lineWidth={1.1}
               transparent
-              opacity={0.48}
+              opacity={isLight ? 0.62 : 0.48}
               depthWrite={false}
             />
             <Line
               points={segment.boundary}
-              color="#aebbd5"
+              color={isLight ? "#53627a" : "#aebbd5"}
               lineWidth={0.65}
               transparent
-              opacity={0.3}
+              opacity={isLight ? 0.46 : 0.3}
               depthWrite={false}
             />
             <Line
@@ -134,7 +155,7 @@ export default function Nakshatras3D({
               color={accent}
               lineWidth={0.7}
               transparent
-              opacity={0.5}
+              opacity={isLight ? 0.64 : 0.5}
               depthWrite={false}
             />
 

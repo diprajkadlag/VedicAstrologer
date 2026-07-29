@@ -31,6 +31,11 @@ professional astrological certification.
   development updates instead of crashing on a newly selected locale.
 - English is explicitly encoded and regression-tested as the first-visit
   language while valid returning-user language choices remain persisted.
+- The Geocentric Cosmos now uses a complete light-theme palette across its
+  WebGL scene, controls, fullscreen view, and no-WebGL recovery state.
+- Guided birth entry now advances immediately after committed choices and
+  valid inputs, while retaining explicit confirmation for the name and final
+  review and preserving timezone/DST correctness gates.
 - Portfolio documentation now distinguishes browser-local chart/PDF work,
   deployment-specific geocoding transport, deterministic calculations,
   traditional interpretation, and scientific evidence more explicitly.

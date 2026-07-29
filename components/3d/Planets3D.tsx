@@ -16,7 +16,7 @@ import {
   getLocalizedNakshatraName,
   getLocalizedRasiName,
 } from "@/lib/astro/localizedNames";
-import type { AppLocale } from "@/lib/i18n";
+import type { AppLocale, AppTheme } from "@/lib/i18n";
 
 export interface PlanetVisualStyle {
   color: string;
@@ -39,6 +39,18 @@ export const PLANET_VISUALS: Record<GrahaId, PlanetVisualStyle> = {
   ketu: { color: "#62d9e6", emissive: "#167c8c", size: 0.22, orbitRadius: CELESTIAL_SHELL_RADIUS },
 };
 
+const LIGHT_PLANET_COLORS: Readonly<Record<GrahaId, string>> = {
+  sun: "#d89b18",
+  moon: "#8da2ba",
+  mercury: "#26916a",
+  venus: "#ca6fa4",
+  mars: "#d94a43",
+  jupiter: "#c88713",
+  saturn: "#5277bb",
+  rahu: "#7654c5",
+  ketu: "#268b98",
+};
+
 export interface Planets3DProps {
   planets: VedicChart["planets"];
   selectedPlanetId?: GrahaId | null;
@@ -46,6 +58,7 @@ export interface Planets3DProps {
   showTrajectories?: boolean;
   trajectories?: readonly GrahaTrajectory[];
   locale?: AppLocale;
+  theme?: AppTheme;
   text?: Readonly<{
     bhava: string;
     pada: string;
@@ -87,10 +100,12 @@ function TrajectoryTrail({
   trajectory,
   radius,
   color,
+  opacity,
 }: {
   trajectory: GrahaTrajectory;
   radius: number;
   color: string;
+  opacity: number;
 }) {
   const points = useMemo(
     () =>
@@ -110,7 +125,7 @@ function TrajectoryTrail({
       color={color}
       lineWidth={1.05}
       transparent
-      opacity={0.34}
+      opacity={opacity}
       depthWrite={false}
     />
   );
@@ -121,6 +136,7 @@ interface PlanetNodeProps {
   selected: boolean;
   onSelectPlanet?: (planet: GrahaPosition) => void;
   locale: AppLocale;
+  theme: AppTheme;
   text: NonNullable<Planets3DProps["text"]>;
 }
 
@@ -129,11 +145,14 @@ function PlanetNodeComponent({
   selected,
   onSelectPlanet,
   locale,
+  theme,
   text,
 }: PlanetNodeProps) {
   const groupRef = useRef<THREE.Group>(null);
   const [hovered, setHovered] = useState(false);
   const visual = PLANET_VISUALS[planet.id];
+  const displayColor =
+    theme === "light" ? LIGHT_PLANET_COLORS[planet.id] : visual.color;
   const position = useMemo(
     () =>
       eclipticScenePosition(
@@ -171,9 +190,17 @@ function PlanetNodeComponent({
       >
         <sphereGeometry args={[visual.size, 24, 16]} />
         <meshStandardMaterial
-          color={visual.color}
+          color={displayColor}
           emissive={visual.emissive}
-          emissiveIntensity={selected ? 1.8 : 0.9}
+          emissiveIntensity={
+            theme === "light"
+              ? selected
+                ? 0.9
+                : 0.35
+              : selected
+                ? 1.8
+                : 0.9
+          }
           roughness={planet.id === "moon" ? 0.88 : 0.48}
           metalness={planet.id === "saturn" ? 0.28 : 0.08}
         />
@@ -186,14 +213,30 @@ function PlanetNodeComponent({
             <meshBasicMaterial
               color={visual.color}
               transparent
-              opacity={planet.id === "sun" ? 0.13 : 0.09}
+              opacity={
+                theme === "light"
+                  ? planet.id === "sun"
+                    ? 0.08
+                    : 0.055
+                  : planet.id === "sun"
+                    ? 0.13
+                    : 0.09
+              }
               blending={THREE.AdditiveBlending}
               depthWrite={false}
             />
           </mesh>
           <pointLight
             color={visual.color}
-            intensity={planet.id === "sun" ? 4 : 1.2}
+            intensity={
+              theme === "light"
+                ? planet.id === "sun"
+                  ? 1.8
+                  : 0.55
+                : planet.id === "sun"
+                  ? 4
+                  : 1.2
+            }
             distance={planet.id === "sun" ? 3.5 : 1.8}
             decay={2}
           />
@@ -257,6 +300,7 @@ export default function Planets3D({
   showTrajectories = true,
   trajectories = [],
   locale = "en",
+  theme = "dark",
   text = DEFAULT_TEXT,
 }: Planets3DProps) {
   return (
@@ -270,7 +314,12 @@ export default function Planets3D({
               key={`track-${planet.id}`}
               trajectory={trajectory}
               radius={visual.orbitRadius}
-              color={visual.color}
+              color={
+                theme === "light"
+                  ? LIGHT_PLANET_COLORS[planet.id]
+                  : visual.color
+              }
+              opacity={theme === "light" ? 0.52 : 0.34}
             />
           ) : null;
         })}
@@ -282,6 +331,7 @@ export default function Planets3D({
           selected={planet.id === selectedPlanetId}
           onSelectPlanet={onSelectPlanet}
           locale={locale}
+          theme={theme}
           text={text}
         />
       ))}

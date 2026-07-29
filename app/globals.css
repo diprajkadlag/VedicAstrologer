@@ -87,7 +87,8 @@ button:not(:disabled) {
  * The first release used Tailwind color utilities directly. These scoped
  * compatibility rules give every existing panel a coherent light appearance
  * while feature components progressively move to semantic design tokens.
- * The WebGL canvas itself intentionally remains a dark sky visualization.
+ * The celestial viewer supplies its own theme-aware WebGL palette, while its
+ * HTML overlays inherit these same surface and text rules.
  */
 :root[data-theme="light"] main {
   background-color: var(--background) !important;
@@ -95,30 +96,48 @@ button:not(:disabled) {
 }
 
 :root[data-theme="light"]
-  [class*="bg-[#"]:not(canvas, [data-cosmos-ui], [data-cosmos-ui] *),
+  [class*="bg-[#"]:not(canvas),
 :root[data-theme="light"]
-  [class*="bg-black"]:not([data-cosmos-ui], [data-cosmos-ui] *) {
+  [class*="bg-black"] {
   background-color: var(--surface) !important;
 }
 
 :root[data-theme="light"]
-  [class*="bg-white"]:not([data-cosmos-ui], [data-cosmos-ui] *) {
+  [class*="bg-white"] {
   background-color: var(--surface-soft) !important;
 }
 
 :root[data-theme="light"]
-  [class*="border-white"]:not([data-cosmos-ui], [data-cosmos-ui] *) {
+  [class*="border-white"] {
   border-color: var(--border) !important;
 }
 
 :root[data-theme="light"]
-  [class*="text-white"]:not([data-cosmos-ui], [data-cosmos-ui] *) {
+  [class*="text-white"] {
   color: #152033 !important;
 }
 
 :root[data-theme="light"]
-  [class*="text-slate-"]:not([data-cosmos-ui], [data-cosmos-ui] *) {
+  [class*="text-slate-"] {
   color: var(--muted) !important;
+}
+
+:root[data-theme="light"]
+  [data-cosmos-ui]
+  [class*="text-amber-"] {
+  color: #815500 !important;
+}
+
+:root[data-theme="light"]
+  [data-cosmos-ui]
+  [class*="text-violet-"] {
+  color: #5b21b6 !important;
+}
+
+:root[data-theme="light"]
+  [data-cosmos-ui]
+  [class*="text-emerald-"] {
+  color: #047857 !important;
 }
 
 :root[data-theme="light"] input,
@@ -132,12 +151,8 @@ button:not(:disabled) {
   color: #172033;
 }
 
-:root[data-theme="light"] #cosmos canvas {
-  color-scheme: dark;
-}
-
 [data-cosmos-ui] {
-  color-scheme: dark;
+  color-scheme: inherit;
 }
 
 .time-slider {
