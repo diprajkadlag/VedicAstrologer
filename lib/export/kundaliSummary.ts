@@ -1,5 +1,6 @@
 import {
   BHAVA_EDUCATION,
+  GRAHA_EDUCATION,
   LOCALIZED_ANALYSIS_LIMITATIONS,
   readLocalized,
 } from "../astro/education";
@@ -20,6 +21,7 @@ import {
   getLocalizedNakshatraName,
   getLocalizedRasiName,
 } from "../astro/localizedNames";
+import { RASI_PROFILES } from "../astro/glossary";
 import {
   APP_LOCALES,
   INTL_LOCALES,
@@ -54,6 +56,7 @@ export interface KundaliSummaryInput {
 }
 
 export interface KundaliPdfCopy {
+  reportBrand: string;
   title: string;
   subtitle: string;
   identityAndBirth: string;
@@ -70,6 +73,8 @@ export interface KundaliPdfCopy {
   placement: string;
   nakshatraPada: string;
   bhavaMotion: string;
+  bhavaConclusions: string;
+  bhavaConclusionsIntro: string;
   bhavaSummary: string;
   occupants: string;
   noOccupants: string;
@@ -119,8 +124,17 @@ export interface KundaliBhavaRow {
   number: HouseNumber;
   name: string;
   rasi: string;
+  lord: string;
+  lordBhava: HouseNumber;
   domain: string;
   occupants: string;
+  /** The house's traditional scope, stated without chart-specific inference. */
+  significance: string;
+  /** Only the calculated sign, ruler pathway and resident bodies in this chart. */
+  chartReading: string;
+  /** A balanced invitation to reflect, never a fixed trait or prediction. */
+  reflection: string;
+  conclusion: string;
   constructive: string;
   caution: string;
 }
@@ -163,8 +177,9 @@ export interface KundaliSummary {
 
 const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
   en: {
-    title: "Kundali summary",
-    subtitle: "Lahiri-sidereal natal reference",
+    reportBrand: "Vedic astrology",
+    title: "Birth chart summary",
+    subtitle: "Lahiri-sidereal birth-chart reference",
     identityAndBirth: "Identity and birth data",
     name: "Name",
     addressing: "Addressing",
@@ -174,34 +189,38 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     coordinates: "Coordinates",
     timeZone: "Time zone",
     coreAnchors: "Core natal anchors",
-    grahaPositions: "Nine Graha positions",
-    graha: "Graha",
-    placement: "Rasi · degree",
-    nakshatraPada: "Nakshatra · Pada",
-    bhavaMotion: "Bhava · motion",
-    bhavaSummary: "Twelve Bhavas",
-    occupants: "Resident Grahas",
-    noOccupants: "No classical Graha",
+    grahaPositions: "Nine planetary positions",
+    graha: "Planet",
+    placement: "Zodiac sign · degree",
+    nakshatraPada: "Lunar mansion · quarter",
+    bhavaMotion: "House · motion",
+    bhavaConclusions: "Conclusions for the twelve houses",
+    bhavaConclusionsIntro:
+      "These chart-specific bullets combine each house's calculated zodiac sign, its ruler's position and resident planets with the app's disclosed educational rules. They are traditional-symbolic themes—not measured facts or guaranteed events. An empty house is not inactive.",
+    bhavaSummary: "Twelve houses",
+    occupants: "Resident planets",
+    noOccupants: "No resident planet",
     constructiveExpression: "Constructive expression",
     caution: "Watch with balance",
-    vimshottari: "Vimshottari timing",
+    vimshottari: "Vimshottari periods",
     referenceDate: "Reference date",
-    mahadasha: "Mahadasha",
-    antardasha: "Antardasha",
+    mahadasha: "Major period",
+    antardasha: "Subperiod",
     period: "Period",
     methodology: "Calculation method",
     limitations: "Limits and responsible use",
-    generatedBy: "Generated locally by Vedic Astrologer",
+    generatedBy: "Generated locally by the Vedic Astrology Observatory",
     page: "Page",
     of: "of",
-    pada: "Pada",
-    bhava: "Bhava",
-    nakshatraLord: "lord",
+    pada: "Quarter",
+    bhava: "House",
+    nakshatraLord: "Lunar-mansion ruler",
     notSpecified: "Not specified",
     internalAudit: "Internal consistency audit",
     passedChecks: "structural checks passed",
   },
   hi: {
+    reportBrand: "वैदिक ज्योतिष",
     title: "कुंडली सारांश",
     subtitle: "लाहिरी-निरयण जन्म-कुंडली संदर्भ",
     identityAndBirth: "पहचान और जन्म-विवरण",
@@ -218,6 +237,9 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     placement: "राशि · अंश",
     nakshatraPada: "नक्षत्र · पाद",
     bhavaMotion: "भाव · गति",
+    bhavaConclusions: "बारह घरों (भावों) के निष्कर्ष",
+    bhavaConclusionsIntro:
+      "ये कुंडली-विशिष्ट बिंदु प्रत्येक घर की गणितीय राशि, भावेश की स्थिति और स्थित ग्रहों को ऐप के घोषित शैक्षिक नियमों से जोड़ते हैं। ये पारंपरिक-प्रतीकात्मक विषय हैं—मापे हुए तथ्य या निश्चित घटनाएँ नहीं। खाली घर निष्क्रिय नहीं होता।",
     bhavaSummary: "बारह भाव",
     occupants: "स्थित ग्रह",
     noOccupants: "कोई शास्त्रीय ग्रह नहीं",
@@ -230,7 +252,7 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     period: "अवधि",
     methodology: "गणना-पद्धति",
     limitations: "सीमाएँ और जिम्मेदार उपयोग",
-    generatedBy: "Vedic Astrologer द्वारा आपके उपकरण पर बनाया गया",
+    generatedBy: "वैदिक ज्योतिष वेधशाला द्वारा आपके उपकरण पर बनाया गया",
     page: "पृष्ठ",
     of: "में से",
     pada: "पाद",
@@ -241,6 +263,7 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     passedChecks: "संरचनात्मक जाँच सफल",
   },
   mr: {
+    reportBrand: "वैदिक ज्योतिष",
     title: "कुंडली सारांश",
     subtitle: "लाहिरी-निरयण जन्मकुंडली संदर्भ",
     identityAndBirth: "ओळख आणि जन्मतपशील",
@@ -257,6 +280,9 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     placement: "राशी · अंश",
     nakshatraPada: "नक्षत्र · पाद",
     bhavaMotion: "भाव · गती",
+    bhavaConclusions: "बारा घरांचे (भावांचे) निष्कर्ष",
+    bhavaConclusionsIntro:
+      "हे कुंडली-विशिष्ट मुद्दे प्रत्येक घराची गणिती राशी, भावेशाचे स्थान आणि स्थित ग्रह यांना अ‍ॅपच्या घोषित शैक्षणिक नियमांशी जोडतात. हे पारंपरिक-प्रतीकात्मक विषय आहेत—मोजलेली तथ्ये किंवा निश्चित घटना नव्हेत. रिकामे घर निष्क्रिय नसते.",
     bhavaSummary: "बारा भाव",
     occupants: "स्थित ग्रह",
     noOccupants: "शास्त्रीय ग्रह नाही",
@@ -269,7 +295,7 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     period: "कालावधी",
     methodology: "गणनापद्धती",
     limitations: "मर्यादा आणि जबाबदार वापर",
-    generatedBy: "Vedic Astrologer ने तुमच्या उपकरणावर तयार केले",
+    generatedBy: "वैदिक ज्योतिष वेधशाळेने तुमच्या उपकरणावर तयार केले",
     page: "पृष्ठ",
     of: "पैकी",
     pada: "पाद",
@@ -280,8 +306,9 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     passedChecks: "रचनात्मक तपासण्या यशस्वी",
   },
   de: {
-    title: "Kundali-Zusammenfassung",
-    subtitle: "Lahiri-siderische Referenz der Geburtskundali",
+    reportBrand: "Vedische Astrologie",
+    title: "Geburtshoroskop-Zusammenfassung",
+    subtitle: "Lahiri-siderische Referenz des Geburtshoroskops",
     identityAndBirth: "Person und Geburtsdaten",
     name: "Name",
     addressing: "Anrede",
@@ -291,29 +318,32 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
     coordinates: "Koordinaten",
     timeZone: "Zeitzone",
     coreAnchors: "Zentrale Geburtsfaktoren",
-    grahaPositions: "Positionen der neun Grahas",
-    graha: "Graha",
-    placement: "Rasi · Grad",
-    nakshatraPada: "Nakshatra · Pada",
-    bhavaMotion: "Bhava · Bewegung",
-    bhavaSummary: "Zwölf Bhavas",
-    occupants: "Enthaltene Grahas",
-    noOccupants: "Kein klassischer Graha",
+    grahaPositions: "Positionen der neun Planeten",
+    graha: "Planet",
+    placement: "Tierkreiszeichen · Grad",
+    nakshatraPada: "Mondstation · Viertel",
+    bhavaMotion: "Haus · Bewegung",
+    bhavaConclusions: "Schlussfolgerungen zu den zwölf Häusern",
+    bhavaConclusionsIntro:
+      "Diese geburtshoroskop-spezifischen Punkte verbinden das berechnete Tierkreiszeichen jedes Hauses, die Stellung seines Herrschers und die enthaltenen Planeten mit den offengelegten Bildungsregeln der App. Es sind traditionell-symbolische Themen—keine gemessenen Tatsachen oder garantierten Ereignisse. Ein leeres Haus ist nicht inaktiv.",
+    bhavaSummary: "Zwölf Häuser",
+    occupants: "Enthaltene Planeten",
+    noOccupants: "Kein enthaltener Planet",
     constructiveExpression: "Konstruktiver Ausdruck",
     caution: "Ausgewogen beachten",
-    vimshottari: "Vimshottari-Zeitstruktur",
+    vimshottari: "Vimshottari-Zeitperioden",
     referenceDate: "Bezugsdatum",
-    mahadasha: "Mahadasha",
-    antardasha: "Antardasha",
+    mahadasha: "Hauptperiode",
+    antardasha: "Unterperiode",
     period: "Zeitraum",
     methodology: "Berechnungsmethode",
     limitations: "Grenzen und verantwortliche Nutzung",
-    generatedBy: "Lokal durch Vedic Astrologer erstellt",
+    generatedBy: "Lokal vom Observatorium für vedische Astrologie erstellt",
     page: "Seite",
     of: "von",
-    pada: "Pada",
-    bhava: "Bhava",
-    nakshatraLord: "Herrscher",
+    pada: "Viertel",
+    bhava: "Haus",
+    nakshatraLord: "Herrscher der Mondstation",
     notSpecified: "Nicht angegeben",
     internalAudit: "Interne Konsistenzprüfung",
     passedChecks: "Strukturprüfungen bestanden",
@@ -322,9 +352,9 @@ const COPY: Readonly<Record<AppLocale, KundaliPdfCopy>> = {
 
 const MOTION_LABELS: Readonly<Record<AppLocale, Record<Motion, string>>> = {
   en: {
-    direct: "Margi (direct)",
-    retrograde: "Vakri (retrograde)",
-    stationary: "Sthira (stationary)",
+    direct: "Direct",
+    retrograde: "Retrograde",
+    stationary: "Stationary",
   },
   hi: {
     direct: "मार्गी",
@@ -337,9 +367,9 @@ const MOTION_LABELS: Readonly<Record<AppLocale, Record<Motion, string>>> = {
     stationary: "स्थिर",
   },
   de: {
-    direct: "Margi (direktläufig)",
-    retrograde: "Vakri (rückläufig)",
-    stationary: "Sthira (stationär)",
+    direct: "Direktläufig",
+    retrograde: "Rückläufig",
+    stationary: "Stationär",
   },
 };
 
@@ -375,10 +405,10 @@ const GENDER_LABELS: Readonly<
 const CORE_LABELS: Readonly<
   Record<AppLocale, Readonly<Record<KundaliCoreAnchor["id"], string>>>
 > = {
-  en: { lagna: "Lagna", sun: "Surya", moon: "Chandra" },
+  en: { lagna: "Ascendant", sun: "Sun", moon: "Moon" },
   hi: { lagna: "लग्न", sun: "सूर्य", moon: "चन्द्र" },
   mr: { lagna: "लग्न", sun: "सूर्य", moon: "चंद्र" },
-  de: { lagna: "Lagna", sun: "Surya", moon: "Chandra" },
+  de: { lagna: "Aszendent", sun: "Sonne", moon: "Mond" },
 };
 
 const LIMITATION_IDS = [
@@ -390,6 +420,55 @@ const LIMITATION_IDS = [
   "ephemeris-tolerance",
   "dasha-convention",
 ] as const;
+
+type PdfLimitationId = (typeof LIMITATION_IDS)[number];
+
+const REPORT_LIMITATION_OVERRIDES: Readonly<
+  Record<
+    "en" | "de",
+    Readonly<Partial<Record<PdfLimitationId, string>>>
+  >
+> = {
+  en: {
+    "symbolic-not-scientific":
+      "The interpretations here follow traditional Indian astrological symbolism. Astrology has not been scientifically validated as a reliable way to predict events, personality, health or outcomes.",
+    "birth-time-sensitivity":
+      "The Ascendant and houses are sensitive to birth time and place. Rounded or uncertain input can materially change them.",
+    "model-dependence":
+      "Results depend on convention. This app uses its documented Lahiri sidereal offset and whole-sign houses; another model may differ near boundaries.",
+    "mean-node-model":
+      "The north and south lunar nodes use mean-node positions. True-node positions may differ, especially near a boundary.",
+    "feature-scope":
+      "Sixfold strength, divisional charts, combustion, classical aspects, conjunction strength, planetary combinations and event probabilities are not calculated. Any mention of them is educational only.",
+    "dasha-convention":
+      "Major- and subperiod dates in the Vimshottari system use a disclosed 365.25-day year. Traditions or software using another year length or boundary rule can produce different dates.",
+  },
+  de: {
+    "symbolic-not-scientific":
+      "Die Deutungen hier folgen der Symbolik traditioneller indischer Astrologie. Astrologie ist wissenschaftlich nicht als zuverlässige Methode zur Vorhersage von Ereignissen, Persönlichkeit, Gesundheit oder Ergebnissen validiert.",
+    "birth-time-sensitivity":
+      "Aszendent und Häuser reagieren empfindlich auf Geburtszeit und -ort. Gerundete oder unsichere Eingaben können sie wesentlich verändern.",
+    "model-dependence":
+      "Ergebnisse hängen von der Konvention ab. Diese App verwendet ihren dokumentierten siderischen Versatz nach Lahiri und Ganzzeichen-Häuser; andere Modelle können nahe Grenzen abweichen.",
+    "mean-node-model":
+      "Nördlicher und südlicher Mondknoten verwenden mittlere Knotenpositionen. Wahre Knotenpositionen können insbesondere nahe einer Grenze abweichen.",
+    "feature-scope":
+      "Sechsfache Stärkebewertung, Teilhoroskope, Verbrennung, klassische Aspekte, Konjunktionsstärke, Planetenkombinationen und Ereigniswahrscheinlichkeiten werden nicht berechnet. Erwähnungen dienen ausschließlich der Bildung.",
+    "dasha-convention":
+      "Haupt- und Unterperioden im Vimshottari-System beruhen auf der offengelegten Konvention eines Jahres mit 365,25 Tagen. Traditionen oder Programme mit anderer Jahreslänge oder Grenzregel können andere Daten ergeben.",
+  },
+};
+
+function localizedReportLimitation(
+  id: PdfLimitationId,
+  locale: AppLocale,
+): string {
+  if (locale === "en" || locale === "de") {
+    const override = REPORT_LIMITATION_OVERRIDES[locale][id];
+    if (override) return override;
+  }
+  return readLocalized(LOCALIZED_ANALYSIS_LIMITATIONS[id], locale);
+}
 
 function formatNumber(
   value: number,
@@ -457,6 +536,181 @@ function localizeGender(
   return GENDER_LABELS[locale][gender] ?? gender;
 }
 
+interface BhavaConclusionParts {
+  number: HouseNumber;
+  domain: string;
+  rasi: string;
+  lord: string;
+  lordBhava: HouseNumber;
+  lordBhavaName?: string;
+  lordBhavaDomain: string;
+  residentFunctions: readonly string[];
+  constructive: string;
+  caution: string;
+}
+
+interface LocalizedBhavaNarrative {
+  significance: string;
+  chartReading: string;
+  reflection: string;
+  conclusion: string;
+}
+
+/**
+ * Summarizes only factors that the app actually calculates and discloses:
+ * whole-sign zodiac sign, house-ruler placement and resident planetary
+ * significations. The constructive/caution pair remains separate on the PDF
+ * so it cannot be mistaken for an event prediction.
+ */
+function buildLocalizedBhavaNarrative(
+  parts: BhavaConclusionParts,
+  locale: AppLocale,
+): LocalizedBhavaNarrative {
+  const residents = parts.residentFunctions.join("; ");
+
+  if (locale === "hi") {
+    const residentClause = residents
+      ? `स्थित ग्रहों की पारंपरिक भूमिकाएँ भी जुड़ती हैं—${residents}`
+      : "कोई ग्रह स्थित नहीं है, इसलिए यह भाव निष्क्रिय नहीं बल्कि राशि और भावेश के माध्यम से पढ़ा जाता है";
+    const significance = `भाव ${parts.number} परंपरागत रूप से ${parts.domain} दर्शाता है।`;
+    const chartReading = `इस कुंडली में ${parts.rasi} इस भाव में है और इसके स्वामी ${parts.lord} भाव ${parts.lordBhava} (${parts.lordBhavaName}) में हैं, इसलिए ${parts.lordBhavaDomain} से प्रतीकात्मक संबंध बनता है; ${residentClause}।`;
+    const reflection = `अपने अनुभव में ${parts.constructive} की संभावना और ${parts.caution} की सावधानी—दोनों पर विचार करें; यह व्यक्ति का निश्चित वर्णन या घटना की भविष्यवाणी नहीं है।`;
+    return {
+      significance,
+      chartReading,
+      reflection,
+      conclusion: `${significance} ${chartReading} ${reflection}`,
+    };
+  }
+
+  if (locale === "mr") {
+    const residentClause = residents
+      ? `स्थित ग्रहांच्या पारंपरिक भूमिकाही जोडल्या जातात—${residents}`
+      : "येथे ग्रह नाही; म्हणून हा भाव निष्क्रिय नसून राशी आणि भावेशाद्वारे वाचला जातो";
+    const significance = `भाव ${parts.number} परंपरेनुसार ${parts.domain} दर्शवतो.`;
+    const chartReading = `या कुंडलीत ${parts.rasi} या भावात आहे आणि तिचा स्वामी ${parts.lord} भाव ${parts.lordBhava} (${parts.lordBhavaName}) मध्ये आहे, त्यामुळे ${parts.lordBhavaDomain} यांच्याशी प्रतीकात्मक दुवा तयार होतो; ${residentClause}.`;
+    const reflection = `स्वतःच्या अनुभवात ${parts.constructive} यांची शक्यता आणि ${parts.caution} याबाबतची सावधगिरी—दोन्ही तपासा; हे व्यक्तीचे निश्चित वर्णन किंवा घटनेचे भाकीत नाही.`;
+    return {
+      significance,
+      chartReading,
+      reflection,
+      conclusion: `${significance} ${chartReading} ${reflection}`,
+    };
+  }
+
+  if (locale === "de") {
+    const lordHouseName = parts.lordBhavaName
+      ? ` (${parts.lordBhavaName})`
+      : "";
+    const residentClause = residents
+      ? `die traditionellen Rollen der enthaltenen Himmelskörper kommen hinzu: ${residents}`
+      : "kein Himmelskörper steht darin, daher wird das Haus nicht als inaktiv behandelt, sondern über Tierkreiszeichen und Hausherrscher gelesen";
+    const significance = `Haus ${parts.number} steht traditionell für ${parts.domain}.`;
+    const chartReading = `In diesem Geburtshoroskop besetzt ${parts.rasi} das Haus und sein Herrscher ${parts.lord} steht in Haus ${parts.lordBhava}${lordHouseName}, wodurch eine symbolische Verbindung zu ${parts.lordBhavaDomain} entsteht; ${residentClause}.`;
+    const reflection = `Als persönliche Reflexion lassen sich sowohl ${parts.constructive} als auch die mögliche Spannung ${parts.caution} prüfen; dies ist weder eine feste Beschreibung der Person noch eine Vorhersage.`;
+    return {
+      significance,
+      chartReading,
+      reflection,
+      conclusion: `${significance} ${chartReading} ${reflection}`,
+    };
+  }
+
+  const lordHouseName = parts.lordBhavaName
+    ? ` (${parts.lordBhavaName})`
+    : "";
+  const residentClause = residents
+    ? `the traditional roles of its resident bodies also enter the reading: ${residents}`
+    : "no body is resident, so the house is not inactive and is read through its zodiac sign and ruler";
+  const significance = `House ${parts.number} traditionally signifies ${parts.domain}.`;
+  const chartReading = `In this birth chart, ${parts.rasi} occupies the house and its ruler ${parts.lord} is in House ${parts.lordBhava}${lordHouseName}, symbolically linking it with ${parts.lordBhavaDomain}; ${residentClause}.`;
+  const reflection = `For personal reflection, consider both the potential for ${parts.constructive} and the caution around ${parts.caution}; this is neither a fixed description of the person nor a prediction.`;
+  return {
+    significance,
+    chartReading,
+    reflection,
+    conclusion: `${significance} ${chartReading} ${reflection}`,
+  };
+}
+
+/**
+ * Builds the same twelve localized, chart-specific house summaries used by
+ * both the interactive analysis and the PDF export.
+ */
+export function buildLocalizedBhavaRows(
+  chart: VedicChart,
+  locale: AppLocale,
+): readonly KundaliBhavaRow[] {
+  const copy = COPY[locale];
+
+  return chart.houses.map((house) => {
+    const education = BHAVA_EDUCATION[house.number];
+    const lordId = RASI_PROFILES[house.sign.name].ruler;
+    const lordPlacement = chart.planets.find(
+      (planet) => planet.id === lordId,
+    );
+    if (!lordPlacement) {
+      throw new RangeError(
+        `House summary blocked: house ruler ${lordId} is missing.`,
+      );
+    }
+
+    const lordBhavaEducation = BHAVA_EDUCATION[lordPlacement.house];
+    const rasi = getLocalizedRasiName(house.sign.name, locale);
+    const lord = getLocalizedGrahaName(lordId, locale);
+    const domain = readLocalized(education.domain, locale);
+    const constructive = readLocalized(education.constructive, locale);
+    const caution = readLocalized(education.caution, locale);
+    const residentFunctions = house.planets.map((id) => {
+      const name = getLocalizedGrahaName(id, locale);
+      const functionText = readLocalized(
+        GRAHA_EDUCATION[id].signifies,
+        locale,
+      );
+      return `${name}: ${functionText}`;
+    });
+    const narrative = buildLocalizedBhavaNarrative(
+      {
+        number: house.number,
+        domain,
+        rasi,
+        lord,
+        lordBhava: lordPlacement.house,
+        lordBhavaName:
+          locale === "en" || locale === "de"
+            ? undefined
+            : readLocalized(lordBhavaEducation.name, locale),
+        lordBhavaDomain: readLocalized(
+          lordBhavaEducation.domain,
+          locale,
+        ),
+        residentFunctions,
+        constructive,
+        caution,
+      },
+      locale,
+    );
+
+    return {
+      number: house.number,
+      name: readLocalized(education.name, locale),
+      rasi,
+      lord,
+      lordBhava: lordPlacement.house,
+      domain,
+      occupants:
+        house.planets.length > 0
+          ? house.planets
+              .map((id) => getLocalizedGrahaName(id, locale))
+              .join(", ")
+          : copy.noOccupants,
+      ...narrative,
+      constructive,
+      caution,
+    };
+  });
+}
+
 function localizedMethod(
   chart: VedicChart,
   locale: AppLocale,
@@ -466,9 +720,9 @@ function localizedMethod(
   const checks = formatNumber(auditChecks, locale, 0);
   return {
     en: [
-      `Sidereal zodiac with ${chart.ayanamsa.model}; true Ayanamsa ${ayanamsa}° at the natal instant.`,
-      "Whole-sign Bhavas; Lagna determines the first Rasi and each following Rasi forms the next Bhava.",
-      "Apparent geocentric true ecliptic positions of date from astronomy-engine; Rahu and Ketu use mean lunar nodes.",
+      `Sidereal zodiac using ${chart.ayanamsa.model}; calculated sidereal offset ${ayanamsa}° at the birth instant.`,
+      "Whole-sign houses; the Ascendant determines the first zodiac sign, and each following sign forms the next house.",
+      "Apparent geocentric positions on the true ecliptic of date from astronomy-engine; the north and south lunar nodes use mean-node positions.",
       `Internal consistency audit: ${checks} structural checks passed before export.`,
     ],
     hi: [
@@ -484,9 +738,9 @@ function localizedMethod(
       `निर्यातीपूर्वी अंतर्गत सुसंगती तपासणीत ${checks} रचनात्मक तपासण्या यशस्वी झाल्या.`,
     ],
     de: [
-      `Siderischer Tierkreis mit ${chart.ayanamsa.model}; wahres Ayanamsa ${ayanamsa}° zum Geburtszeitpunkt.`,
-      "Ganzzeichen-Bhavas; Lagna bestimmt den ersten Rasi, jeder folgende Rasi bildet den nächsten Bhava.",
-      "Scheinbare geozentrische Positionen auf der wahren Ekliptik des Datums aus astronomy-engine; Rahu und Ketu verwenden mittlere Mondknoten.",
+      `Siderischer Tierkreis nach ${chart.ayanamsa.model}; berechneter siderischer Versatz ${ayanamsa}° zum Geburtszeitpunkt.`,
+      "Ganzzeichen-Häuser; der Aszendent bestimmt das erste Tierkreiszeichen, jedes folgende Zeichen bildet das nächste Haus.",
+      "Scheinbare geozentrische Positionen auf der wahren Ekliptik des Datums aus astronomy-engine; nördlicher und südlicher Mondknoten verwenden mittlere Knotenpositionen.",
       `Interne Konsistenzprüfung: Vor dem Export wurden ${checks} Strukturprüfungen bestanden.`,
     ],
   }[locale];
@@ -568,23 +822,7 @@ export function buildKundaliSummary({
     motion: MOTION_LABELS[locale][planet.motion],
   }));
 
-  const bhavas: readonly KundaliBhavaRow[] = chart.houses.map((house) => {
-    const education = BHAVA_EDUCATION[house.number];
-    return {
-      number: house.number,
-      name: readLocalized(education.name, locale),
-      rasi: getLocalizedRasiName(house.sign.name, locale),
-      domain: readLocalized(education.domain, locale),
-      occupants:
-        house.planets.length > 0
-          ? house.planets
-              .map((id) => getLocalizedGrahaName(id, locale))
-              .join(", ")
-          : copy.noOccupants,
-      constructive: readLocalized(education.constructive, locale),
-      caution: readLocalized(education.caution, locale),
-    };
-  });
+  const bhavas = buildLocalizedBhavaRows(chart, locale);
 
   const currentMajor = analysis.dashas.currentMahadasha;
   const currentMinor = analysis.dashas.currentAntardasha;
@@ -625,7 +863,7 @@ export function buildKundaliSummary({
       warningCount: audit.warningCount,
     },
     limitations: LIMITATION_IDS.map((id) =>
-      readLocalized(LOCALIZED_ANALYSIS_LIMITATIONS[id], locale),
+      localizedReportLimitation(id, locale),
     ),
   };
 }
@@ -639,6 +877,15 @@ export function buildKundaliPdfFilename(
   localDate: string | undefined,
   locale: AppLocale,
 ): string {
+  const filenameCopy: Readonly<
+    Record<AppLocale, { document: string; unknownDate: string }>
+  > = {
+    en: { document: "birth-chart", unknownDate: "date-unknown" },
+    hi: { document: "जन्म-कुंडली", unknownDate: "तिथि-अज्ञात" },
+    mr: { document: "जन्मकुंडली", unknownDate: "दिनांक-अज्ञात" },
+    de: { document: "geburtshoroskop", unknownDate: "datum-unbekannt" },
+  };
+  const labels = filenameCopy[locale];
   const safeName = fullName
     .normalize("NFKC")
     .trim()
@@ -648,6 +895,9 @@ export function buildKundaliPdfFilename(
     .slice(0, 64);
   const safeDate = localDate?.match(/^\d{4}-\d{2}-\d{2}$/)
     ? localDate
-    : "natal";
-  return `${safeName || "kundali"}-kundali-${safeDate}-${locale}.pdf`;
+    : labels.unknownDate;
+  const stem = safeName
+    ? `${safeName}-${labels.document}`
+    : labels.document;
+  return `${stem}-${safeDate}-${locale}.pdf`;
 }

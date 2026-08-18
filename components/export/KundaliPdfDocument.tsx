@@ -87,11 +87,14 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     letterSpacing: 1.2,
     textTransform: "uppercase",
+    width: "28%",
   },
   reportSection: {
     color: palette.ink,
-    fontSize: 15,
+    fontSize: 14,
     fontWeight: 700,
+    textAlign: "right",
+    width: "70%",
   },
   footer: {
     position: "absolute",
@@ -194,6 +197,83 @@ const styles = StyleSheet.create({
     color: palette.muted,
     fontSize: 8,
     marginBottom: 2,
+  },
+  conclusionIntro: {
+    backgroundColor: palette.violetSoft,
+    borderLeftWidth: 3,
+    borderLeftColor: palette.violet,
+    borderRadius: 7,
+    color: palette.body,
+    fontSize: 8.2,
+    lineHeight: 1.35,
+    marginBottom: 11,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+  },
+  conclusionItem: {
+    borderWidth: 1,
+    borderColor: palette.line,
+    borderRadius: 7,
+    marginBottom: 9,
+    paddingVertical: 9,
+    paddingHorizontal: 10,
+    flexDirection: "row",
+  },
+  conclusionBullet: {
+    color: palette.violet,
+    width: 15,
+    fontSize: 11,
+    fontWeight: 700,
+  },
+  conclusionBody: {
+    flex: 1,
+  },
+  conclusionHeadingRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  conclusionHeading: {
+    color: palette.ink,
+    fontSize: 9.5,
+    fontWeight: 700,
+    maxWidth: "74%",
+  },
+  conclusionRasi: {
+    color: palette.violet,
+    fontSize: 8.8,
+    fontWeight: 700,
+    textAlign: "right",
+    maxWidth: "25%",
+  },
+  conclusionSentence: {
+    borderLeftWidth: 2,
+    marginTop: 4,
+    paddingLeft: 6,
+  },
+  conclusionSignificance: {
+    borderLeftColor: palette.violet,
+  },
+  conclusionChart: {
+    borderLeftColor: "#3982a3",
+  },
+  conclusionReflection: {
+    borderLeftColor: "#3f7d55",
+  },
+  conclusionSignificanceText: {
+    color: palette.violet,
+    fontSize: 7.9,
+    lineHeight: 1.32,
+  },
+  conclusionChartText: {
+    color: "#315f73",
+    fontSize: 7.9,
+    lineHeight: 1.32,
+  },
+  conclusionReflectionText: {
+    color: "#285b3b",
+    fontSize: 7.9,
+    lineHeight: 1.32,
   },
   dashaPanel: {
     backgroundColor: palette.goldSoft,
@@ -394,7 +474,7 @@ function ReportPage({
       ]}
     >
       <View style={styles.reportHeader}>
-        <Text style={styles.reportBrand}>{summary.copy.title}</Text>
+        <Text style={styles.reportBrand}>{summary.copy.reportBrand}</Text>
         <Text style={styles.reportSection}>{sectionTitle}</Text>
       </View>
       {children}
@@ -452,19 +532,60 @@ function BhavaCard({
   );
 }
 
+function BhavaConclusionBullet({
+  row,
+  summary,
+}: {
+  row: KundaliBhavaRow;
+  summary: KundaliSummary;
+}) {
+  const { copy } = summary;
+  return (
+    <View style={styles.conclusionItem} wrap={false}>
+      <Text style={styles.conclusionBullet}>•</Text>
+      <View style={styles.conclusionBody}>
+        <View style={styles.conclusionHeadingRow}>
+          <Text style={styles.conclusionHeading}>
+            {copy.bhava} {row.number} · {row.name}
+          </Text>
+          <Text style={styles.conclusionRasi}>{row.rasi}</Text>
+        </View>
+        <View
+          style={[styles.conclusionSentence, styles.conclusionSignificance]}
+        >
+          <Text style={styles.conclusionSignificanceText}>
+            {row.significance}
+          </Text>
+        </View>
+        <View style={[styles.conclusionSentence, styles.conclusionChart]}>
+          <Text style={styles.conclusionChartText}>{row.chartReading}</Text>
+        </View>
+        <View
+          style={[styles.conclusionSentence, styles.conclusionReflection]}
+        >
+          <Text style={styles.conclusionReflectionText}>{row.reflection}</Text>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 export function KundaliPdfDocument({
   summary,
 }: {
   summary: KundaliSummary;
 }) {
   const { copy } = summary;
-  const firstBhavas = summary.bhavas.slice(0, 6);
-  const secondBhavas = summary.bhavas.slice(6);
+  const bhavaGroups = [
+    summary.bhavas.slice(0, 4),
+    summary.bhavas.slice(4, 8),
+    summary.bhavas.slice(8, 12),
+  ] as const;
 
   return (
     <Document
       title={`${copy.title} · ${summary.person.fullName}`}
-      author="Vedic Astrologer"
+      author={copy.reportBrand}
       subject={copy.subtitle}
       language={summary.locale}
     >
@@ -550,6 +671,29 @@ export function KundaliPdfDocument({
         </View>
       </ReportPage>
 
+      {bhavaGroups.map((rows) => {
+        const first = rows[0].number;
+        const last = rows[rows.length - 1].number;
+        return (
+          <ReportPage
+            key={`bhava-conclusions-${first}`}
+            summary={summary}
+            sectionTitle={`${copy.bhavaConclusions} · ${first}–${last}`}
+          >
+            <Text style={styles.conclusionIntro}>
+              {copy.bhavaConclusionsIntro}
+            </Text>
+            {rows.map((row) => (
+              <BhavaConclusionBullet
+                key={`conclusion-${row.number}`}
+                row={row}
+                summary={summary}
+              />
+            ))}
+          </ReportPage>
+        );
+      })}
+
       <ReportPage summary={summary} sectionTitle={copy.grahaPositions}>
         <View style={styles.table}>
           <View style={[styles.tableRow, styles.tableHeader]}>
@@ -603,23 +747,25 @@ export function KundaliPdfDocument({
         </View>
       </ReportPage>
 
-      <ReportPage
-        summary={summary}
-        sectionTitle={`${copy.bhavaSummary} · 1–6`}
-      >
-        {firstBhavas.map((row) => (
-          <BhavaCard key={row.number} row={row} summary={summary} />
-        ))}
-      </ReportPage>
-
-      <ReportPage
-        summary={summary}
-        sectionTitle={`${copy.bhavaSummary} · 7–12`}
-      >
-        {secondBhavas.map((row) => (
-          <BhavaCard key={row.number} row={row} summary={summary} />
-        ))}
-      </ReportPage>
+      {bhavaGroups.map((rows) => {
+        const first = rows[0].number;
+        const last = rows[rows.length - 1].number;
+        return (
+          <ReportPage
+            key={`bhava-details-${first}`}
+            summary={summary}
+            sectionTitle={`${copy.bhavaSummary} · ${first}–${last}`}
+          >
+            {rows.map((row) => (
+              <BhavaCard
+                key={row.number}
+                row={row}
+                summary={summary}
+              />
+            ))}
+          </ReportPage>
+        );
+      })}
 
       <ReportPage summary={summary} sectionTitle={copy.methodology}>
         <View style={styles.auditBox}>

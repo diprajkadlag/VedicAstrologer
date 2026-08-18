@@ -5,7 +5,6 @@ import type {
   HousePosition,
   VedicChart,
 } from "@/lib/astro/ephemeris";
-import { RASI_DISPLAY_ABBREVIATIONS } from "../../lib/astro/display";
 import {
   getLocalizedGrahaName,
   getLocalizedRasiName,
@@ -17,31 +16,28 @@ import {
 } from "../../lib/i18n";
 
 export interface PlanetPresentation {
-  abbreviation: string;
   color: string;
   glyph: string;
 }
 
 export const PLANET_PRESENTATION: Record<GrahaId, PlanetPresentation> = {
-  sun: { abbreviation: "Su", color: "#fbbf24", glyph: "☉" },
-  moon: { abbreviation: "Mo", color: "#e2e8f0", glyph: "☽" },
-  mercury: { abbreviation: "Me", color: "#5eead4", glyph: "☿" },
-  venus: { abbreviation: "Ve", color: "#f9a8d4", glyph: "♀" },
-  mars: { abbreviation: "Ma", color: "#fb7185", glyph: "♂" },
-  jupiter: { abbreviation: "Ju", color: "#fde047", glyph: "♃" },
-  saturn: { abbreviation: "Sa", color: "#93c5fd", glyph: "♄" },
-  rahu: { abbreviation: "Ra", color: "#c4b5fd", glyph: "☊" },
-  ketu: { abbreviation: "Ke", color: "#fdba74", glyph: "☋" },
+  sun: { color: "#fbbf24", glyph: "☉" },
+  moon: { color: "#e2e8f0", glyph: "☽" },
+  mercury: { color: "#5eead4", glyph: "☿" },
+  venus: { color: "#f9a8d4", glyph: "♀" },
+  mars: { color: "#fb7185", glyph: "♂" },
+  jupiter: { color: "#fde047", glyph: "♃" },
+  saturn: { color: "#93c5fd", glyph: "♄" },
+  rahu: { color: "#c4b5fd", glyph: "☊" },
+  ketu: { color: "#fdba74", glyph: "☋" },
 };
-
-export { RASI_DISPLAY_ABBREVIATIONS };
 
 const CHART_DESCRIPTION_MESSAGES = defineMessages({
   en: {
-    empty: "no grahas",
-    house: "Bhava {house}, {rasi}, {occupants}",
+    empty: "no planetary bodies",
+    house: "House {house}, {rasi}, {occupants}",
     planet:
-      "{planet}, {rasi}, Bhava {house}, {degrees} degrees{retrograde}",
+      "{planet}, {rasi}, house {house}, {degrees} degrees{retrograde}",
     retrograde: ", retrograde",
   },
   hi: {
@@ -57,22 +53,20 @@ const CHART_DESCRIPTION_MESSAGES = defineMessages({
     retrograde: ", वक्री",
   },
   de: {
-    empty: "keine Grahas",
-    house: "Bhava {house}, {rasi}, {occupants}",
+    empty: "keine Himmelskörper",
+    house: "Haus {house}, {rasi}, {occupants}",
     planet:
-      "{planet}, {rasi}, Bhava {house}, {degrees} Grad{retrograde}",
+      "{planet}, {rasi}, Haus {house}, {degrees} Grad{retrograde}",
     retrograde: ", rückläufig",
   },
 });
 
 export function getChartRasiAbbreviation(
-  signIndex: number,
+  _signIndex: number,
   signName: GrahaPosition["sign"]["name"],
   locale: AppLocale,
 ): string {
-  return locale === "en"
-    ? RASI_DISPLAY_ABBREVIATIONS[signIndex]
-    : getLocalizedRasiName(signName, locale);
+  return getLocalizedRasiName(signName, locale);
 }
 
 export const HOUSE_NUMBERS = [

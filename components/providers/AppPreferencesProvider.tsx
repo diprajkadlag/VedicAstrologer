@@ -29,9 +29,9 @@ const documentCopy: Readonly<
   Record<AppLocale, Readonly<{ title: string; description: string }>>
 > = {
   en: {
-    title: "Jyotish Observatory",
+    title: "Vedic Astrology Observatory",
     description:
-      "Explore a Lahiri sidereal birth chart through a 3D celestial sphere, Vedic charts, and transparent Jyotish analysis.",
+      "Explore a Lahiri sidereal birth chart through a 3D celestial sphere, Vedic charts, and transparent Vedic astrology analysis.",
   },
   hi: {
     title: "ज्योतिष वेधशाला",
@@ -44,9 +44,9 @@ const documentCopy: Readonly<
       "3D खगोलीय गोल, वैदिक कुंडल्या आणि पारदर्शक ज्योतिष विश्लेषणातून लाहिरी निरयन जन्मकुंडली पाहा.",
   },
   de: {
-    title: "Jyotish-Observatorium",
+    title: "Observatorium für vedische Astrologie",
     description:
-      "Erkunde ein siderisches Lahiri-Geburtshoroskop mit einer interaktiven 3D-Himmelssphäre, vedischen Horoskopdarstellungen und transparenter Jyotish-Analyse.",
+      "Erkunde ein siderisches Lahiri-Geburtshoroskop mit einer interaktiven 3D-Himmelssphäre, vedischen Horoskopdarstellungen und transparenter Analyse der vedischen Astrologie.",
   },
 };
 

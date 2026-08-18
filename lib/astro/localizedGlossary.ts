@@ -72,28 +72,28 @@ const DISTINCT_TERMS: Readonly<
 > = {
   "nakshatra-lord": {
     title: localized(
-      "Nakshatra Lord",
+      "Lunar-mansion ruler",
       "नक्षत्र अधिपति",
       "नक्षत्र अधिपती",
     ),
     short: localized(
-      "The graha assigned to a lunar mansion in the repeating Vimshottari sequence.",
+      "The planetary body assigned to a lunar mansion in the repeating Vimshottari sequence.",
       "विंशोत्तरी के दोहराते क्रम में किसी नक्षत्र को दिया गया ग्रह।",
       "विंशोत्तरीच्या पुनरावर्ती क्रमात नक्षत्राला नेमलेला ग्रह.",
     ),
     detailed: localized(
-      "The sequence Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani and Budha repeats across the 27 Nakshatras. This lord connects a placement's Nakshatra layer with that graha's natal position and, for the birth Moon, identifies the first Mahadasha lord. It is a traditional symbolic assignment, not the astronomical ruler of a constellation and not the same as a Rasi lord.",
+      "The sequence South Node, Venus, Sun, Moon, Mars, North Node, Jupiter, Saturn and Mercury repeats across the 27 lunar mansions. This ruler connects a placement's lunar-mansion layer with that planetary body's natal position and, for the birth Moon, identifies the first major-period ruler. It is a traditional symbolic assignment, not the astronomical ruler of a constellation and not the same as a zodiac-sign ruler.",
       "केतु, शुक्र, सूर्य, चन्द्र, मंगल, राहु, गुरु, शनि और बुध का क्रम 27 नक्षत्रों में दोहरता है। यह अधिपति किसी ग्रह के नक्षत्र-स्तर को उस अधिपति की जन्म-कुण्डली स्थिति से जोड़ता है और जन्म चन्द्र के लिए आरम्भिक महादशा बताता है। यह पारंपरिक प्रतीकात्मक नियुक्ति है—किसी तारामण्डल का खगोलीय स्वामी नहीं—और राशि अधिपति से अलग है।",
       "केतू, शुक्र, सूर्य, चंद्र, मंगळ, राहू, गुरु, शनि आणि बुध हा क्रम 27 नक्षत्रांत पुनः येतो. हा अधिपती ग्रहाच्या नक्षत्र-स्तराला त्या अधिपतीच्या जन्मकुंडलीतील स्थितीशी जोडतो आणि जन्मचंद्रासाठी पहिली महादशा ठरवतो. ही पारंपरिक प्रतीकात्मक नेमणूक आहे—तारकासमूहाचा खगोलीय स्वामी नव्हे—आणि राशी अधिपतीपेक्षा वेगळी आहे.",
     ),
     readingTips: [
       localized(
-        "Locate the Nakshatra lord in the natal chart before interpreting the link.",
+        "Locate the lunar-mansion ruler in the natal chart before interpreting the link.",
         "संबंध की व्याख्या से पहले नक्षत्र अधिपति की जन्म-कुण्डली स्थिति देखें।",
         "संबंधाचा अर्थ लावण्याआधी नक्षत्र अधिपतीची जन्मकुंडलीतील स्थिती पाहा.",
       ),
       localized(
-        "Do not confuse a Nakshatra lord with the lord of its Rasi or Bhava.",
+        "Do not confuse a lunar-mansion ruler with the ruler of its zodiac sign or house.",
         "नक्षत्र अधिपति को राशि या भाव के अधिपति जैसा न मानें।",
         "नक्षत्र अधिपतीला राशी किंवा भावाचा अधिपती समजू नका.",
       ),
@@ -101,23 +101,23 @@ const DISTINCT_TERMS: Readonly<
   },
   lahiri: {
     title: localized(
-      "Lahiri Ayanamsa",
+      "Lahiri sidereal offset",
       "लाहिरी अयनांश",
       "लाहिरी अयनांश",
     ),
     short: localized(
-      "A widely used Indian sidereal reference convention, also called Chitrapaksha.",
+      "A widely used Indian sidereal reference convention.",
       "भारत में व्यापक रूप से प्रयुक्त निरयन सन्दर्भ पद्धति, जिसे चित्रपक्ष भी कहते हैं।",
       "भारतात मोठ्या प्रमाणावर वापरली जाणारी निरयन संदर्भपद्धत, जिला चित्रपक्षही म्हणतात.",
     ),
     detailed: localized(
-      "Lahiri provides the offset used to convert tropical longitudes into one consistent sidereal frame for Rasis, Nakshatras, Lagna, grahas and lunar nodes. Other accepted ayanamsa conventions produce slightly different longitudes and may change placements close to a boundary. Lahiri is this app's declared convention; it is not presented as the only possible sidereal standard.",
+      "Lahiri provides the offset used to convert tropical longitudes into one consistent sidereal frame for zodiac signs, lunar mansions, the ascendant, planetary bodies and lunar nodes. Other accepted sidereal-offset conventions produce slightly different longitudes and may change placements close to a boundary. Lahiri is this app's declared convention; it is not presented as the only possible sidereal standard.",
       "लाहिरी वह अन्तर देता है जिससे सायन देशान्तर को राशियों, नक्षत्रों, लग्न, ग्रहों और चन्द्र पातों के लिए एक संगत निरयन ढाँचे में बदला जाता है। अन्य मान्य अयनांश पद्धतियाँ थोड़े अलग देशान्तर दे सकती हैं और सीमा के पास स्थिति बदल सकती है। लाहिरी इस ऐप की घोषित पद्धति है; इसे एकमात्र सम्भव निरयन मानक नहीं बताया गया है।",
       "लाहिरी हा फरक देतो ज्याने सायन रेखांश राशी, नक्षत्रे, लग्न, ग्रह आणि चंद्रपातांसाठी एका सुसंगत निरयन चौकटीत रूपांतरित होतो. इतर मान्य अयनांश पद्धती किंचित वेगळे रेखांश देऊ शकतात आणि सीमेजवळील स्थान बदलू शकतात. लाहिरी ही या ॲपची घोषित पद्धत आहे; ती एकमेव शक्य निरयन मानक असल्याचा दावा नाही.",
     ),
     readingTips: [
       localized(
-        "Use the same ayanamsa when comparing natal and transit charts.",
+        "Use the same sidereal offset when comparing natal and transit charts.",
         "जन्म और गोचर कुण्डलियों की तुलना में एक ही अयनांश रखें।",
         "जन्म आणि गोचर कुंडल्या तुलना करताना तोच अयनांश वापरा.",
       ),
@@ -130,23 +130,23 @@ const DISTINCT_TERMS: Readonly<
   },
   vimshottari: {
     title: localized(
-      "Vimshottari Dasha",
+      "Vimshottari planetary periods",
       "विंशोत्तरी दशा",
       "विंशोत्तरी दशा",
     ),
     short: localized(
-      "A 120-year symbolic sequence of nine planetary periods derived from the birth Moon's Nakshatra.",
+      "A 120-year symbolic sequence of nine planetary periods derived from the birth Moon's lunar mansion.",
       "जन्म चन्द्र के नक्षत्र से निकला नौ ग्रह-अवधियों का 120-वर्षीय प्रतीकात्मक क्रम।",
       "जन्मचंद्राच्या नक्षत्रावरून मिळणारा नऊ ग्रहकालखंडांचा 120 वर्षांचा प्रतीकात्मक क्रम.",
     ),
     detailed: localized(
-      "Vimshottari cycles through Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani and Budha with unequal durations totalling 120 years. The Moon's birth Nakshatra selects the opening lord; its calculated progress through that mansion sets the remaining balance. It is a traditional timing framework, not an astronomical causal mechanism or a guarantee that predicted events will occur.",
+      "Vimshottari cycles through the South Node, Venus, Sun, Moon, Mars, North Node, Jupiter, Saturn and Mercury with unequal durations totalling 120 years. The Moon's birth lunar mansion selects the opening ruler; its calculated progress through that mansion sets the remaining balance. It is a traditional timing framework, not an astronomical causal mechanism or a guarantee that predicted events will occur.",
       "विंशोत्तरी में केतु, शुक्र, सूर्य, चन्द्र, मंगल, राहु, गुरु, शनि और बुध की असमान अवधियाँ मिलकर 120 वर्ष बनाती हैं। जन्म चन्द्र का नक्षत्र आरम्भिक अधिपति चुनता है और उस नक्षत्र में चन्द्र की गणना की गई प्रगति पहली अवधि का शेष भाग तय करती है। यह पारंपरिक काल-ढाँचा है, कोई खगोलीय कारण-तंत्र या घटना की गारंटी नहीं।",
       "विंशोत्तरीत केतू, शुक्र, सूर्य, चंद्र, मंगळ, राहू, गुरु, शनि आणि बुध यांचे असमान कालखंड मिळून 120 वर्षे होतात. जन्मचंद्राचे नक्षत्र आरंभीचा अधिपती निवडते आणि त्या नक्षत्रातील मोजलेली प्रगती पहिल्या कालखंडाची उरलेली मुदत ठरवते. ही पारंपरिक कालचौकट आहे; खगोलीय कारणयंत्रणा किंवा घटना घडण्याची हमी नाही.",
     ),
     readingTips: [
       localized(
-        "Read Mahadasha as the broad chapter and Antardasha as the nearer-term subtheme.",
+        "Read the major period as the broad chapter and the sub-period as the nearer-term subtheme.",
         "महादशा को व्यापक अध्याय और अन्तर्दशा को निकट अवधि का उप-विषय मानें।",
         "महादशा हा व्यापक अध्याय आणि अंतर्दशा हा जवळच्या काळाचा उपविषय माना.",
       ),
@@ -158,39 +158,39 @@ const DISTINCT_TERMS: Readonly<
     ],
   },
   mahadasha: {
-    title: localized("Mahadasha", "महादशा", "महादशा"),
+    title: localized("Major period", "महादशा", "महादशा"),
     short: localized(
       "The major planetary period that supplies the broad background chapter in Vimshottari timing.",
       "विंशोत्तरी काल में व्यापक पृष्ठभूमि देने वाली मुख्य ग्रह-अवधि।",
       "विंशोत्तरी कालात व्यापक पार्श्वभूमी देणारा मुख्य ग्रहकालखंड.",
     ),
     detailed: localized(
-      "A Mahadasha lasts from 6 to 20 years according to its lord. Traditional interpretation begins with that lord's natal Bhava, Rasi, house rulerships, dignity and relationships, then adds the current Antardasha and transits. It describes a long-running area of emphasis rather than one event, and a difficult symbol does not make every year uniformly difficult.",
+      "A major period lasts from 6 to 20 years according to its ruler. Traditional interpretation begins with that ruler's natal house, zodiac sign, house rulerships, dignity and relationships, then adds the current sub-period and transits. It describes a long-running area of emphasis rather than one event, and a difficult symbol does not make every year uniformly difficult.",
       "महादशा अपने अधिपति के अनुसार 6 से 20 वर्ष चलती है। पारंपरिक व्याख्या में पहले उस अधिपति का जन्म भाव, राशि, भाव-अधिपत्य, गरिमा और सम्बन्ध देखे जाते हैं; फिर वर्तमान अन्तर्दशा और गोचर जोड़े जाते हैं। यह एक घटना नहीं बल्कि लम्बे समय का प्रमुख विषय बताती है; कठिन प्रतीक का अर्थ हर वर्ष समान रूप से कठिन होना नहीं है।",
       "महादशा तिच्या अधिपतीनुसार 6 ते 20 वर्षे चालते. पारंपरिक अर्थनिर्णयात प्रथम त्या अधिपतीचा जन्मभाव, राशी, भावस्वामित्व, प्रतिष्ठा आणि संबंध पाहतात; नंतर चालू अंतर्दशा व गोचर जोडतात. ती एका घटनेऐवजी दीर्घकाळचा भर दर्शवते; कठीण प्रतीक म्हणजे प्रत्येक वर्ष सारखेच कठीण असे नाही.",
     ),
     readingTips: [
       localized(
-        "Locate the Mahadasha lord and the Bhavas it rules before synthesizing themes.",
+        "Locate the major-period ruler and the houses it rules before synthesizing themes.",
         "विषयों का संश्लेषण करने से पहले महादशा अधिपति और उसके भाव-अधिपत्य देखें।",
         "विषय जोडण्याआधी महादशा अधिपती आणि त्याची भावस्वामित्वे पाहा.",
       ),
       localized(
-        "Layer the Antardasha and current transits; do not read the major period in isolation.",
+        "Layer the sub-period and current transits; do not read the major period in isolation.",
         "अन्तर्दशा और वर्तमान गोचर जोड़ें; महादशा को अकेले न पढ़ें।",
         "अंतर्दशा आणि चालू गोचर जोडा; महादशा स्वतंत्रपणे वाचू नका.",
       ),
     ],
   },
   antardasha: {
-    title: localized("Antardasha", "अन्तर्दशा", "अंतर्दशा"),
+    title: localized("Sub-period", "अन्तर्दशा", "अंतर्दशा"),
     short: localized(
-      "A sub-period that channels a Mahadasha through a second graha.",
+      "A sub-period that channels a major period through a second planetary body.",
       "महादशा को दूसरे ग्रह के माध्यम से व्यक्त करने वाली उप-अवधि।",
       "महादशेला दुसऱ्या ग्रहामार्फत व्यक्त करणारा उपकालखंड.",
     ),
     detailed: localized(
-      "The Mahadasha lord sets the larger context; the Antardasha lord describes the more immediate route through it. Interpretation compares both lords' natal Bhavas, Rasis, rulerships, dignity and relationships, then checks current transits for temporary activation. A generic lord pairing is only a starting hypothesis, not a personalized prediction or certainty.",
+      "The major-period ruler sets the larger context; the sub-period ruler describes the more immediate route through it. Interpretation compares both rulers' natal houses, zodiac signs, rulerships, dignity and relationships, then checks current transits for temporary activation. A generic ruler pairing is only a starting hypothesis, not a personalized prediction or certainty.",
       "महादशा अधिपति व्यापक सन्दर्भ देता है; अन्तर्दशा अधिपति उसके भीतर निकट अवधि का मार्ग बताता है। व्याख्या दोनों अधिपतियों के जन्म भाव, राशियाँ, भाव-अधिपत्य, गरिमा और सम्बन्धों की तुलना करती है और फिर अस्थायी सक्रियता के लिए वर्तमान गोचर देखती है। केवल दो अधिपतियों की सामान्य जोड़ी आरम्भिक परिकल्पना है, व्यक्तिगत भविष्यवाणी या निश्चितता नहीं।",
       "महादशा अधिपती व्यापक संदर्भ देतो; अंतर्दशा अधिपती त्यातील जवळच्या काळाचा मार्ग दर्शवतो. अर्थनिर्णय दोन्ही अधिपतींचे जन्मभाव, राशी, भावस्वामित्व, प्रतिष्ठा व संबंध तुलना करतो आणि तात्पुरत्या सक्रियतेसाठी चालू गोचर पाहतो. दोन अधिपतींची सामान्य जोडी ही फक्त सुरुवातीची कल्पना आहे, वैयक्तिक भविष्यवाणी किंवा निश्चितता नव्हे.",
     ),
@@ -201,35 +201,12 @@ const DISTINCT_TERMS: Readonly<
         "महादशा अधिपतीला संदर्भ आणि अंतर्दशा अधिपतीला सक्रिय केंद्र माना.",
       ),
       localized(
-        "Look for repeated Bhava topics between both lords, then verify rather than assume.",
+        "Look for repeated house topics between both rulers, then verify rather than assume.",
         "दोनों अधिपतियों में दोहरते भाव-विषय खोजें और अनुमान के बजाय जाँचें।",
         "दोन्ही अधिपतींतील पुनरावर्ती भावविषय शोधा आणि गृहित धरण्याऐवजी तपासा.",
       ),
     ],
   },
-};
-
-const GERMAN_SANSKRIT_NAMES: Readonly<
-  Partial<Record<AstroTermId, string>>
-> = {
-  lagna: "Lagna",
-  graha: "Graha",
-  rasi: "Rāśi",
-  "janma-rasi": "Janma Rāśi",
-  bhava: "Bhāva",
-  "house-lord": "Bhāveśa",
-  nakshatra: "Nakṣatra",
-  pada: "Pāda",
-  "nakshatra-lord": "Nakṣatra Adhipati",
-  ayanamsa: "Ayanāṃśa",
-  lahiri: "Citrapakṣa",
-  retrograde: "Vakri",
-  gochara: "Gocara",
-  dasha: "Daśā",
-  vimshottari: "Viṃśottarī Daśā",
-  mahadasha: "Mahādaśā",
-  antardasha: "Antardaśā",
-  "rahu-ketu": "Rāhu–Ketu",
 };
 
 interface GermanGlossarySupplement {
@@ -243,58 +220,58 @@ const GERMAN_DISTINCT_TERMS: Readonly<
   Record<keyof typeof DISTINCT_TERMS, GermanGlossarySupplement>
 > = {
   "nakshatra-lord": {
-    title: "Nakshatra-Herrscher",
+    title: "Herrscher der Mondstation",
     short:
-      "Der Graha, der einer Mondstation in der wiederkehrenden Vimshottari-Abfolge zugeordnet ist.",
+      "Der Himmelskörper, der einer Mondstation in der wiederkehrenden Vimshottari-Abfolge zugeordnet ist.",
     detailed:
-      "Die Reihenfolge Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani und Budha wiederholt sich über die 27 Nakshatras. Dieser Herrscher verbindet die Nakshatra-Ebene einer Stellung mit seiner Position in der Geburtskundali und bestimmt beim Geburts-Chandra den ersten Mahadasha-Herrscher. Es handelt sich um eine traditionelle symbolische Zuordnung, nicht um den astronomischen Herrscher eines Sternbilds und nicht um einen Rasi-Herrscher.",
+      "Die Reihenfolge Südknoten, Venus, Sonne, Mond, Mars, Nordknoten, Jupiter, Saturn und Merkur wiederholt sich über die 27 Mondstationen. Dieser Herrscher verbindet die Mondstationsebene einer Stellung mit seiner Position im Geburtshoroskop und bestimmt beim Geburtsmond den ersten Herrscher der Hauptperiode. Es handelt sich um eine traditionelle symbolische Zuordnung, nicht um den astronomischen Herrscher eines Sternbilds und nicht um einen Tierkreiszeichenherrscher.",
     readingTips: [
-      "Vor der Deutung der Verbindung den Nakshatra-Herrscher in der Geburtskundali lokalisieren.",
-      "Den Nakshatra-Herrscher nicht mit dem Herrscher seiner Rasi oder seines Bhava verwechseln.",
+      "Vor der Deutung der Verbindung den Mondstationsherrscher im Geburtshoroskop lokalisieren.",
+      "Den Mondstationsherrscher nicht mit dem Herrscher seines Tierkreiszeichens oder Hauses verwechseln.",
     ],
   },
   lahiri: {
-    title: "Lahiri-Ayanamsa",
+    title: "Siderischer Lahiri-Versatz",
     short:
-      "Eine in Indien weit verbreitete siderische Bezugskonvention, auch Chitrapaksha genannt.",
+      "Eine in Indien weit verbreitete siderische Bezugskonvention.",
     detailed:
-      "Lahiri liefert den Versatz, mit dem tropische Längengrade für Rasis, Nakshatras, Lagna, Grahas und Mondknoten in einen einheitlichen siderischen Bezugsrahmen umgerechnet werden. Andere anerkannte Ayanamsa-Konventionen ergeben leicht abweichende Längengrade und können Positionen nahe einer Grenze verändern. Lahiri ist die offengelegte Konvention dieser App; sie wird nicht als einzig möglicher siderischer Standard dargestellt.",
+      "Lahiri liefert den Versatz, mit dem tropische Längengrade für Tierkreiszeichen, Mondstationen, Aszendent, Himmelskörper und Mondknoten in einen einheitlichen siderischen Bezugsrahmen umgerechnet werden. Andere anerkannte Konventionen für den siderischen Versatz ergeben leicht abweichende Längengrade und können Positionen nahe einer Grenze verändern. Lahiri ist die offengelegte Konvention dieser App; sie wird nicht als einzig möglicher siderischer Standard dargestellt.",
     readingTips: [
-      "Beim Vergleich von Geburts- und Gochara-Kundalis dasselbe Ayanamsa verwenden.",
+      "Beim Vergleich von Geburtshoroskop und Transiten denselben siderischen Versatz verwenden.",
       "Grenzwechsel zwischen Konventionen als Methodenunterschied behandeln, nicht als verborgene Präzision.",
     ],
   },
   vimshottari: {
-    title: "Vimshottari-Dasha",
+    title: "Vimshottari-Planetenperioden",
     short:
-      "Eine 120-jährige symbolische Abfolge von neun Graha-Perioden, abgeleitet aus Chandras Geburts-Nakshatra.",
+      "Eine 120-jährige symbolische Abfolge von neun Planetenperioden, abgeleitet aus der Geburts-Mondstation.",
     detailed:
-      "Vimshottari durchläuft Ketu, Shukra, Surya, Chandra, Mangala, Rahu, Guru, Shani und Budha mit ungleichen Zeitspannen, die insgesamt 120 Jahre ergeben. Chandras Geburts-Nakshatra bestimmt den ersten Herrscher; sein berechneter Fortschritt durch diese Mondstation legt die verbleibende Dauer fest. Das ist ein traditionelles Zeitsystem, kein astronomischer Kausalmechanismus und keine Garantie für vorhergesagte Ereignisse.",
+      "Vimshottari durchläuft Südknoten, Venus, Sonne, Mond, Mars, Nordknoten, Jupiter, Saturn und Merkur mit ungleichen Zeitspannen, die insgesamt 120 Jahre ergeben. Die Geburts-Mondstation bestimmt den ersten Herrscher; der berechnete Fortschritt des Mondes durch diese Station legt die verbleibende Dauer fest. Das ist ein traditionelles Zeitsystem, kein astronomischer Kausalmechanismus und keine Garantie für vorhergesagte Ereignisse.",
     readingTips: [
-      "Mahadasha als übergeordnetes Kapitel und Antardasha als zeitnähere Unterthematik lesen.",
+      "Die Hauptperiode als übergeordnetes Kapitel und die Unterperiode als zeitnähere Unterthematik lesen.",
       "Beide Periodenherrscher anhand ihrer Geburtsstellungen beurteilen; ihre Namen allein reichen nicht aus.",
     ],
   },
   mahadasha: {
-    title: "Mahadasha",
+    title: "Hauptperiode",
     short:
-      "Die große Graha-Periode, die im Vimshottari-System das langfristige Hintergrundkapitel bildet.",
+      "Die große Planetenperiode, die im Vimshottari-System das langfristige Hintergrundkapitel bildet.",
     detailed:
-      "Eine Mahadasha dauert je nach Herrscher sechs bis zwanzig Jahre. Die traditionelle Deutung beginnt mit dessen Geburts-Bhava, Rasi, Bhava-Herrschaften, Würde und Beziehungen; anschließend werden aktuelle Antardasha und Gochara ergänzt. Sie beschreibt ein lang anhaltendes Feld der Betonung statt eines einzelnen Ereignisses. Ein schwieriges Symbol macht nicht jedes Jahr gleichermaßen schwierig.",
+      "Eine Hauptperiode dauert je nach Herrscher sechs bis zwanzig Jahre. Die traditionelle Deutung beginnt mit dessen Geburtshaus, Tierkreiszeichen, Hausherrschaften, Würde und Beziehungen; anschließend werden aktuelle Unterperiode und Transite ergänzt. Sie beschreibt ein lang anhaltendes Feld der Betonung statt eines einzelnen Ereignisses. Ein schwieriges Symbol macht nicht jedes Jahr gleichermaßen schwierig.",
     readingTips: [
-      "Vor der Synthese den Mahadasha-Herrscher und die von ihm beherrschten Bhavas bestimmen.",
-      "Antardasha und aktuelle Gochara ergänzen; die große Periode nicht isoliert lesen.",
+      "Vor der Synthese den Herrscher der Hauptperiode und die von ihm beherrschten Häuser bestimmen.",
+      "Unterperiode und aktuelle Transite ergänzen; die Hauptperiode nicht isoliert lesen.",
     ],
   },
   antardasha: {
-    title: "Antardasha",
+    title: "Unterperiode",
     short:
-      "Eine Unterperiode, durch die sich eine Mahadasha über einen zweiten Graha ausdrückt.",
+      "Eine Unterperiode, durch die sich eine Hauptperiode über einen zweiten Himmelskörper ausdrückt.",
     detailed:
-      "Der Mahadasha-Herrscher setzt den größeren Rahmen; der Antardasha-Herrscher beschreibt den unmittelbareren Weg darin. Die Deutung vergleicht Geburts-Bhavas, Rasis, Herrschaften, Würde und Beziehungen beider Grahas und prüft anschließend aktuelle Gochara auf zeitweilige Aktivierungen. Eine allgemeine Kombination zweier Herrscher ist nur eine Ausgangshypothese, keine persönliche Vorhersage oder Gewissheit.",
+      "Der Herrscher der Hauptperiode setzt den größeren Rahmen; der Herrscher der Unterperiode beschreibt den unmittelbareren Weg darin. Die Deutung vergleicht Geburtshäuser, Tierkreiszeichen, Herrschaften, Würde und Beziehungen beider Himmelskörper und prüft anschließend aktuelle Transite auf zeitweilige Aktivierungen. Eine allgemeine Kombination zweier Herrscher ist nur eine Ausgangshypothese, keine persönliche Vorhersage oder Gewissheit.",
     readingTips: [
       "Den großen Herrscher als Kontext und den Unterperioden-Herrscher als aktiven Fokus lesen.",
-      "Wiederkehrende Bhava-Themen beider Herrscher suchen und anschließend prüfen, statt sie vorauszusetzen.",
+      "Wiederkehrende Hausthemen beider Herrscher suchen und anschließend prüfen, statt sie vorauszusetzen.",
     ],
   },
 };
@@ -303,52 +280,52 @@ const CALCULATION_NOTES: Readonly<
   Partial<Record<AstroTermId, LocalizedText>>
 > = {
   lagna: localized(
-    "The app finds the eastern horizon–ecliptic intersection for the entered time and coordinates, applies Lahiri ayanamsa, and uses its Rasi as the first whole-sign Bhava.",
+    "The app finds the eastern horizon–ecliptic intersection for the entered time and coordinates, applies the Lahiri sidereal offset, and uses its zodiac sign as the first whole-sign house.",
     "ऐप दर्ज समय और निर्देशांक के लिए पूर्वी क्षितिज व क्रान्तिवृत्त का प्रतिच्छेद निकालता है, लाहिरी अयनांश लगाता है और उसकी राशि को पहला पूर्ण-राशि भाव मानता है।",
     "ॲप दिलेल्या वेळ व निर्देशांकांसाठी पूर्व क्षितिज आणि क्रांतिवृत्ताचा छेद काढते, लाहिरी अयनांश लावते आणि त्याची राशी पहिला पूर्ण-राशी भाव मानते.",
   ),
   rasi: localized(
-    "Normalized sidereal longitude is divided into twelve consecutive 30° sections from Mesha through Meena.",
+    "Normalized sidereal longitude is divided into twelve consecutive 30° sections from Aries through Pisces.",
     "सामान्यीकृत निरयन देशान्तर को मेष से मीन तक बारह लगातार 30° खण्डों में बाँटा जाता है।",
     "सामान्यीकृत निरयन रेखांश मेष ते मीन अशा बारा सलग 30° विभागांत वाटला जातो.",
   ),
   "janma-rasi": localized(
-    "The Moon's Lahiri-sidereal longitude at birth determines its 30° Rasi section.",
+    "The Moon's Lahiri-sidereal longitude at birth determines its 30° zodiac-sign section.",
     "जन्म समय चन्द्र का लाहिरी-निरयन देशान्तर उसका 30° राशि खण्ड तय करता है।",
     "जन्मवेळचा चंद्राचा लाहिरी-निरयन रेखांश त्याचा 30° राशी विभाग ठरवतो.",
   ),
   bhava: localized(
-    "This app uses whole-sign Bhavas: the Lagna Rasi is Bhava 1 and each following Rasi is the next Bhava.",
+    "This app uses whole-sign houses: the ascendant's zodiac sign is House 1 and each following zodiac sign is the next house.",
     "यह ऐप पूर्ण-राशि भाव उपयोग करता है: लग्न राशि भाव 1 है और हर अगली राशि अगला भाव है।",
     "हे ॲप पूर्ण-राशी भाव वापरते: लग्न राशी भाव 1 आणि प्रत्येक पुढील राशी पुढील भाव असते.",
   ),
   "whole-sign-house": localized(
-    "Bhava number is the inclusive sign-count from the Lagna Rasi, wrapping after Meena.",
+    "House number is the inclusive zodiac-sign count from the ascendant's sign, wrapping after Pisces.",
     "भाव संख्या लग्न राशि से समावेशी राशि-गणना है, जो मीन के बाद फिर आरम्भ होती है।",
     "भाव क्रमांक हा लग्न राशीपासूनचा समावेशक राशीहिशेब आहे, जो मीननंतर पुन्हा सुरू होतो.",
   ),
   "house-lord": localized(
-    "The app looks up the classical graha ruler of the Rasi occupying each Bhava, then locates that graha in the natal chart.",
+    "The app looks up the classical planetary ruler of the zodiac sign occupying each house, then locates that planetary body in the natal chart.",
     "ऐप प्रत्येक भाव की राशि का पारंपरिक ग्रह-अधिपति देखता है और फिर जन्म-कुण्डली में उस ग्रह की स्थिति खोजता है।",
     "ॲप प्रत्येक भावातील राशीचा पारंपरिक ग्रह-अधिपती पाहते आणि नंतर जन्मकुंडलीत त्या ग्रहाचे स्थान शोधते.",
   ),
   nakshatra: localized(
-    "The 360° sidereal zodiac is divided into 27 equal sections of 13°20′, beginning with Ashwini at zero degrees Mesha.",
+    "The 360° sidereal zodiac is divided into 27 equal lunar-mansion sections of 13°20′, beginning with Ashwini at zero degrees Aries.",
     "360° निरयन राशि-चक्र को 13°20′ के 27 समान भागों में बाँटा जाता है, जिसकी शुरुआत शून्य अंश मेष पर अश्विनी से होती है।",
     "360° निरयन राशिचक्र 13°20′ च्या 27 समान भागांत विभागले जाते; सुरुवात मेष शून्य अंशावरील अश्विनीपासून होते.",
   ),
   pada: localized(
-    "The degree within a Nakshatra is divided into four equal 3°20′ quarters, numbered 1 through 4.",
+    "The degree within a lunar mansion is divided into four equal 3°20′ quarters, numbered 1 through 4.",
     "नक्षत्र के भीतर अंश को 3°20′ के चार समान पादों में बाँटकर 1 से 4 तक क्रम दिया जाता है।",
     "नक्षत्रातील अंश 3°20′ च्या चार समान पादांत विभागून 1 ते 4 क्रम दिला जातो.",
   ),
   "nakshatra-lord": localized(
-    "The app applies the fixed nine-lord Vimshottari sequence to the calculated Nakshatra index.",
+    "The app applies the fixed nine-ruler Vimshottari sequence to the calculated lunar-mansion index.",
     "ऐप गणित नक्षत्र क्रमांक पर विंशोत्तरी का निश्चित नौ-अधिपति क्रम लागू करता है।",
     "ॲप गणित नक्षत्र क्रमांकावर विंशोत्तरीचा निश्चित नऊ-अधिपती क्रम लावते.",
   ),
   ayanamsa: localized(
-    "The selected ayanamsa offset is subtracted from tropical ecliptic longitude to obtain sidereal longitude.",
+    "The selected sidereal offset is subtracted from tropical ecliptic longitude to obtain sidereal longitude.",
     "चुना हुआ अयनांश अन्तर सायन क्रान्तिवृत्तीय देशान्तर से घटाकर निरयन देशान्तर मिलता है।",
     "निवडलेला अयनांश फरक सायन क्रांतिवृत्तीय रेखांशातून वजा करून निरयन रेखांश मिळतो.",
   ),
@@ -363,22 +340,22 @@ const CALCULATION_NOTES: Readonly<
     "निवडलेल्या क्षणाभोवती रेखांश नमुने घेतले जातात. ऋण भूकेंद्री रेखांशगती वक्री आणि जवळपास शून्य गती स्थिर मानली जाते.",
   ),
   gochara: localized(
-    "The app calculates graha positions for the selected date and compares their whole-sign Bhavas from both natal Lagna and Janma Rasi.",
+    "The app calculates planetary-body positions for the selected date and compares their whole-sign houses from both the natal ascendant and birth Moon sign.",
     "ऐप चुनी तिथि की ग्रह स्थितियाँ निकालकर जन्म लग्न और जन्म राशि—दोनों से उनके पूर्ण-राशि भावों की तुलना करता है।",
     "ॲप निवडलेल्या तारखेच्या ग्रहस्थिती काढून जन्मलग्न आणि जन्मराशी या दोन्हींपासून त्यांच्या पूर्ण-राशी भावांची तुलना करते.",
   ),
   vimshottari: localized(
-    "Calculated Moon progress through its birth Nakshatra sets the remaining first period; the app uses a disclosed 365.25-day year convention and half-open boundaries.",
+    "Calculated Moon progress through its birth lunar mansion sets the remaining first period; the app uses a disclosed 365.25-day year convention and half-open boundaries.",
     "जन्म नक्षत्र में चन्द्र की गणना की गई प्रगति पहली अवधि का शेष भाग तय करती है; ऐप घोषित 365.25-दिन वर्ष और अर्ध-खुली सीमाएँ उपयोग करता है।",
     "जन्मनक्षत्रातील चंद्राची मोजलेली प्रगती पहिल्या कालखंडाची उरलेली मुदत ठरवते; ॲप घोषित 365.25-दिवस वर्ष आणि अर्ध-उघड सीमा वापरते.",
   ),
   antardasha: localized(
-    "Each Mahadasha is divided into nine sub-periods. Duration equals major-lord years × minor-lord years ÷ 120.",
+    "Each major period is divided into nine sub-periods. Duration equals major-ruler years × sub-period-ruler years ÷ 120.",
     "हर महादशा नौ उप-अवधियों में बँटती है। अवधि = महादशा-अधिपति वर्ष × अन्तर्दशा-अधिपति वर्ष ÷ 120।",
     "प्रत्येक महादशा नऊ उपकालखंडांत विभागली जाते. कालावधी = महादशा-अधिपती वर्षे × अंतर्दशा-अधिपती वर्षे ÷ 120.",
   ),
   "rahu-ketu": localized(
-    "The app uses the mean ascending lunar node for Rahu and places Ketu exactly 180° opposite.",
+    "The app uses the mean ascending lunar node for the North Node and places the South Node exactly 180° opposite.",
     "ऐप राहु के लिए माध्य आरोही चन्द्र पात उपयोग करता है और केतु को ठीक 180° विपरीत रखता है।",
     "ॲप राहूसाठी मध्यम आरोही चंद्रपात वापरते आणि केतूला नेमके 180° विरुद्ध ठेवते.",
   ),
@@ -388,37 +365,37 @@ const GERMAN_CALCULATION_NOTES: Readonly<
   Partial<Record<AstroTermId, string>>
 > = {
   lagna:
-    "Die App bestimmt für eingegebene Zeit und Koordinaten den Schnittpunkt von östlichem Horizont und Ekliptik, wendet das Lahiri-Ayanamsa an und verwendet dessen Rasi als ersten Ganzzeichen-Bhava.",
+    "Die App bestimmt für eingegebene Zeit und Koordinaten den Schnittpunkt von östlichem Horizont und Ekliptik, wendet den siderischen Lahiri-Versatz an und verwendet dessen Tierkreiszeichen als erstes Ganzzeichenhaus.",
   rasi:
-    "Der normalisierte siderische Längengrad wird von Mesha bis Meena in zwölf aufeinanderfolgende Abschnitte zu je 30° geteilt.",
+    "Der normalisierte siderische Längengrad wird von Widder bis Fische in zwölf aufeinanderfolgende Abschnitte zu je 30° geteilt.",
   "janma-rasi":
-    "Chandras Lahiri-siderischer Längengrad bei der Geburt bestimmt seinen 30° breiten Rasi-Abschnitt.",
+    "Der siderische Lahiri-Längengrad des Mondes bei der Geburt bestimmt seinen 30° breiten Tierkreiszeichen-Abschnitt.",
   bhava:
-    "Diese App verwendet Ganzzeichen-Bhavas: Die Lagna-Rasi ist Bhava 1 und jede folgende Rasi bildet den nächsten Bhava.",
+    "Diese App verwendet Ganzzeichenhäuser: Das Tierkreiszeichen des Aszendenten ist Haus 1 und jedes folgende Tierkreiszeichen bildet das nächste Haus.",
   "whole-sign-house":
-    "Die Bhava-Nummer ergibt sich durch inklusives Zählen der Rasis ab der Lagna-Rasi; nach Meena beginnt die Folge erneut.",
+    "Die Hausnummer ergibt sich durch inklusives Zählen der Tierkreiszeichen ab dem Zeichen des Aszendenten; nach Fische beginnt die Folge erneut.",
   "house-lord":
-    "Die App ermittelt den klassischen Graha-Herrscher der Rasi in jedem Bhava und lokalisiert diesen Graha anschließend in der Geburtskundali.",
+    "Die App ermittelt den klassischen planetaren Herrscher des Tierkreiszeichens in jedem Haus und lokalisiert diesen Himmelskörper anschließend im Geburtshoroskop.",
   nakshatra:
-    "Der siderische Tierkreis von 360° wird in 27 gleich große Abschnitte zu je 13°20′ geteilt, beginnend mit Ashwini bei 0° Mesha.",
+    "Der siderische Tierkreis von 360° wird in 27 gleich große Mondstationsabschnitte zu je 13°20′ geteilt, beginnend mit Ashwini bei 0° Widder.",
   pada:
-    "Der Grad innerhalb eines Nakshatra wird in vier gleich große Viertel zu je 3°20′ geteilt, nummeriert von 1 bis 4.",
+    "Der Grad innerhalb einer Mondstation wird in vier gleich große Viertel zu je 3°20′ geteilt, nummeriert von 1 bis 4.",
   "nakshatra-lord":
-    "Die App wendet die feste Vimshottari-Abfolge der neun Herrscher auf den berechneten Nakshatra-Index an.",
+    "Die App wendet die feste Vimshottari-Abfolge der neun Herrscher auf den berechneten Mondstationsindex an.",
   ayanamsa:
-    "Der gewählte Ayanamsa-Versatz wird vom tropischen ekliptikalen Längengrad abgezogen, um den siderischen Längengrad zu erhalten.",
+    "Der gewählte siderische Versatz wird vom tropischen ekliptikalen Längengrad abgezogen, um den siderischen Längengrad zu erhalten.",
   lahiri:
-    "Die Ephemeride wendet ihr dokumentiertes Lahiri-Präzessionsmodell einheitlich auf Geburts-, Simulations- und Gochara-Positionen an.",
+    "Die Ephemeride wendet ihr dokumentiertes Lahiri-Präzessionsmodell einheitlich auf Geburts-, Simulations- und Transitpositionen an.",
   retrograde:
     "Längengrade werden um den gewählten Zeitpunkt herum abgetastet. Negative geozentrische Längengeschwindigkeit wird als rückläufig, nahezu null als stationär markiert.",
   gochara:
-    "Die App berechnet Graha-Positionen für das gewählte Datum und vergleicht ihre Ganzzeichen-Bhavas sowohl vom Geburts-Lagna als auch von Janma Rasi aus.",
+    "Die App berechnet Positionen der Himmelskörper für das gewählte Datum und vergleicht ihre Ganzzeichenhäuser sowohl vom Geburtsaszendenten als auch vom Geburts-Mondzeichen aus.",
   vimshottari:
-    "Chandras berechneter Fortschritt durch sein Geburts-Nakshatra bestimmt die verbleibende erste Periode; die App verwendet die offengelegte Konvention eines Jahres mit 365,25 Tagen und halb offene Grenzen.",
+    "Der berechnete Fortschritt des Mondes durch seine Geburts-Mondstation bestimmt die verbleibende erste Periode; die App verwendet die offengelegte Konvention eines Jahres mit 365,25 Tagen und halb offene Grenzen.",
   antardasha:
-    "Jede Mahadasha wird in neun Unterperioden geteilt. Die Dauer entspricht den Jahren des großen Herrschers × den Jahren des Unterherrschers ÷ 120.",
+    "Jede Hauptperiode wird in neun Unterperioden geteilt. Die Dauer entspricht den Jahren des Hauptperioden-Herrschers × den Jahren des Unterperioden-Herrschers ÷ 120.",
   "rahu-ketu":
-    "Die App verwendet für Rahu den mittleren aufsteigenden Mondknoten und setzt Ketu exakt 180° gegenüber.",
+    "Die App verwendet für den Nordknoten die mittlere aufsteigende Mondknotenposition und setzt den Südknoten exakt 180° gegenüber.",
 };
 
 function isDistinctTerm(
@@ -432,11 +409,11 @@ export function getLocalizedAstroGlossaryEntry(
   locale: AppLocale,
 ): LocalizedAstroGlossaryEntry {
   const sanskrit =
-    locale === "de"
-      ? GERMAN_SANSKRIT_NAMES[id]
-      : SANSKRIT_NAMES[id]
+    locale === "hi" || locale === "mr"
+      ? SANSKRIT_NAMES[id]
         ? readLocalized(SANSKRIT_NAMES[id], locale)
-        : undefined;
+        : undefined
+      : undefined;
   const calculation =
     locale === "de"
       ? GERMAN_CALCULATION_NOTES[id]

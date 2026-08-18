@@ -69,40 +69,40 @@ export interface HoroscopeTabProps {
 
 const HOROSCOPE_MESSAGES = defineMessages({
   en: {
-    eyebrow: "Gochara · transit observatory",
+    eyebrow: "Transit observatory",
     title: "Daily and monthly transit focus",
     intro:
-      "Current Lahiri-sidereal placements are compared with the natal Lagna and Janma Rasi. The result is a transparent traditional rule summary, not an event forecast.",
+      "Current Lahiri-sidereal placements are compared with the natal Ascendant and birth Moon sign. The result is a transparent traditional rule summary, not an event forecast.",
     dateLabel: "Transit date",
     today: "Today",
     calculatedAt: "Calculated for {date}",
     dailyTitle: "Daily Moon focus",
     monthlyTitle: "Monthly Sun–Mercury focus",
     majorTitle: "Slow-moving transit notices",
-    dailyHeadline: "{nakshatra} Chandra · Bhava {house} from Janma Rasi",
+    dailyHeadline: "{nakshatra} Moon · house {house} from the birth Moon sign",
     dailySummary:
-      "Chandra is in {rasi}, {nakshatra} Pada {pada}, ruled by {lord}. It occupies Bhava {lagnaHouse} from Lagna and Bhava {moonHouse} from Janma Rasi.",
-    monthlyHeadline: "Surya in {sunRasi} · Budha in {mercuryRasi}",
+      "The Moon is in {rasi}, lunar mansion {nakshatra}, quarter {pada}, ruled by {lord}. It occupies house {lagnaHouse} from the Ascendant and house {moonHouse} from the birth Moon sign.",
+    monthlyHeadline: "Sun in {sunRasi} · Mercury in {mercuryRasi}",
     monthlySummary:
-      "Surya activates Bhava {sunHouse} from Lagna. Budha activates Bhava {mercuryHouse} from Janma Rasi and is {motion}.",
-    rasi: "Rasi",
-    nakshatraPada: "Nakshatra and Pada",
-    nakshatraLord: "Nakshatra lord",
-    fromLagna: "From Lagna",
-    fromJanmaRasi: "From Janma Rasi",
-    bhavaValue: "Bhava {house}",
+      "The Sun activates house {sunHouse} from the Ascendant. Mercury activates house {mercuryHouse} from the birth Moon sign and is {motion}.",
+    rasi: "Zodiac sign",
+    nakshatraPada: "Lunar mansion and quarter",
+    nakshatraLord: "Lunar-mansion ruler",
+    fromLagna: "From the Ascendant",
+    fromJanmaRasi: "From the birth Moon sign",
+    bhavaValue: "House {house}",
     direct: "direct",
     retrograde: "retrograde",
     focusTitle: "Practical reflection",
     dailyFocus:
-      "Notice {theme}. Use the {lordQuality} qualities of the Nakshatra lord deliberately.",
+      "Notice {theme}. Use the {lordQuality} qualities of the lunar-mansion ruler deliberately.",
     monthlyFocus:
-      "Surya brings attention to {sunTheme}; Budha asks for thoughtful processing of {mercuryTheme}.",
+      "The Sun brings attention to {sunTheme}; Mercury asks for thoughtful processing of {mercuryTheme}.",
     noticeTitle: "{planet} transit",
     noticeSummary:
-      "{planet} is in {rasi}: Bhava {lagnaHouse} from Lagna and Bhava {moonHouse} from Janma Rasi.",
-    lagnaTheme: "Lagna reference",
-    moonTheme: "Janma Rasi reference",
+      "{planet} is in {rasi}: house {lagnaHouse} from the Ascendant and house {moonHouse} from the birth Moon sign.",
+    lagnaTheme: "Ascendant reference",
+    moonTheme: "Birth Moon-sign reference",
     intensity: "Notice level",
     intensityBackground: "Background",
     intensityNotable: "Notable",
@@ -122,31 +122,31 @@ const HOROSCOPE_MESSAGES = defineMessages({
       "Baseline plus the listed fixed-rule adjustments; the result is rounded and clamped to the 0–100 range.",
     methodologyTitle: "What this score does—and does not—mean",
     methodologyIntro:
-      "A score summarizes this app’s fixed Gochara rules. It is not a probability, scientific measurement, certainty rating, or prediction of a concrete event.",
+      "A score summarizes this app’s fixed transit rules. It is not a probability, scientific measurement, certainty rating, or prediction of a concrete event.",
     methodologyOne:
-      "Astronomical inputs: apparent geocentric positions, Lahiri ayanamsa, and whole-sign counting from natal Lagna and Janma Rasi.",
+      "Astronomical inputs: apparent geocentric positions, Lahiri ayanamsa, and whole-sign counting from the natal Ascendant and birth Moon sign.",
     methodologyTwo:
       "Interpretive inputs: a baseline of 50 plus the calculated rule contributions shown inside each card.",
     methodologyThree:
       "Low scores mean the rules emphasize effort, review, or complexity; high scores mean they emphasize support. Neither guarantees good or bad outcomes.",
     ruleMoonHouse:
-      "Chandra’s Bhava {house} from Janma Rasi applies the published daily house adjustment.",
+      "The Moon’s house {house} from the birth Moon sign applies the published daily house adjustment.",
     ruleNakshatraLord:
-      "The {lord}-ruled Nakshatra applies its fixed lord adjustment.",
+      "The lunar mansion ruled by {lord} applies its fixed ruler adjustment.",
     rulePada:
-      "Pada {pada} applies its published fixed adjustment.",
+      "Quarter {pada} applies its published fixed adjustment.",
     ruleSunHouse:
-      "Surya’s Bhava {house} from Lagna applies the monthly Surya adjustment.",
+      "The Sun’s house {house} from the Ascendant applies the monthly Sun adjustment.",
     ruleMercuryHouse:
-      "Budha’s Bhava {house} from Janma Rasi applies the monthly Budha adjustment.",
+      "Mercury’s house {house} from the birth Moon sign applies the monthly Mercury adjustment.",
     ruleMercuryMotion:
-      "Budha’s {motion} apparent motion applies the published motion adjustment.",
+      "Mercury’s {motion} apparent motion applies the published motion adjustment.",
     ruleMajorMoon:
-      "{planet} in Bhava {house} from Janma Rasi applies the slow-transit Moon-reference adjustment.",
+      "{planet} in house {house} from the birth Moon sign applies the slow-transit Moon-reference adjustment.",
     ruleMajorLagna:
-      "{planet} in Bhava {house} from Lagna is checked against the angular and trinal house rule.",
+      "{planet} in house {house} from the Ascendant is checked against the angular and trinal house rule.",
     ruleSadeSati:
-      "Shani is within the traditional three-Rasi Sade Sati zone around the natal Chandra; this flags sustained responsibility, not guaranteed harm.",
+      "Saturn is within the traditional three-sign Sade Sati zone around the natal Moon; this flags sustained responsibility, not guaranteed harm.",
     ruleFallback: "A fixed rule contributes the displayed adjustment.",
     disclaimer:
       "Use this material for reflection and study. Do not use it alone for medical, legal, financial, safety, relationship, or other consequential decisions.",
@@ -316,41 +316,41 @@ const HOROSCOPE_MESSAGES = defineMessages({
       "ही सामग्री चिंतन आणि अभ्यासासाठी वापरा. वैद्यकीय, कायदेशीर, आर्थिक, सुरक्षितता, नातेसंबंध किंवा इतर महत्त्वाचे निर्णय केवळ यावर आधारित घेऊ नका.",
   },
   de: {
-    eyebrow: "Gochara · Transit-Observatorium",
-    title: "Täglicher und monatlicher Gochara-Fokus",
+    eyebrow: "Transit-Observatorium",
+    title: "Täglicher und monatlicher Transit-Fokus",
     intro:
-      "Aktuelle siderische Lahiri-Positionen werden mit dem Geburts-Lagna und der Janma Rasi verglichen. Das Ergebnis ist eine transparente Zusammenfassung traditioneller Regeln, keine Ereignisprognose.",
-    dateLabel: "Gochara-Datum",
+      "Aktuelle siderische Lahiri-Positionen werden mit dem Aszendenten bei der Geburt und dem Geburts-Mondzeichen verglichen. Das Ergebnis ist eine transparente Zusammenfassung traditioneller Regeln, keine Ereignisprognose.",
+    dateLabel: "Transitdatum",
     today: "Heute",
     calculatedAt: "Berechnet für {date}",
-    dailyTitle: "Täglicher Chandra-Fokus",
-    monthlyTitle: "Monatlicher Surya–Budha-Fokus",
-    majorTitle: "Hinweise zu langsam laufenden Grahas",
+    dailyTitle: "Täglicher Mond-Fokus",
+    monthlyTitle: "Monatlicher Sonne–Merkur-Fokus",
+    majorTitle: "Hinweise zu langsam laufenden Himmelskörpern",
     dailyHeadline:
-      "{nakshatra} Chandra · Bhava {house} von der Janma Rasi",
+      "{nakshatra} Mond · Haus {house} vom Geburts-Mondzeichen",
     dailySummary:
-      "Chandra steht in {rasi}, {nakshatra}, Pada {pada}, regiert von {lord}. Er befindet sich in Bhava {lagnaHouse} vom Lagna und Bhava {moonHouse} von der Janma Rasi.",
-    monthlyHeadline: "Surya in {sunRasi} · Budha in {mercuryRasi}",
+      "Der Mond steht im Tierkreiszeichen {rasi}, in der Mondstation {nakshatra}, Viertel {pada}, regiert von {lord}. Er befindet sich in Haus {lagnaHouse} vom Aszendenten und Haus {moonHouse} vom Geburts-Mondzeichen.",
+    monthlyHeadline: "Sonne in {sunRasi} · Merkur in {mercuryRasi}",
     monthlySummary:
-      "Surya aktiviert Bhava {sunHouse} vom Lagna. Budha aktiviert Bhava {mercuryHouse} von der Janma Rasi und ist {motion}.",
-    rasi: "Rasi",
-    nakshatraPada: "Nakshatra und Pada",
-    nakshatraLord: "Nakshatra-Herrscher",
-    fromLagna: "Vom Lagna",
-    fromJanmaRasi: "Von der Janma Rasi",
-    bhavaValue: "Bhava {house}",
+      "Die Sonne aktiviert Haus {sunHouse} vom Aszendenten. Merkur aktiviert Haus {mercuryHouse} vom Geburts-Mondzeichen und ist {motion}.",
+    rasi: "Tierkreiszeichen",
+    nakshatraPada: "Mondstation und Viertel",
+    nakshatraLord: "Herrscher der Mondstation",
+    fromLagna: "Vom Aszendenten",
+    fromJanmaRasi: "Vom Geburts-Mondzeichen",
+    bhavaValue: "Haus {house}",
     direct: "direktläufig",
-    retrograde: "Vakri",
+    retrograde: "rückläufig",
     focusTitle: "Praktische Reflexion",
     dailyFocus:
-      "Beobachten Sie {theme}. Setzen Sie die Qualitäten des Nakshatra-Herrschers—{lordQuality}—bewusst ein.",
+      "Beobachten Sie {theme}. Setzen Sie die Qualitäten des Herrschers der Mondstation—{lordQuality}—bewusst ein.",
     monthlyFocus:
-      "Surya lenkt Aufmerksamkeit auf {sunTheme}; Budha regt zur durchdachten Verarbeitung von {mercuryTheme} an.",
-    noticeTitle: "{planet}-Gochara",
+      "Die Sonne lenkt Aufmerksamkeit auf {sunTheme}; Merkur regt zur durchdachten Verarbeitung von {mercuryTheme} an.",
+    noticeTitle: "{planet}-Transit",
     noticeSummary:
-      "{planet} steht in {rasi}: Bhava {lagnaHouse} vom Lagna und Bhava {moonHouse} von der Janma Rasi.",
-    lagnaTheme: "Lagna-Bezug",
-    moonTheme: "Janma-Rasi-Bezug",
+      "{planet} steht in {rasi}: Haus {lagnaHouse} vom Aszendenten und Haus {moonHouse} vom Geburts-Mondzeichen.",
+    lagnaTheme: "Aszendenten-Bezug",
+    moonTheme: "Bezug zum Geburts-Mondzeichen",
     intensity: "Hinweisstufe",
     intensityBackground: "Hintergrund",
     intensityNotable: "Beachtenswert",
@@ -370,31 +370,31 @@ const HOROSCOPE_MESSAGES = defineMessages({
       "Zum Ausgangswert werden die aufgeführten Anpassungen fester Regeln addiert; das Ergebnis wird gerundet und auf den Bereich 0–100 begrenzt.",
     methodologyTitle: "Was dieser Wert bedeutet—und was nicht",
     methodologyIntro:
-      "Der Wert fasst die festen Gochara-Regeln dieser App zusammen. Er ist weder Wahrscheinlichkeit noch wissenschaftliche Messung, Sicherheitsgrad oder Prognose eines konkreten Ereignisses.",
+      "Der Wert fasst die festen Transitregeln dieser App zusammen. Er ist weder Wahrscheinlichkeit noch wissenschaftliche Messung, Sicherheitsgrad oder Prognose eines konkreten Ereignisses.",
     methodologyOne:
-      "Astronomische Eingaben: scheinbare geozentrische Positionen, Lahiri-Ayanamsa und Ganzzeichen-Zählung vom Geburts-Lagna und von der Janma Rasi.",
+      "Astronomische Eingaben: scheinbare geozentrische Positionen, Lahiri-Ayanamsa und Ganzzeichen-Zählung vom Aszendenten bei der Geburt und vom Geburts-Mondzeichen.",
     methodologyTwo:
       "Deutungsgrundlage: ein Ausgangswert von 50 plus die in jeder Karte offengelegten, berechneten Regelbeiträge.",
     methodologyThree:
       "Niedrige Werte bedeuten, dass die Regeln Anstrengung, Überprüfung oder Komplexität hervorheben; hohe Werte betonen Unterstützung. Keiner davon garantiert gute oder schlechte Ergebnisse.",
     ruleMoonHouse:
-      "Chandras Bhava {house} von der Janma Rasi wendet die veröffentlichte tägliche Bhava-Anpassung an.",
+      "Haus {house} des Mondes vom Geburts-Mondzeichen wendet die veröffentlichte tägliche Hausanpassung an.",
     ruleNakshatraLord:
-      "Das von {lord} regierte Nakshatra wendet die feste Herrscher-Anpassung an.",
+      "Die von {lord} regierte Mondstation wendet die feste Herrscher-Anpassung an.",
     rulePada:
-      "Pada {pada} wendet seine veröffentlichte feste Anpassung an.",
+      "Viertel {pada} wendet seine veröffentlichte feste Anpassung an.",
     ruleSunHouse:
-      "Suryas Bhava {house} vom Lagna wendet die monatliche Surya-Anpassung an.",
+      "Haus {house} der Sonne vom Aszendenten wendet die monatliche Sonnenanpassung an.",
     ruleMercuryHouse:
-      "Budhas Bhava {house} von der Janma Rasi wendet die monatliche Budha-Anpassung an.",
+      "Haus {house} des Merkur vom Geburts-Mondzeichen wendet die monatliche Merkur-Anpassung an.",
     ruleMercuryMotion:
-      "Budhas scheinbare Bewegung ({motion}) wendet die veröffentlichte Bewegungsanpassung an.",
+      "Die scheinbare Bewegung des Merkur ({motion}) wendet die veröffentlichte Bewegungsanpassung an.",
     ruleMajorMoon:
-      "{planet} in Bhava {house} von der Janma Rasi wendet die Chandra-bezogene Anpassung für langsame Gochara an.",
+      "{planet} in Haus {house} vom Geburts-Mondzeichen wendet die mondbezogene Anpassung für langsame Transite an.",
     ruleMajorLagna:
-      "{planet} in Bhava {house} vom Lagna wird anhand der Regel für Kendra- und Trikona-Bhavas geprüft.",
+      "{planet} in Haus {house} vom Aszendenten wird anhand der Regel für Winkel- und Dreieckshäuser geprüft.",
     ruleSadeSati:
-      "Shani befindet sich in der traditionellen Drei-Rasi-Zone Sade Sati um den Geburts-Chandra; dies markiert anhaltende Verantwortung, nicht garantierten Schaden.",
+      "Saturn befindet sich in der traditionellen Drei-Zeichen-Zone Sade Sati um den Mond bei der Geburt; dies markiert anhaltende Verantwortung, nicht garantierten Schaden.",
     ruleFallback: "Eine feste Regel trägt die angezeigte Anpassung bei.",
     disclaimer:
       "Nutzen Sie dieses Material zur Reflexion und zum Lernen. Treffen Sie medizinische, rechtliche, finanzielle, sicherheitsbezogene, partnerschaftliche oder andere folgenreiche Entscheidungen nicht allein auf dieser Grundlage.",

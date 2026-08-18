@@ -15,7 +15,7 @@ import {
 export const LOCALIZED_RASI_NAMES: Readonly<
   Record<AppLocale, Readonly<Record<RasiName, string>>>
 > = {
-  en: RASI_DISPLAY_NAMES,
+  en: recordFromOrder(RASIS, RASIS),
   hi: {
     Aries: "मेष",
     Taurus: "वृषभ",
@@ -44,22 +44,35 @@ export const LOCALIZED_RASI_NAMES: Readonly<
     Aquarius: "कुंभ",
     Pisces: "मीन",
   },
-  de: RASI_DISPLAY_NAMES,
+  de: {
+    Aries: "Widder",
+    Taurus: "Stier",
+    Gemini: "Zwillinge",
+    Cancer: "Krebs",
+    Leo: "Löwe",
+    Virgo: "Jungfrau",
+    Libra: "Waage",
+    Scorpio: "Skorpion",
+    Sagittarius: "Schütze",
+    Capricorn: "Steinbock",
+    Aquarius: "Wassermann",
+    Pisces: "Fische",
+  },
 };
 
 export const LOCALIZED_GRAHA_NAMES: Readonly<
   Record<AppLocale, Readonly<Record<GrahaId, string>>>
 > = {
   en: {
-    sun: "Surya",
-    moon: "Chandra",
-    mercury: "Budha",
-    venus: "Shukra",
-    mars: "Mangala",
-    jupiter: "Guru",
-    saturn: "Shani",
-    rahu: "Rahu",
-    ketu: "Ketu",
+    sun: "Sun",
+    moon: "Moon",
+    mercury: "Mercury",
+    venus: "Venus",
+    mars: "Mars",
+    jupiter: "Jupiter",
+    saturn: "Saturn",
+    rahu: "North Node",
+    ketu: "South Node",
   },
   hi: {
     sun: "सूर्य",
@@ -84,15 +97,65 @@ export const LOCALIZED_GRAHA_NAMES: Readonly<
     ketu: "केतू",
   },
   de: {
-    sun: "Surya",
-    moon: "Chandra",
-    mercury: "Budha",
-    venus: "Shukra",
-    mars: "Mangala",
-    jupiter: "Guru",
-    saturn: "Shani",
-    rahu: "Rahu",
-    ketu: "Ketu",
+    sun: "Sonne",
+    moon: "Mond",
+    mercury: "Merkur",
+    venus: "Venus",
+    mars: "Mars",
+    jupiter: "Jupiter",
+    saturn: "Saturn",
+    rahu: "Nordknoten",
+    ketu: "Südknoten",
+  },
+};
+
+/** Compact chart labels derived from each locale's displayed planet names. */
+export const LOCALIZED_GRAHA_ABBREVIATIONS: Readonly<
+  Record<AppLocale, Readonly<Record<GrahaId, string>>>
+> = {
+  en: {
+    sun: "Su",
+    moon: "Mo",
+    mercury: "Me",
+    venus: "Ve",
+    mars: "Ma",
+    jupiter: "Ju",
+    saturn: "Sa",
+    rahu: "NN",
+    ketu: "SN",
+  },
+  hi: {
+    sun: "सू",
+    moon: "चं",
+    mercury: "बु",
+    venus: "शु",
+    mars: "मं",
+    jupiter: "गु",
+    saturn: "श",
+    rahu: "रा",
+    ketu: "के",
+  },
+  mr: {
+    sun: "सू",
+    moon: "चं",
+    mercury: "बु",
+    venus: "शु",
+    mars: "मं",
+    jupiter: "गु",
+    saturn: "श",
+    rahu: "रा",
+    ketu: "के",
+  },
+  de: {
+    sun: "So",
+    moon: "Mo",
+    mercury: "Me",
+    venus: "Ve",
+    mars: "Ma",
+    jupiter: "Ju",
+    saturn: "Sa",
+    rahu: "NK",
+    ketu: "SK",
   },
 };
 
@@ -161,6 +224,13 @@ export function getLocalizedGrahaName(
   return LOCALIZED_GRAHA_NAMES[locale][id];
 }
 
+export function getLocalizedGrahaAbbreviation(
+  id: GrahaId,
+  locale: AppLocale,
+): string {
+  return LOCALIZED_GRAHA_ABBREVIATIONS[locale][id];
+}
+
 export function getLocalizedNakshatraName(
   name: NakshatraName,
   locale: AppLocale,
@@ -177,6 +247,7 @@ export function getTransliteratedRasiName(name: RasiName): SanskritRasiName {
 if (
   Object.keys(LOCALIZED_RASI_NAMES.en).length !== RASIS.length ||
   Object.keys(LOCALIZED_GRAHA_NAMES.en).length !== GRAHA_IDS.length ||
+  Object.keys(LOCALIZED_GRAHA_ABBREVIATIONS.en).length !== GRAHA_IDS.length ||
   Object.keys(LOCALIZED_NAKSHATRA_NAMES.en).length !== NAKSHATRAS.length
 ) {
   throw new Error("Localized astronomical name tables are incomplete.");

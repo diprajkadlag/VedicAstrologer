@@ -4,7 +4,7 @@
 
 The AI Astrologer workspace is deliberately implemented as a deterministic
 context-and-prompt preparation system, not as a simulated AI answer. It converts
-an already calculated Vedic chart, Vimshottari periods, and Gochara transits into
+an already calculated Vedic chart, Vimshottari periods, and current transits into
 a versioned JSON payload; combines that payload with a bounded user question;
 and produces separate system-role and user-role messages.
 
@@ -29,7 +29,7 @@ validation, or a model-quality evaluation suite.
 
 An open-ended astrology assistant has two separate failure modes:
 
-1. It can invent chart facts, such as a placement, house, date, Dasha, or
+1. It can invent chart facts, such as a placement, house, date, period, or
    transit that does not match the user's calculated chart.
 2. It can overstate an interpretive tradition as scientific causation or a
    guaranteed prediction.
@@ -47,16 +47,18 @@ flowchart LR
     A[Birth data and selected reference instant] --> B[Deterministic ephemeris]
     B --> C[VedicChart]
     C --> D[Vimshottari analysis]
-    C --> E[Gochara transit analysis]
+    C --> E[Transit analysis]
     D --> F[buildAstrologyContext]
     E --> F
-    F --> G[Versioned JSON-safe context]
+    F --> G[Versioned JSON-safe calculation context]
     H[Preset or custom question] --> I[Question normalization and bounds]
     I --> J[buildAiAstrologerPrompt]
-    G --> J
-    K[Selected app locale] --> J
+    G --> P[projectAstrologyContextForLocale]
+    K[Selected global app locale] --> P
+    P --> J
+    K --> J
     J --> L[Localized system message]
-    J --> M[Stable user-role JSON]
+    J --> M[Stable localized user-role JSON]
     L --> N[Preview and copy UI]
     M --> N
 ```
@@ -65,6 +67,9 @@ The primary implementation is split across:
 
 - [`lib/aiPromptBuilder.ts`](../lib/aiPromptBuilder.ts), which builds and
   validates the context and assembles the role-separated prompt;
+- [`lib/aiContextLocalization.ts`](../lib/aiContextLocalization.ts), which
+  projects astronomical references into the selected locale without exposing
+  parallel internal planet, zodiac-sign, or lunar-mansion name IDs;
 - [`components/dashboard/AiAstrologerTab.tsx`](../components/dashboard/AiAstrologerTab.tsx),
   which provides presets, custom questions, a localized chart snapshot, and a
   transparent prompt preview;
@@ -95,19 +100,20 @@ it checks that:
 - the transit reference instant equals the prompt reference instant;
 - the transits were calculated from the same natal instant and natal anchors;
 - the chart uses the supported sidereal and whole-sign configuration;
-- Chandra and every required graha are present;
-- each Bhava lord can be connected to an actual natal placement.
+- the Moon and every required planetary record are present;
+- each house ruler can be connected to an actual natal placement.
 
 The result is tagged with `vedic-astrologer-context/v1` and contains:
 
 - the reference and birth instants;
 - coordinate system, Ayanamsa metadata, house system, node model, and
   observer location;
-- Lagna, Janma Rasi, and birth Nakshatra/Pada;
-- nine graha placements, motion, speed, house, Rasi, and Nakshatra data;
-- all twelve whole-sign Bhavas, their lords, lord placements, and occupants;
-- the current Vimshottari Mahadasha and Antardasha;
-- current transit positions, daily/monthly rule summaries, and Guru/Shani
+- Ascendant, birth Moon sign, and birth lunar mansion/quarter;
+- nine planetary placements, motion, speed, house, zodiac-sign, and
+  lunar-mansion data;
+- all twelve whole-sign houses, their rulers, ruler placements, and occupants;
+- the current Vimshottari major period and subperiod;
+- current transit positions, daily/monthly rule summaries, and Jupiter/Saturn
   notices;
 - an interpretation boundary stating that Jyotish is symbolic and must not
   replace qualified high-stakes advice.
@@ -153,11 +159,11 @@ prompt-injection defense.
 
 Five presets currently cover:
 
-- daily Gochara reflection;
+- daily transit reflection;
 - monthly focus;
 - career and life-path themes;
-- current Mahadasha/Antardasha;
-- mind and emotional themes through Chandra and Nakshatra.
+- current Vimshottari major period/subperiod;
+- mind and emotional themes through the Moon and lunar mansion.
 
 The presets provide task structure, but they do not contain hidden chart
 claims. The same calculated context is used for preset and custom questions.
@@ -168,11 +174,12 @@ The localized system policy instructs a future model to:
 
 - use only the supplied context;
 - not invent placements, aspects, dates, dignities, Yogas, or events;
-- keep natal indicators, Vimshottari timing, and Gochara distinct;
+- keep natal indicators, Vimshottari timing, and transits distinct;
 - separate calculated data, traditional rules, and model inference;
 - surface conflicting indicators rather than forcing a tidy conclusion;
 - disclose missing methods and boundary-sensitive uncertainty;
-- use Sanskrit Rasi names rather than substituting Western zodiac names;
+- use the selected locale's familiar terminology and astronomical names,
+  without leaking internal IDs or transliterations into user-facing prose;
 - avoid flattery, confirmation-only selection, fatalism, and guaranteed
   outcomes;
 - avoid certainty in medical, legal, financial, mental-health, fertility,
@@ -191,8 +198,8 @@ The application intentionally distinguishes epistemic layers:
 
 | Layer | Examples | Current treatment |
 | --- | --- | --- |
-| Calculated chart data | sidereal longitudes, Lagna, Rasi, Nakshatra, Pada, whole-sign Bhava, motion | Produced by deterministic application code and serialized as structured fields |
-| Deterministic derivation | Bhava lord placement, current Mahadasha/Antardasha, houses counted from Lagna and Janma Rasi | Derived from the calculated chart using explicit code and conventions |
+| Calculated chart data | sidereal longitudes, Ascendant, zodiac sign, lunar mansion, quarter, whole-sign house, motion | Produced by deterministic application code and serialized as structured fields |
+| Deterministic derivation | house-ruler placement, current Vimshottari major/subperiod, houses counted from Ascendant and birth Moon sign | Derived from the calculated chart using explicit code and conventions |
 | App-defined traditional rules | transit focus text and bounded score contributions | Exposed as rules and reflective summaries, not event probabilities |
 | Model inference | synthesis, trade-offs, practical reflection | Not produced today; a future model would be required to label it as inference |
 | User intent | preset or natural-language question | Preserved as untrusted user data |
@@ -206,26 +213,41 @@ Two honesty constraints follow from this separation:
    The payload therefore carries the Ayanamsa model, house system, node model,
    timestamps, and coordinates instead of hiding those choices.
 
-The localized Kundali PDF is a separate deterministic presentation surface. It
-formats the audited chart snapshot and declared rule output; it does not call a
-model or turn symbolic interpretation into AI-generated evidence. Keeping that
-boundary explicit prevents a polished report from being mistaken for an
-independent prediction or scientific validation.
+The localized birth-chart PDF is a separate deterministic presentation surface.
+It formats the audited chart snapshot and declared rule output; it does not call
+a model or turn symbolic interpretation into AI-generated evidence. A
+PDF-specific language selector is independent of the global interface
+selector. Its opening pages summarize all twelve houses with exactly three
+color-coded, personalized sentences per house: traditional significance,
+calculated chart context, and balanced reflection. Keeping that boundary
+explicit prevents a polished report from being mistaken for an independent
+prediction or scientific validation.
 
 ## Multilingual prompting
 
 The AI workspace supports English, Hindi, Marathi, and German. Localization is
 not limited to a one-line request at the bottom of an English system prompt.
 Each locale has a complete system policy in its own language, including safety,
-uncertainty, Sanskrit terminology, injection resistance, and answer-language
-requirements.
+uncertainty, locale-native terminology, injection resistance, and
+answer-language requirements.
 
-The JSON schema deliberately keeps stable English field names and enum
-identifiers for API compatibility. The interface discloses this in all four
-languages, and the system policy tells a future model to treat those identifiers
-as data rather than as an instruction to answer in English. User-facing chart
-summaries localize graha, Rasi, and Nakshatra names independently of the machine
-schema.
+The calculation schema deliberately keeps stable English field names and enum
+identifiers for API compatibility. Before prompt assembly,
+`projectAstrologyContextForLocale` replaces astronomical name references with
+presentation objects containing only the selected locale's name. It does not
+include a parallel internal name ID or transliteration for planets,
+zodiac signs, or lunar mansions. Stable non-name keys, numeric indexes, model
+identifiers, and rule IDs remain machine data and do not instruct a future
+model to answer in English. The readable prompt view does not expose those
+machine keys as interface labels: English uses familiar English labels, German
+uses names such as *Löwe*, *Sonne*, and *Mond*, and Hindi/Marathi use native
+Devanagari. The complete structured handoff is available only through the
+explicit copy action.
+
+The generated-chart header keeps a labeled global language selector available
+after birth-data submission, so the local snapshot and prompt policy can be
+reprojected immediately. This control is separate from the PDF-language
+selector and does not silently alter the report choice.
 
 ## Privacy and current local-only behavior
 
@@ -233,9 +255,10 @@ The AI workspace currently performs no LLM network request. Context construction
 prompt assembly, preview, and copying happen in the browser. The UI explicitly
 states that its local snapshot is not an AI answer.
 
-The preview is also a privacy control: it reveals that the payload contains
-birth coordinates and chart data before the user shares it. Data leaves this
-AI workflow only if the user copies it and provides it to another service.
+The localized summary is also a privacy control: it reveals that the copied
+payload contains birth coordinates and chart data before the user shares it.
+Data leaves this AI workflow only if the user copies it and provides it to
+another service.
 
 This statement is scoped to the AI workspace. Other application features, such
 as place search, may use their own network services. “Local only” must not be
@@ -243,12 +266,13 @@ expanded into a claim that the entire web application is offline.
 
 ## Validation already present
 
-The focused `v0.1.0` prompt-builder test file covered:
+The current prompt-builder and localization suites cover:
 
-- completeness of natal, Dasha, and transit context;
-- classical whole-sign Bhava-lord mapping;
+- completeness of natal, period, and transit context;
+- classical whole-sign house-ruler mapping;
 - absence of `Date` objects from the payload;
-- Sanskrit-only serialized Rasi presentation names;
+- locale-only astronomical presentation references with no parallel internal
+  name IDs, while stable calculation contracts remain unchanged;
 - deterministic output for identical explicit instants;
 - rejection of ambiguous, impossible, and mismatched timestamps;
 - rejection of transit data from a different natal reference;
@@ -257,8 +281,9 @@ The focused `v0.1.0` prompt-builder test file covered:
 - blank and overlength question rejection;
 - deterministic object-key sorting without array reordering;
 - presence of uncertainty, conflict, anti-flattery, and high-stakes rules;
-- fully localized Hindi system policy;
-- fully localized Marathi system policy;
+- fully localized English, Hindi, Marathi, and German system policies;
+- locale-native human-readable previews alongside stable non-name machine
+  fields;
 - separation of adversarial question text from system policy.
 
 Point-in-time `v0.1.0` repository validation on 23 July 2026:
@@ -271,8 +296,9 @@ Point-in-time `v0.1.0` repository validation on 23 July 2026:
 | `npm run lint -- --no-warn-ignored lib/aiPromptBuilder.ts lib/aiPromptBuilder.test.ts components/dashboard/AiAstrologerTab.tsx` | Passed |
 
 The active four-language milestone adds German through the same typed locale
-contract and app-wide localization suites. Exact current totals belong to the
-latest CI run rather than this narrative case study.
+contract, verifies familiar English/German/Devanagari presentation, and keeps
+PDF and prompt-preview terminology aligned with that contract. Exact current
+totals belong to the latest CI run rather than this narrative case study.
 
 These are functional and contract checks. They are not model benchmarks. There
 is currently no measured hallucination rate, faithfulness score, answer-quality
@@ -355,8 +381,8 @@ Create de-identified cases across English, Hindi, Marathi, and German,
 including:
 
 - ordinary preset questions;
-- Rasi and Nakshatra boundary cases;
-- conflicting natal, Dasha, and Gochara indicators;
+- zodiac-sign and lunar-mansion boundary cases;
+- conflicting natal, period, and transit indicators;
 - deliberately missing context;
 - requests for unsupported methods;
 - attempts to inject instructions through the question and chart strings;
@@ -370,7 +396,8 @@ Track metrics that correspond to actual failure modes:
 - placement/date faithfulness;
 - unsupported-claim rate;
 - calculated/traditional/inferred layer-label accuracy;
-- Sanskrit Rasi nomenclature compliance;
+- requested-locale terminology compliance, including familiar English, native
+  German, and Devanagari presentation;
 - requested-locale compliance;
 - high-stakes boundary compliance;
 - prompt-injection resistance;
@@ -389,8 +416,8 @@ locale, task category, and safety category.
 
 - Parse model output against the response schema before displaying it.
 - Verify evidence paths against the exact context sent with the request.
-- Reject Western zodiac substitutions when the selected terminology policy
-  requires Sanskrit Rasi names.
+- Reject terminology that conflicts with the selected locale, including
+  internal transliterations leaked into user-facing output.
 - Detect unsupported dates, placements, or techniques.
 - Render uncertainty and missing-method disclosures as first-class UI, not
   hidden footnotes.
@@ -431,9 +458,11 @@ sensitive birth data into routine logs.
 - **Typed contract versus runtime trust:** TypeScript catches application
   mistakes at development time, but network inputs and model outputs still need
   runtime schemas.
-- **Stable JSON versus localized readability:** stable English identifiers
-  simplify integrations; localized summaries and system policies keep the
-  human experience multilingual.
+- **Stable JSON versus localized readability:** stable English keys and
+  non-name identifiers simplify integrations; a separate projection removes
+  internal astronomical name IDs from presentation references, and the
+  interface shows a locale-native readable summary instead of treating
+  machine keys as labels. PDFs and system policies stay multilingual as well.
 - **Input sanitization versus injection security:** normalization removes noisy
   delimiters and bounds size; role separation, server ownership, evaluations,
   and output checks carry the actual security burden.
@@ -478,8 +507,10 @@ answer.
 
 **What does multilingual support involve?**  
 English, Hindi, Marathi, and German each have a complete system policy, not
-merely a translated button or an appended language sentence. Stable machine
-identifiers remain explicit and are disclosed as such.
+merely a translated button or an appended language sentence. Stable schema
+keys and non-name machine identifiers remain explicit, while astronomical
+presentation references contain only familiar English, native German, or
+Devanagari names as selected—never a parallel internal name ID.
 
 **How is truthfulness handled in a non-scientific domain?**  
 The system distinguishes calculation from traditional interpretation and model

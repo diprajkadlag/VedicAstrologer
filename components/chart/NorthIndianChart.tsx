@@ -19,10 +19,10 @@ const NORTH_CHART_MESSAGES = defineMessages({
   en: {
     ariaLabel: "North Indian Vedic birth chart",
     description:
-      "Twelve fixed Bhavas in the traditional North Indian diamond layout. Select a Bhava or graha for details.",
-    lagnaShort: "LAGNA",
+      "Twelve fixed houses in the traditional North Indian diamond layout. Select a house or planetary body for details.",
+    lagnaShort: "ASC",
     figcaption:
-      "North Indian chart. Bhavas are fixed; Rasis rotate from the Lagna.",
+      "North Indian chart. Houses are fixed; zodiac signs rotate from the Ascendant.",
   },
   hi: {
     ariaLabel: "उत्तर भारतीय वैदिक जन्म कुंडली",
@@ -41,12 +41,12 @@ const NORTH_CHART_MESSAGES = defineMessages({
       "उत्तर भारतीय कुंडली. भाव स्थिर असतात; राशी लग्नापासून फिरतात.",
   },
   de: {
-    ariaLabel: "Nordindische vedische Geburtskundali",
+    ariaLabel: "Nordindisches vedisches Geburtshoroskop",
     description:
-      "Zwölf feste Bhavas in der traditionellen nordindischen Rautenform. Wähle ein Bhava oder Graha aus, um Details anzuzeigen.",
-    lagnaShort: "LAGNA",
+      "Zwölf feste Häuser in der traditionellen nordindischen Rautenform. Wähle ein Haus oder einen Himmelskörper aus, um Details anzuzeigen.",
+    lagnaShort: "ASZ",
     figcaption:
-      "Nordindische Kundali. Die Bhavas sind fest angeordnet; die Rāśis drehen sich ausgehend vom Lagna.",
+      "Nordindisches Geburtshoroskop. Die Häuser sind fest angeordnet; die Tierkreiszeichen drehen sich ausgehend vom Aszendenten.",
   },
 });
 

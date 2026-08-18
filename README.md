@@ -59,105 +59,116 @@ study in:
 
 | Area | Implementation |
 | --- | --- |
-| Domain engine | Apparent geocentric positions from Astronomy Engine, a documented Lahiri-style sidereal conversion, Lagna, whole-sign Bhavas, Nakshatras, Padas, nodes, and Vimshottari periods |
-| Visualization | Responsive React Three Fiber celestial sphere plus North and South Indian SVG Rasi charts |
-| Explainability | Inspectable Gochara score arithmetic, structural chart audits, calculation-status badges, methodology and limitation disclosures |
+| Domain engine | Apparent geocentric positions from Astronomy Engine, a documented Lahiri-style sidereal conversion, Ascendant, whole-sign houses, lunar mansions and quarters, nodes, and Vimshottari periods |
+| Visualization | Responsive React Three Fiber celestial sphere plus North and South Indian SVG birth charts |
+| Explainability | Inspectable transit-score arithmetic, structural chart audits, calculation-status badges, methodology and limitation disclosures |
 | AI engineering | Validated structured context, localized system policies, prompt-injection resistance, anti-fabrication constraints, and a local prompt preview/copy workflow |
-| Product quality | Four languages, light-by-default plus dark theme, guided birth entry, responsive layouts, keyboard-oriented controls, WebGL failure recovery, and civil-time/DST handling |
-| Export | Client-side Kundali summary PDF in the selected app language, built from the calculated natal snapshot |
+| Product quality | Four languages, light-by-default plus dark theme, a single-page birth form, responsive layouts, keyboard-oriented controls, WebGL failure recovery, and civil-time/DST handling |
+| Export | Client-side birth-chart PDF in an independently selected report language, including an audited twelve-house summary with locale-native labels |
 | Verification | Vitest, TypeScript, ESLint, production-build gates, and continuous integration; exact current totals are reported by CI |
 | Privacy | Birth data stays in browser memory; only an explicit place query uses geocoding, through the Node proxy or directly from the static GitHub Pages build |
 
 ## Feature tour
 
 The landing experience includes a keyboard-operable visual showcase with
-purpose-built illustrations for the cosmos, Rasi charts, analysis, time
-navigation, and PDF export. It sits beside the guided entry so visitors can
-understand the workflow before submitting birth data.
+repository-owned promotional artwork for the cosmos, traditional charts,
+analysis, time navigation, and PDF export. The primary cosmos, chart, and
+report images are optimized WebP assets. The showcase sits beside the compact
+birth form so visitors can understand the workflow before submitting data.
 
 <table>
   <tr>
     <td width="50%">
-      <img width="100%" src="public/features/cosmos.svg" alt="Illustrated geocentric cosmos feature card">
+      <img width="100%" src="public/features/cosmos-premium.webp" alt="Promotional preview of the interactive geocentric cosmos">
       <br><strong>Spatial astronomy</strong> — inspect the sidereal sky in an
       orbitable, fullscreen WebGL scene.
     </td>
     <td width="50%">
-      <img width="100%" src="public/features/charts.svg" alt="Illustrated North and South Indian Rasi chart feature card">
+      <img width="100%" src="public/features/charts-premium.webp" alt="Promotional preview of the North and South Indian chart workspace">
       <br><strong>Traditional chart views</strong> — keep one calculated chart
       synchronized across North and South Indian layouts.
     </td>
   </tr>
   <tr>
-    <td width="50%">
-      <img width="100%" src="public/features/analysis.svg" alt="Illustrated explainable Jyotish analysis feature card">
-      <br><strong>Explainable analysis</strong> — move from placements to
-      inspectable Bhava, Nakshatra, Dasha, and Gochara rules.
-    </td>
-    <td width="50%">
-      <img width="100%" src="public/features/timing.svg" alt="Illustrated celestial time navigator feature card">
-      <br><strong>Time navigation</strong> — compare the fixed natal chart with
-      an explicitly selected astronomical instant.
-    </td>
-  </tr>
-  <tr>
     <td colspan="2">
-      <img width="50%" src="public/features/pdf.svg" alt="Illustrated localized Kundali PDF feature card">
-      <br><strong>Portable summary</strong> — download the audited natal
-      snapshot in the chosen interface language without uploading the report.
+      <img width="100%" src="public/features/report-premium.webp" alt="Promotional preview of the color-coded twelve-house report">
+      <br><strong>Readable analysis and export</strong> — inspect the
+      color-coded twelve-house summary, navigate time, and download an audited
+      report in the independently chosen PDF language without uploading it.
     </td>
   </tr>
 </table>
 
-### Guided birth-data entry
+### Single-page birth-data entry
 
-- one focused question at a time across name, optional form of address, date,
-  time, place, and confirmation
-- visible progress, Back/Edit controls, per-step validation, and an optional
-  seconds-level time field
+- name, optional form of address, date, time, place, timezone, and advanced
+  fallbacks remain visible in one efficient form
+- one **Generate horoscope** action validates and submits the complete form;
+  there is no multi-step wizard or intermediate Continue action
+- inline field errors and an optional seconds-level time field keep correction
+  local to the relevant input
 - place search with automatic coordinates and timezone plus a manual fallback
 - clear privacy and civil-time guidance before chart generation
 
 ### 3D geocentric cosmos
 
 - Earth-centered celestial sphere with orbit, pan, and zoom controls
-- 12 Sanskrit Rasis and all 27 Nakshatra sectors
-- Surya, Chandra, Budha, Shukra, Mangala, Guru, Shani, Rahu, and Ketu
-- sampled ephemeris trails, selectable Grahas, responsive camera framing, and
-  native fullscreen
-- preflight WebGL detection and a localized fallback when graphics are disabled
+- 12 zodiac signs and all 27 lunar-mansion sectors, labeled for the selected
+  language
+- Sun, Moon, Mercury, Venus, Mars, Jupiter, Saturn, North Node, and South Node
+  in English; German uses *Nordknoten* and *Südknoten*, while Hindi and Marathi
+  use their native Devanagari names
+- sampled ephemeris trails, selectable planets, responsive camera framing, and
+  native fullscreen with automatic context-preserving enter/exit recovery
+- preflight WebGL detection, bounded automatic context-loss recovery, and a
+  localized fallback when graphics are disabled
 
 ### Jyotish chart and analysis workspace
 
 - North Indian diamond and South Indian fixed-sign chart renderers
-- synchronized Graha and Bhava selection across 3D, SVG, and analysis views
-- core Lagna/Surya/Chandra placements and detailed planetary position table
-- all 12 Bhava readings, all 27 Nakshatras, and Vimshottari
-  Mahadasha/Antardasha timelines
-- interactive 22-term guide, nine Graha profiles, and all 108
-  Graha-in-Bhava educational combinations
-- Sanskrit-first Rasi, Graha, Bhava, Nakshatra, and Pada terminology across all
-  supported languages instead of Western zodiac substitutions
+- synchronized planet and house selection across 3D, SVG, and analysis views
+- core Ascendant/Sun/Moon placements and a detailed planetary position table
+- all 12 house cards begin with exactly three color-coded, personalized
+  sentences—traditional significance, this user's calculated chart context,
+  and a balanced reflection—then expand into the fuller educational reading
+- all 27 lunar mansions and Vimshottari major/subperiod timelines
+- interactive 22-term guide, nine planetary profiles, and all 108
+  planet-in-house educational combinations
+- locale-native presentation: familiar English terms and zodiac names, German
+  terms such as *Löwe*, *Sonne*, and *Mond*, and native Devanagari in Hindi and
+  Marathi
+- stable internal IDs and transliterations remain available to calculation and
+  serialization code, but every visible surface uses only the selected
+  language; AI presentation references expose locale-native astronomical names
+  without parallel internal name IDs or transliterations
 - English as the first-visit interface language; a language explicitly chosen
   by a returning user remains saved on that browser
+- a labeled global language selector remains available beside the generated
+  chart, so switching language after submission immediately updates the 3D
+  viewer, charts, analysis, guide, transit views, and AI workspace
 
-### Localized Kundali summary
+### Localized birth-chart summary
 
 - explicit, on-demand PDF generation after the natal chart passes its
   structural audit
-- selected-language output in English, हिन्दी, मराठी, or Deutsch
-- calculated placements, Bhavas, current Vimshottari periods, methodology, and
-  limitation disclosures in one portable summary
+- an independent PDF-language selector offers English, हिन्दी, मराठी, or
+  Deutsch without changing the application language
+- three readable opening pages cover all 12 houses; every house has exactly
+  three color-coded, personalized sentences: its traditional significance,
+  the user's calculated sign/ruler/resident-planet context, and a balanced
+  reflection rather than a fixed judgment
+- calculated placements, current Vimshottari periods, methodology, and
+  limitation disclosures use the selected language's presentation vocabulary
 - browser-side generation with no PDF upload or report-storage service
 
-### Gochara and AI-ready reasoning
+### Transits and AI-ready reasoning
 
-- daily Chandra and monthly Surya–Budha transit views
-- Guru and Shani notices relative to Lagna and Janma Rasi
+- daily Moon and monthly Sun–Mercury transit views
+- Jupiter and Saturn notices relative to the Ascendant and birth Moon sign
 - bounded scores with visible baseline and every rule contribution
 - AI Astrologer workspace with five presets and natural-language questions
-- deterministic natal/Dasha/Gochara JSON context and separate system/user
-  messages
+- deterministic natal/period/transit JSON context with localized prompt
+  previews and separate system/user messages
 - explicit local-only behavior: no model API is called in this milestone
 
 ## Architecture
@@ -172,11 +183,16 @@ flowchart LR
     C --> W[3D WebGL cosmos]
     C --> R[North/South SVG charts]
     C --> J[Rule-based Jyotish analysis]
-    C --> T[Gochara engine]
+    C --> T[Transit engine]
     C --> D[Vimshottari engine]
     C --> Q[Structural audit]
-    C --> PDF[Localized Kundali PDF]
+    C --> PDF[Localized birth-chart PDF]
+    PL[Independent PDF language] --> PDF
     C --> X[AI context builder]
+    AL[Global app language] --> W
+    AL --> R
+    AL --> J
+    AL --> X
     T --> X
     D --> X
     X --> H[Local prompt preview and copy]
@@ -290,9 +306,11 @@ latest CI run; dated baseline results remain in the changelog.
 Test coverage focuses on the failure-prone boundaries rather than only UI
 snapshots:
 
-- Rasi, Nakshatra, Pada, house, node, and Dasha invariants
+- zodiac-sign, lunar-mansion, quarter, house, node, and period invariants
 - civil-time ambiguity and daylight-saving transitions
 - deterministic transit-score arithmetic
+- locale-native interface, PDF, and prompt-preview naming across all four
+  application languages
 - context and prompt validation across all four application languages
 - chart geometry and responsive camera framing
 - WebGL capability classification and graceful fallback
@@ -330,22 +348,22 @@ an administrator to allow WebGL.
 
 The engine uses:
 
-- apparent geocentric Surya, Chandra, and planetary coordinates from Astronomy
+- apparent geocentric Sun, Moon, and planetary coordinates from Astronomy
   Engine;
 - true ecliptic/equinox-of-date tropical positions;
 - a custom Lahiri-style correction using a documented J2000 anchor,
   IAU-1976 precession, and truncated nutation;
-- mean Rahu and Ketu, whole-sign Bhavas, and a 365.25-day-year Vimshottari
+- mean Rahu and Ketu, whole-sign houses, and a 365.25-day-year Vimshottari
   convention.
 
 The approximately one-arcminute target belongs to the upstream Astronomy
 Engine. This app's custom sidereal conversion has **not** been independently
-certified against Swiss Ephemeris. Placements near a Rasi, Nakshatra, or Pada
-boundary require extra caution.
+certified against Swiss Ephemeris. Placements near a zodiac-sign,
+lunar-mansion, or quarter boundary require extra caution.
 
 The structural audit verifies internal software consistency. It does not
 establish the scientific predictive validity of astrology. Interpretations and
-Gochara scores are traditional symbolic reflection material—not probabilities,
+Transit scores are traditional symbolic reflection material—not probabilities,
 diagnoses, guaranteed events, or a basis for medical, legal, financial, safety,
 or mental-health decisions.
 
@@ -353,18 +371,18 @@ or mental-health decisions.
 
 ```text
 app/                          Next.js routes, layout, and global theme
-components/3d/                WebGL scene, Grahas, Nakshatras, capability guard
+components/3d/                WebGL scene, planets, lunar mansions, capability guard
 components/chart/             North/South Indian SVG renderers
 components/analysis/          Jyotish dashboard, guide, methodology, audit UI
-components/dashboard/         Rasi workspace, Gochara, AI prompt workspace
-components/export/            Client-only localized Kundali PDF generation
+components/dashboard/         Birth-chart, transit, and AI prompt workspaces
+components/export/            Client-only localized birth-chart PDF generation
 components/marketing/         Interactive illustrated feature showcase
 components/providers/         Locale and theme preferences
-components/ui/                Guided birth form, term dialog, time navigator
-lib/astro/                    Ephemeris, civil time, Dashas, education, audits
-lib/transits.ts               Explainable Gochara rules
+components/ui/                Single-page birth form, term dialog, time navigator
+lib/astro/                    Ephemeris, civil time, periods, education, audits
+lib/transits.ts               Explainable transit rules
 lib/aiPromptBuilder.ts        Validated structured context and prompt policies
-public/features/              Lightweight feature-tour illustrations
+public/features/              Promotional WebP and supporting feature-tour art
 public/fonts/                 Bundled Noto fonts and license for PDF output
 docs/                         Architecture and AI-engineering case study
 .github/workflows/ci.yml      Reproducible pull-request and push validation

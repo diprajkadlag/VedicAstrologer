@@ -61,21 +61,21 @@ const messages = defineMessages({
     presetDaily: "Generate my daily horoscope",
     presetMonthly: "Generate my monthly focus overview",
     presetCareer: "Career and life-path analysis",
-    presetDasha: "Current Dasha period deep-dive",
+    presetDasha: "Current planetary period deep-dive",
     presetMind: "Mind and emotional strengths",
     questionDaily:
-      "Using today's Chandra Nakshatra and transits from both my Janma Rasi and Lagna, give a practical daily reflection with the main theme, supportive actions, cautions, and one reflection question.",
+      "Using today's lunar mansion and transits from both my birth Moon sign and Ascendant, give a practical daily reflection with the main theme, supportive actions, cautions, and one reflection question.",
     questionMonthly:
-      "Interpret my monthly focus through current Surya and Budha transits, while noting the longer background influence of Guru and Shani. Give practical priorities, communication themes, and one reflection question.",
+      "Interpret my monthly focus through current Sun and Mercury transits, while noting the longer background influence of Jupiter and Saturn. Give practical priorities, communication themes, and one reflection question.",
     questionCareer:
-      "Explore career and life-path themes through the 10th Bhava, its lord and placement, grahas in the 10th Bhava, the Lagna lord, current Dashas, and relevant transits. Describe potentials and trade-offs without guaranteed outcomes.",
+      "Explore career and life-path themes through the 10th house, its ruler and placement, planets in the 10th house, the Ascendant ruler, current planetary periods, and relevant transits. Describe potentials and trade-offs without guaranteed outcomes.",
     questionDasha:
-      "Explain my current Vimshottari Mahadasha and Antardasha: what each lord represents in my natal chart, how their Bhavas and placements interact, possible areas of emphasis, constructive uses, and balanced cautions.",
+      "Explain my current Vimshottari main period and sub-period: what each ruler represents in my birth chart, how their houses and placements interact, possible areas of emphasis, constructive uses, and balanced cautions.",
     questionMind:
-      "Describe emotional patterns and practical strengths through Chandra's Rasi, Bhava, birth Nakshatra and Pada, its lord, current Dasha, and today's lunar transit. Suggest grounded reflection practices.",
+      "Describe emotional patterns and practical strengths through the Moon sign and house, birth lunar mansion and quarter, its ruler, current planetary period, and today's lunar transit. Suggest grounded reflection practices.",
     customQuestion: "Your question",
     placeholder:
-      "For example: How might I reflect on my current Guru transit in relation to research work?",
+      "For example: How might I reflect on my current Jupiter transit in relation to research work?",
     characterCount: "{count} / {maximum}",
     prepare: "Prepare grounded prompt",
     required: "Enter a question or choose one of the presets.",
@@ -87,32 +87,34 @@ const messages = defineMessages({
     notAiAnswer:
       "This is a calculated chart snapshot, not an AI-generated interpretation.",
     chartAnchors: "Natal anchors",
-    lagnaLine: "Lagna: {rasi}.",
+    lagnaLine: "Ascendant: {rasi}.",
     moonLine:
-      "Chandra: {rasi}, {nakshatra} Pada {pada}, Bhava {house}.",
-    timing: "Current Vimshottari timing",
+      "Moon: {rasi}, lunar mansion {nakshatra}, quarter {pada}, house {house}.",
+    timing: "Current Vimshottari planetary periods",
     timingLine:
-      "{major} Mahadasha ({majorRasi}, Bhava {majorHouse}) · {minor} Antardasha ({minorRasi}, Bhava {minorHouse}).",
-    transits: "Current Gochara positions",
+      "{major} main period ({majorRasi}, house {majorHouse}) · {minor} sub-period ({minorRasi}, house {minorHouse}).",
+    transits: "Current transit positions",
     lunarTransit:
-      "Chandra: {nakshatra} Pada {pada}; Bhava {lagnaHouse} from Lagna and {moonHouse} from Janma Rasi.",
+      "Moon: lunar mansion {nakshatra}, quarter {pada}; house {lagnaHouse} from the Ascendant and {moonHouse} from the birth Moon sign.",
     majorTransits:
-      "Guru: Bhava {jupiterLagna}/{jupiterMoon} from Lagna/Janma Rasi. Shani: Bhava {saturnLagna}/{saturnMoon}.",
+      "Jupiter: houses {jupiterLagna}/{jupiterMoon} from the Ascendant/birth Moon sign. Saturn: houses {saturnLagna}/{saturnMoon}.",
     responseBoundary:
       "These calculated placements are inputs for reflection, not conclusions or event predictions.",
     previewTitle: "Prompt and context preview",
     previewHelp:
-      "Review before sharing. The JSON is a stable machine-readable schema and includes birth coordinates and calculated chart data. Its field names and some internal values remain in English for API compatibility; the requested answer language follows your app language.",
+      "Review the readable context before sharing. The copied prompt also includes birth coordinates and calculated chart data; astronomical names follow your selected app language.",
     systemInstructions: "System instructions",
-    userContext: "Machine-readable context schema",
+    userContext: "Structured chart context",
+    contextReady:
+      "The complete machine-readable context is ready to copy. Its birth time, coordinates, calculated placements, periods, and transits are represented by the localized chart snapshot above; internal schema keys are intentionally not shown as interface labels.",
     copyPrompt: "Copy complete prompt",
     copied: "Prompt copied",
-    copyFailed: "Copy failed. Select the preview text and copy it manually.",
+    copyFailed: "Copy failed. Allow clipboard access and try again.",
     noExternalCall:
       "No external model is configured, so the app will not pretend that this local snapshot is an AI answer.",
     safeUseTitle: "Interpretive boundary",
     safeUse:
-      "Jyotish is presented as a symbolic reflective tradition, not scientifically established causation. Do not use this output as medical, legal, financial, mental-health, fertility, mortality, or safety advice.",
+      "Vedic astrology is presented as a symbolic reflective tradition, not scientifically established causation. Do not use this output as medical, legal, financial, mental-health, fertility, mortality, or safety advice.",
   },
   hi: {
     eyebrow: "AI ज्योतिष कार्यक्षेत्र",
@@ -163,12 +165,14 @@ const messages = defineMessages({
       "गणना की गई ये स्थितियाँ चिन्तन के आधार हैं, निष्कर्ष या घटना की भविष्यवाणी नहीं।",
     previewTitle: "प्रॉम्प्ट और सन्दर्भ पूर्वावलोकन",
     previewHelp:
-      "साझा करने से पहले जाँचें। यह JSON स्थिर मशीन-पठनीय स्कीमा है और इसमें जन्म निर्देशांक व गणना की गई कुण्डली का डेटा है। API संगतता के लिए इसके फ़ील्ड-नाम और कुछ आन्तरिक मान अंग्रेज़ी में रहते हैं; माँगे गए उत्तर की भाषा आपके ऐप की भाषा के अनुसार रहती है।",
+      "साझा करने से पहले पठनीय सन्दर्भ जाँचें। कॉपी किए गए प्रॉम्प्ट में जन्म निर्देशांक और गणना की गई कुण्डली का डेटा भी होता है; खगोलीय नाम ऐप की चुनी हुई भाषा में रहते हैं।",
     systemInstructions: "सिस्टम निर्देश",
-    userContext: "मशीन-पठनीय सन्दर्भ स्कीमा",
+    userContext: "संरचित कुण्डली सन्दर्भ",
+    contextReady:
+      "पूरा मशीन-पठनीय सन्दर्भ कॉपी करने के लिए तैयार है। जन्म समय, निर्देशांक, गणना की गई स्थितियाँ, दशाएँ और गोचर ऊपर दिए गए स्थानीयकृत कुण्डली-सार में पठनीय रूप से दिखते हैं; आन्तरिक स्कीमा कुंजियाँ इंटरफ़ेस लेबल के रूप में नहीं दिखाई जातीं।",
     copyPrompt: "पूरा प्रॉम्प्ट कॉपी करें",
     copied: "प्रॉम्प्ट कॉपी हुआ",
-    copyFailed: "कॉपी नहीं हुआ। पूर्वावलोकन पाठ चुनकर स्वयं कॉपी करें।",
+    copyFailed: "कॉपी नहीं हुआ। क्लिपबोर्ड की अनुमति दें और फिर प्रयास करें।",
     noExternalCall:
       "कोई बाहरी मॉडल जुड़ा नहीं है, इसलिए ऐप इस स्थानीय सार को AI उत्तर बताने का दिखावा नहीं करेगा।",
     safeUseTitle: "व्याख्या की सीमा",
@@ -224,12 +228,14 @@ const messages = defineMessages({
       "गणना केलेली ही स्थाने चिंतनाची माहिती आहेत; निष्कर्ष किंवा घटनांचे भाकीत नाहीत.",
     previewTitle: "प्रॉम्प्ट आणि संदर्भ पूर्वदृश्य",
     previewHelp:
-      "सामायिक करण्याआधी तपासा. हा JSON स्थिर मशीन-वाचनीय स्कीमा असून त्यात जन्म निर्देशांक आणि गणना केलेला कुंडली-डेटा आहे. API सुसंगततेसाठी फील्ड-नावे आणि काही अंतर्गत मूल्ये इंग्रजीत राहतात; मागितलेल्या उत्तराची भाषा तुमच्या ॲपच्या भाषेनुसार राहते.",
+      "सामायिक करण्याआधी वाचनीय संदर्भ तपासा. कॉपी केलेल्या प्रॉम्प्टमध्ये जन्म निर्देशांक आणि गणना केलेला कुंडली-डेटाही असतो; खगोलीय नावे ॲपच्या निवडलेल्या भाषेतच राहतात.",
     systemInstructions: "सिस्टम सूचना",
-    userContext: "मशीन-वाचनीय संदर्भ स्कीमा",
+    userContext: "संरचित कुंडली संदर्भ",
+    contextReady:
+      "संपूर्ण मशीन-वाचनीय संदर्भ कॉपी करण्यासाठी तयार आहे. जन्मवेळ, निर्देशांक, गणिती स्थाने, दशा आणि गोचर याच माहितीचे वाचनीय रूप वरच्या स्थानिकीकरण केलेल्या कुंडली-सारात दिसते; अंतर्गत स्कीमा कळा इंटरफेस लेबल म्हणून दाखवल्या जात नाहीत.",
     copyPrompt: "संपूर्ण प्रॉम्प्ट कॉपी करा",
     copied: "प्रॉम्प्ट कॉपी झाला",
-    copyFailed: "कॉपी झाले नाही. पूर्वदृश्य मजकूर निवडून स्वतः कॉपी करा.",
+    copyFailed: "कॉपी झाले नाही. क्लिपबोर्ड परवानगी द्या आणि पुन्हा प्रयत्न करा.",
     noExternalCall:
       "बाह्य मॉडेल जोडलेले नाही; त्यामुळे ॲप हा स्थानिक सार AI उत्तर असल्याचा आव आणणार नाही.",
     safeUseTitle: "अर्थनिर्णयाची सीमा",
@@ -237,68 +243,70 @@ const messages = defineMessages({
       "ज्योतिष ही प्रतीकात्मक चिंतनपरंपरा म्हणून मांडली आहे; वैज्ञानिकरीत्या सिद्ध कारण म्हणून नाही. हे वैद्यकीय, कायदेशीर, आर्थिक, मानसिक आरोग्य, प्रजनन, मृत्यू किंवा सुरक्षितता सल्ला समजू नका.",
   },
   de: {
-    eyebrow: "AI-Jyotish-Arbeitsbereich",
-    title: "Fragen Sie auf Grundlage Ihrer berechneten Kundali",
+    eyebrow: "KI-Astrologie-Arbeitsbereich",
+    title: "Fragen Sie auf Grundlage Ihres berechneten Geburtshoroskops",
     intro:
-      "Wählen Sie eine gezielte Frage oder formulieren Sie eine eigene. Diese reine Browser-Version erstellt einen fundierten Prompt und einen berechneten Kundali-Datensatz; sie kontaktiert keinen AI-Dienst.",
+      "Wählen Sie eine gezielte Frage oder formulieren Sie eine eigene. Diese reine Browser-Version erstellt einen fundierten Prompt und einen berechneten Datensatz des Geburtshoroskops; sie kontaktiert keinen KI-Dienst.",
     localOnly: "Nur lokal · kein LLM-Aufruf",
     quickQuestions: "Schnellanalysen",
-    presetDaily: "Mein tägliches Gochara erstellen",
+    presetDaily: "Mein Tageshoroskop erstellen",
     presetMonthly: "Meinen monatlichen Fokus zusammenfassen",
     presetCareer: "Karriere- und Lebensweg-Analyse",
-    presetDasha: "Aktuelle Dasha vertieft betrachten",
+    presetDasha: "Aktuelle Planetenperiode vertieft betrachten",
     presetMind: "Geistige und emotionale Stärken",
     questionDaily:
-      "Erstelle anhand des heutigen Chandra-Nakshatra und der Gochara von meiner Janma Rasi und meinem Lagna eine praktische Tagesreflexion mit Hauptthema, unterstützenden Handlungen, Hinweisen zur Vorsicht und einer Reflexionsfrage.",
+      "Erstelle anhand der heutigen Mondstation und der Transite von meinem Mondzeichen bei der Geburt und meinem Aszendenten eine praktische Tagesreflexion mit Hauptthema, unterstützenden Handlungen, Hinweisen zur Vorsicht und einer Reflexionsfrage.",
     questionMonthly:
-      "Deute meinen monatlichen Fokus anhand der aktuellen Gochara von Surya und Budha und benenne den längerfristigen Hintergrund von Guru und Shani. Nenne praktische Prioritäten, Kommunikationsthemen und eine Reflexionsfrage.",
+      "Deute meinen monatlichen Fokus anhand der aktuellen Transite von Sonne und Merkur und benenne den längerfristigen Hintergrund von Jupiter und Saturn. Nenne praktische Prioritäten, Kommunikationsthemen und eine Reflexionsfrage.",
     questionCareer:
-      "Untersuche Karriere- und Lebenswegthemen über den 10. Bhava, seinen Bhavesha und dessen Platzierung, Grahas im 10. Bhava, den Lagnesha, aktuelle Dashas und relevante Gochara. Beschreibe Potenziale und Zielkonflikte, ohne garantierte Ergebnisse zu behaupten.",
+      "Untersuche Karriere- und Lebenswegthemen über das 10. Haus, seinen Hausherrscher und dessen Platzierung, Planeten im 10. Haus, den Aszendentenherrscher, aktuelle Planetenperioden und relevante Transite. Beschreibe Potenziale und Zielkonflikte, ohne garantierte Ergebnisse zu behaupten.",
     questionDasha:
-      "Erkläre meine aktuelle Vimshottari-Mahadasha und -Antardasha: was beide Herrscher in meiner Geburtskundali symbolisieren, wie ihre Bhavas und Platzierungen zusammenspielen, mögliche Schwerpunkte, konstruktive Nutzung und ausgewogene Vorsicht.",
+      "Erkläre meine aktuelle Vimshottari-Haupt- und Unterperiode: was beide Herrscher in meinem Geburtshoroskop symbolisieren, wie ihre Häuser und Platzierungen zusammenspielen, mögliche Schwerpunkte, konstruktive Nutzung und ausgewogene Vorsicht.",
     questionMind:
-      "Beschreibe emotionale Muster und praktische Stärken anhand von Chandras Rasi und Bhava, Geburts-Nakshatra und Pada, dessen Herrscher, aktueller Dasha und heutigem Chandra-Gochara. Schlage bodenständige Reflexionspraktiken vor.",
+      "Beschreibe emotionale Muster und praktische Stärken anhand von Mondzeichen und Haus des Mondes, Mondstation und Viertel bei der Geburt, deren Herrscher, aktueller Planetenperiode und heutigem Mondtransit. Schlage bodenständige Reflexionspraktiken vor.",
     customQuestion: "Ihre Frage",
     placeholder:
-      "Zum Beispiel: Wie kann ich über meinen aktuellen Guru-Gochara in Bezug auf meine Forschungsarbeit nachdenken?",
+      "Zum Beispiel: Wie kann ich über meinen aktuellen Jupitertransit in Bezug auf meine Forschungsarbeit nachdenken?",
     characterCount: "{count} / {maximum}",
     prepare: "Fundierten Prompt vorbereiten",
     required: "Geben Sie eine Frage ein oder wählen Sie eine Schnellfrage.",
     tooLong: "Die Frage darf höchstens {maximum} Zeichen lang sein.",
     contextError:
-      "Der Prompt konnte nicht erstellt werden, weil Kundali, Geburtszeitpunkt, Referenzdatum und Gochara-Kontext nicht übereinstimmen.",
+      "Der Prompt konnte nicht erstellt werden, weil Geburtshoroskop, Geburtszeitpunkt, Referenzdatum und Transitkontext nicht übereinstimmen.",
     preparedFor: "Vorbereitete Frage",
     localSnapshot: "Lokal berechneter Kontext",
     notAiAnswer:
-      "Dies ist ein berechneter Kundali-Datensatz, keine von AI erzeugte Deutung.",
-    chartAnchors: "Geburtskundali-Anker",
-    lagnaLine: "Lagna: {rasi}.",
+      "Dies ist ein berechneter Datensatz des Geburtshoroskops, keine von KI erzeugte Deutung.",
+    chartAnchors: "Anker des Geburtshoroskops",
+    lagnaLine: "Aszendent: {rasi}.",
     moonLine:
-      "Chandra: {rasi}, {nakshatra}, Pada {pada}, Bhava {house}.",
-    timing: "Aktuelle Vimshottari-Phase",
+      "Mond: {rasi}, Mondstation {nakshatra}, Viertel {pada}, Haus {house}.",
+    timing: "Aktuelle Vimshottari-Planetenperioden",
     timingLine:
-      "{major}-Mahadasha ({majorRasi}, Bhava {majorHouse}) · {minor}-Antardasha ({minorRasi}, Bhava {minorHouse}).",
-    transits: "Aktuelle Gochara-Positionen",
+      "{major}-Hauptperiode ({majorRasi}, Haus {majorHouse}) · {minor}-Unterperiode ({minorRasi}, Haus {minorHouse}).",
+    transits: "Aktuelle Transitpositionen",
     lunarTransit:
-      "Chandra: {nakshatra}, Pada {pada}; Bhava {lagnaHouse} vom Lagna und Bhava {moonHouse} von der Janma Rasi.",
+      "Mond: Mondstation {nakshatra}, Viertel {pada}; Haus {lagnaHouse} vom Aszendenten und Haus {moonHouse} vom Mondzeichen bei der Geburt.",
     majorTransits:
-      "Guru: Bhava {jupiterLagna}/{jupiterMoon} vom Lagna/von der Janma Rasi. Shani: Bhava {saturnLagna}/{saturnMoon}.",
+      "Jupiter: Häuser {jupiterLagna}/{jupiterMoon} vom Aszendenten/Mondzeichen bei der Geburt. Saturn: Häuser {saturnLagna}/{saturnMoon}.",
     responseBoundary:
       "Diese berechneten Positionen sind Ausgangspunkte für Reflexion, keine Schlussfolgerungen oder Ereignisprognosen.",
     previewTitle: "Vorschau von Prompt und Kontext",
     previewHelp:
-      "Prüfen Sie die Daten vor dem Teilen. Das JSON ist ein stabiles, maschinenlesbares Schema und enthält Geburtskoordinaten sowie berechnete Kundali-Daten. Feldnamen und einige interne Werte bleiben für API-Kompatibilität auf Englisch; die gewünschte Antwortsprache folgt der App-Sprache.",
+      "Prüfen Sie vor dem Teilen den lesbaren Kontext. Der kopierte Prompt enthält zusätzlich Geburtskoordinaten und berechnete Horoskopdaten; astronomische Namen folgen der gewählten App-Sprache.",
     systemInstructions: "Systemanweisungen",
-    userContext: "Maschinenlesbares Kontextschema",
+    userContext: "Strukturierter Horoskopkontext",
+    contextReady:
+      "Der vollständige maschinenlesbare Kontext ist zum Kopieren bereit. Geburtszeit, Koordinaten, berechnete Positionen, Perioden und Transite werden in der lokalisierten Horoskopübersicht oben lesbar dargestellt; interne Schemaschlüssel erscheinen bewusst nicht als Beschriftungen der Oberfläche.",
     copyPrompt: "Vollständigen Prompt kopieren",
     copied: "Prompt kopiert",
     copyFailed:
-      "Kopieren fehlgeschlagen. Markieren Sie den Vorschautext und kopieren Sie ihn manuell.",
+      "Kopieren fehlgeschlagen. Erlauben Sie den Zugriff auf die Zwischenablage und versuchen Sie es erneut.",
     noExternalCall:
-      "Es ist kein externes Modell eingerichtet. Die App gibt diesen lokalen Datensatz daher nicht als AI-Antwort aus.",
+      "Es ist kein externes Modell eingerichtet. Die App gibt diesen lokalen Datensatz daher nicht als KI-Antwort aus.",
     safeUseTitle: "Grenzen der Deutung",
     safeUse:
-      "Jyotish wird als symbolische Tradition zur Reflexion dargestellt, nicht als wissenschaftlich belegter Kausalzusammenhang. Verwenden Sie die Ausgabe nicht als medizinische, rechtliche, finanzielle, psychologische, Fruchtbarkeits-, Sterblichkeits- oder Sicherheitsberatung.",
+      "Vedische Astrologie wird als symbolische Tradition zur Reflexion dargestellt, nicht als wissenschaftlich belegter Kausalzusammenhang. Verwenden Sie die Ausgabe nicht als medizinische, rechtliche, finanzielle, psychologische, Fruchtbarkeits-, Sterblichkeits- oder Sicherheitsberatung.",
   },
 });
 
@@ -828,9 +836,9 @@ export default function AiAstrologerTab({
                       <h4 className="text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
                         {t("userContext")}
                       </h4>
-                      <pre className="mt-2 max-h-80 overflow-auto whitespace-pre-wrap rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] p-3 text-[11px] leading-5 text-[var(--foreground)]">
-                        {prepared.prompt.user}
-                      </pre>
+                      <p className="mt-2 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.055] p-3 text-xs leading-5 text-[var(--foreground)]">
+                        {t("contextReady")}
+                      </p>
                     </section>
                   </div>
                   <div className="mt-4 flex flex-wrap items-center gap-3">

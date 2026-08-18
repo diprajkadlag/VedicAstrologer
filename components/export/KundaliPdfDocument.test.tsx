@@ -108,10 +108,14 @@ describe("KundaliPdfDocument browser render path", () => {
       ).toBlob();
       const bytes = new Uint8Array(await blob.arrayBuffer());
       const signature = new TextDecoder("ascii").decode(bytes.slice(0, 5));
+      const pdfStructure = new TextDecoder("latin1").decode(bytes);
+      const renderedPages =
+        pdfStructure.match(/\/Type\s*\/Page(?!s)\b/g) ?? [];
 
       expect(blob.type).toBe("application/pdf");
       expect(signature).toBe("%PDF-");
       expect(bytes.byteLength).toBeGreaterThan(15_000);
+      expect(renderedPages).toHaveLength(9);
     },
     30_000,
   );

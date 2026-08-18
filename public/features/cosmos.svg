@@ -37,7 +37,7 @@
     <circle cx="76" cy="116" r="7" fill="#93c5fd"/>
   </g>
   <g fill="#ddd6fe" font-family="Arial,sans-serif" font-size="17" font-weight="700">
-    <text x="378" y="70">Mesha</text><text x="602" y="194">Karka</text>
-    <text x="568" y="388">Tula</text><text x="182" y="415">Makara</text>
+    <text x="394" y="70">♈</text><text x="618" y="194">♋</text>
+    <text x="584" y="388">♎</text><text x="198" y="415">♑</text>
   </g>
 </svg>

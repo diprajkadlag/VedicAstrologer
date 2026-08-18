@@ -86,7 +86,14 @@ describe("Vedic chart layout maps", () => {
         simhaBhava.sign.name,
         "en",
       ),
-    ).toBe("Simha");
+    ).toBe("Leo");
+    expect(
+      getChartRasiAbbreviation(
+        simhaBhava.sign.index,
+        simhaBhava.sign.name,
+        "de",
+      ),
+    ).toBe("Löwe");
     expect(
       getChartRasiAbbreviation(
         simhaBhava.sign.index,
@@ -94,6 +101,12 @@ describe("Vedic chart layout maps", () => {
         "hi",
       ),
     ).toBe("सिंह");
+    expect(describeHouse(simhaBhava, [], "en")).toBe(
+      "House 1, Leo, no planetary bodies",
+    );
+    expect(describeHouse(simhaBhava, [], "de")).toBe(
+      "Haus 1, Löwe, keine Himmelskörper",
+    );
     expect(describeHouse(simhaBhava, [], "hi")).toBe(
       "भाव 1, सिंह, कोई ग्रह नहीं",
     );

@@ -68,8 +68,8 @@ export interface Planets3DProps {
 
 const DEG_TO_RAD = Math.PI / 180;
 const DEFAULT_TEXT = {
-  bhava: "Bhava",
-  pada: "Pada",
+  bhava: "House",
+  pada: "Quarter",
   retrogradeShort: "R",
 } as const;
 

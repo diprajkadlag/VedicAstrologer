@@ -3,7 +3,7 @@
 import type { KeyboardEvent, MouseEvent } from "react";
 
 import type { GrahaPosition } from "@/lib/astro/ephemeris";
-import { getLocalizedGrahaName } from "../../lib/astro/localizedNames";
+import { getLocalizedGrahaAbbreviation } from "../../lib/astro/localizedNames";
 import { defineMessages, type AppLocale } from "../../lib/i18n";
 
 import {
@@ -43,10 +43,7 @@ export function ChartPlanetMark({
 }: ChartPlanetMarkProps) {
   const presentation = PLANET_PRESENTATION[planet.id];
   const label = describePlanet(planet, locale);
-  const shortName =
-    locale === "en"
-      ? presentation.abbreviation
-      : getLocalizedGrahaName(planet.id, locale);
+  const shortName = getLocalizedGrahaAbbreviation(planet.id, locale);
 
   function selectFromMouse(event: MouseEvent<SVGGElement>) {
     event.stopPropagation();
@@ -86,7 +83,11 @@ export function ChartPlanetMark({
         aria-hidden="true"
         dominantBaseline="middle"
         fill={presentation.color}
-        fontSize={locale === "en" ? fontSize : Math.min(fontSize, 7.4)}
+        fontSize={
+          locale === "en" || locale === "de"
+            ? fontSize
+            : Math.min(fontSize, 7.4)
+        }
         fontWeight="650"
         textAnchor="middle"
         x={width / 2}

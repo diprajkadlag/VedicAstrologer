@@ -22,7 +22,7 @@ const messages = defineMessages({
   en: {
     learnAbout: "Learn about {term}",
     close: "Close definition",
-    glossary: "Jyotish glossary",
+    glossary: "Vedic astrology glossary",
     sanskrit: "Sanskrit",
     calculation: "How this app calculates it",
     reading: "How to read it",
@@ -52,7 +52,7 @@ const messages = defineMessages({
   de: {
     learnAbout: "Mehr über {term} erfahren",
     close: "Definition schließen",
-    glossary: "Jyotish-Glossar",
+    glossary: "Glossar der vedischen Astrologie",
     sanskrit: "Sanskrit",
     calculation: "So berechnet die App diesen Wert",
     reading: "So lässt sich der Begriff einordnen",

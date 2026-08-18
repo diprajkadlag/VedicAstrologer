@@ -38,7 +38,7 @@ const COPY: Readonly<
 > = {
   en: {
     selectLabel: "PDF language",
-    download: "Download Kundali PDF",
+    download: "Download birth-chart PDF",
     preparing: "Preparing PDF…",
     error: "The PDF could not be created. Verify the chart and try again.",
   },
@@ -56,10 +56,10 @@ const COPY: Readonly<
   },
   de: {
     selectLabel: "PDF-Sprache",
-    download: "Kundali-PDF herunterladen",
+    download: "Geburtshoroskop als PDF herunterladen",
     preparing: "PDF wird erstellt…",
     error:
-      "Die PDF konnte nicht erstellt werden. Kundali prüfen und erneut versuchen.",
+      "Die PDF konnte nicht erstellt werden. Geburtshoroskop prüfen und erneut versuchen.",
   },
 };
 
@@ -149,14 +149,17 @@ export default function KundaliPdfDownload({
   return (
     <div className={className}>
       <div className="inline-flex max-w-full flex-wrap items-stretch overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)] shadow-sm">
-        <label className="sr-only" htmlFor="kundali-pdf-language">
-          {copy.selectLabel}
-        </label>
-        <div className="flex items-center border-r border-[var(--border)] px-2.5">
+        <label
+          className="flex items-center border-r border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground)]"
+          htmlFor="kundali-pdf-language"
+        >
           <FileText
             aria-hidden="true"
             className="mr-1.5 size-3.5 text-violet-600 dark:text-violet-300"
           />
+          <span className="hidden sm:inline">{copy.selectLabel}</span>
+        </label>
+        <div className="flex items-center border-r border-[var(--border)] px-2.5">
           <select
             id="kundali-pdf-language"
             value={documentLocale}

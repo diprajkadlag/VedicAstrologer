@@ -49,16 +49,16 @@ export interface JyotishGuideTabProps {
 
 const COPY = {
   en: {
-    eyebrow: "INTERACTIVE JYOTISH GUIDE",
+    eyebrow: "INTERACTIVE VEDIC ASTROLOGY GUIDE",
     title: "Learn the language before reading the chart",
     subtitle:
       "Explore the small set of concepts that explains most of this app. Every interpretation is framed as a traditional symbolic lens—not a scientific prediction or fixed verdict.",
     terms: "Key terms",
-    grahas: "Grahas",
-    explorer: "Graha × Bhava",
+    grahas: "Planetary bodies",
+    explorer: "Planetary body × house",
     integrity: "Method & limits",
     search: "Search terms",
-    searchPlaceholder: "Try Lagna, Pada, Dasha…",
+    searchPlaceholder: "Try ascendant, quarter, planetary period…",
     resultCount: "terms",
     noResults: "No matching term. Try a broader word.",
     howToRead: "How to use it",
@@ -69,7 +69,7 @@ const COPY = {
     statusIntro:
       "The badge says whether this app actually calculates the item. Educational text alone is not a chart result.",
     grahaIntro:
-      "Choose a graha to see its traditional scope. A graha is not simply good or bad; expression changes with context and human choices.",
+      "Choose a planetary body to see its traditional scope. A planetary body is not simply good or bad; expression changes with context and human choices.",
     astronomicalIdentity: "Astronomical identity",
     signifies: "Symbolic significations",
     constructive: "Constructive expression",
@@ -77,13 +77,13 @@ const COPY = {
     inquiry: "Reflection question",
     openInChart: "Highlight in chart",
     explorerIntro:
-      "This explorer exposes the rule used for all 108 combinations: graha = function, Bhava = life field. Select both to see how the focus changes.",
-    chooseGraha: "1 · Choose a graha",
-    chooseBhava: "2 · Choose a Bhava",
+      "This explorer exposes the rule used for all 108 combinations: planetary body = function, house = life field. Select both to see how the focus changes.",
+    chooseGraha: "1 · Choose a planetary body",
+    chooseBhava: "2 · Choose a house",
     selectedReading: "3 · Read the synthesis",
-    bhava: "Bhava",
+    bhava: "House",
     methodNote: "What this reading did—and did not—calculate",
-    inspectBhava: "Highlight this Bhava",
+    inspectBhava: "Highlight this house",
     traditionalLabel: "Traditional symbolic interpretation",
     integrityIntro:
       "Accuracy has two different meanings here: internal calculation consistency can be checked; astrology's interpretive claims cannot be promoted as scientifically predictive.",
@@ -97,7 +97,7 @@ const COPY = {
     warnings: "warnings",
     whatWasChecked: "What the audit checks",
     checkedText:
-      "Rasi, Nakshatra and Pada derivation; whole-sign Bhava sequence; graha-to-Bhava membership; motion flags; supported graha set; Rahu–Ketu opposition; coordinate and model declarations.",
+      "Zodiac-sign, lunar-mansion and quarter derivation; whole-sign house sequence; planetary-body-to-house membership; motion flags; supported planetary-body set; North Node–South Node opposition; coordinate and model declarations.",
     whatItCannotProve: "Transparent limitations",
     finding: "Structural inconsistency",
     technicalDiagnostics: "Developer diagnostics",
@@ -220,16 +220,17 @@ const COPY = {
       "संतुलित वाचनाचे मानक: रचनात्मक व कठीण दोन्ही अभिव्यक्ती सांगा, वगळलेले घटक स्पष्ट करा, भीती निर्माण करू नका आणि प्रतीकात्मक मजकुराला वैद्यकीय, कायदेशीर, आर्थिक किंवा मानसशास्त्रीय निदान मानू नका.",
   },
   de: {
-    eyebrow: "INTERAKTIVER JYOTISH-LEITFADEN",
-    title: "Erst die Sprache lernen, dann die Kundali lesen",
+    eyebrow: "INTERAKTIVER LEITFADEN ZUR VEDISCHEN ASTROLOGIE",
+    title: "Erst die Begriffe lernen, dann das Geburtshoroskop lesen",
     subtitle:
       "Erkunde die wenigen Grundbegriffe, die den größten Teil dieser App erklären. Jede Deutung wird als traditionelle symbolische Perspektive formuliert — nicht als wissenschaftliche Vorhersage oder festes Urteil.",
     terms: "Schlüsselbegriffe",
-    grahas: "Grahas",
-    explorer: "Graha × Bhava",
+    grahas: "Himmelskörper",
+    explorer: "Himmelskörper × Haus",
     integrity: "Methode & Grenzen",
     search: "Begriffe suchen",
-    searchPlaceholder: "Zum Beispiel Lagna, Pada, Dasha …",
+    searchPlaceholder:
+      "Zum Beispiel Aszendent, Viertel, Planetenperiode …",
     resultCount: "Begriffe",
     noResults:
       "Kein passender Begriff gefunden. Versuche einen allgemeineren Suchbegriff.",
@@ -239,30 +240,30 @@ const COPY = {
     notCalculated: "Nicht berechnet",
     concept: "Konzept",
     statusIntro:
-      "Das Kennzeichen zeigt, ob die App diesen Faktor tatsächlich berechnet. Ein Lerntext allein ist noch kein Ergebnis der Kundali.",
+      "Das Kennzeichen zeigt, ob die App diesen Faktor tatsächlich berechnet. Ein Lerntext allein ist noch kein Ergebnis des Geburtshoroskops.",
     grahaIntro:
-      "Wähle einen Graha, um seinen traditionellen Bedeutungsrahmen zu erkunden. Ein Graha ist nicht einfach gut oder schlecht; sein Ausdruck verändert sich mit Kontext und menschlichen Entscheidungen.",
+      "Wähle einen Himmelskörper, um seinen traditionellen Bedeutungsrahmen zu erkunden. Ein Himmelskörper ist nicht einfach gut oder schlecht; sein Ausdruck verändert sich mit Kontext und menschlichen Entscheidungen.",
     astronomicalIdentity: "Astronomische Einordnung",
-    signifies: "Symbolische Karakatvas",
+    signifies: "Symbolische Bedeutungen",
     constructive: "Konstruktiver Ausdruck",
     caution: "Mögliches Ungleichgewicht",
     inquiry: "Reflexionsfrage",
-    openInChart: "In der Kundali hervorheben",
+    openInChart: "Im Geburtshoroskop hervorheben",
     explorerIntro:
-      "Dieser Explorer legt die Regel für alle 108 Kombinationen offen: Graha = Funktion, Bhava = Lebensfeld. Wähle beides, um zu sehen, wie sich der Schwerpunkt verändert.",
-    chooseGraha: "1 · Graha wählen",
-    chooseBhava: "2 · Bhava wählen",
+      "Dieser Explorer legt die Regel für alle 108 Kombinationen offen: Himmelskörper = Funktion, Haus = Lebensfeld. Wähle beides, um zu sehen, wie sich der Schwerpunkt verändert.",
+    chooseGraha: "1 · Himmelskörper wählen",
+    chooseBhava: "2 · Haus wählen",
     selectedReading: "3 · Synthese lesen",
-    bhava: "Bhava",
+    bhava: "Haus",
     methodNote:
       "Was diese Deutung berechnet hat — und was nicht",
-    inspectBhava: "Diesen Bhava hervorheben",
+    inspectBhava: "Dieses Haus hervorheben",
     traditionalLabel: "Traditionelle symbolische Deutung",
     integrityIntro:
       "Genauigkeit hat hier zwei verschiedene Bedeutungen: Die interne Konsistenz der Berechnung ist prüfbar; astrologische Deutungsansprüche dürfen nicht als wissenschaftlich vorhersagefähig dargestellt werden.",
-    chartAudit: "Integritätsprüfung der aktuellen Kundali",
+    chartAudit: "Integritätsprüfung des aktuellen Geburtshoroskops",
     noChart:
-      "Erstelle eine Kundali, um strukturelle Prüfungen auszuführen. Die folgenden Grenzen gelten mit und ohne berechnete Kundali.",
+      "Erstelle ein Geburtshoroskop, um strukturelle Prüfungen auszuführen. Die folgenden Grenzen gelten mit und ohne berechnetes Geburtshoroskop.",
     consistent: "Intern konsistent",
     inconsistent: "Überprüfung erforderlich",
     checks: "Strukturprüfungen",
@@ -270,7 +271,7 @@ const COPY = {
     warnings: "Warnungen",
     whatWasChecked: "Was die Prüfung kontrolliert",
     checkedText:
-      "Ableitung von Rasi, Nakshatra und Pada; Ganzzeichen-Abfolge der Bhavas; Zuordnung von Grahas zu Bhavas; Bewegungskennzeichen; unterstützte Grahas; Opposition von Rahu und Ketu; Koordinaten- und Modelldeklarationen.",
+      "Ableitung von Tierkreiszeichen, Mondstation und Viertel; Ganzzeichen-Abfolge der Häuser; Zuordnung von Himmelskörpern zu Häusern; Bewegungskennzeichen; unterstützte Himmelskörper; Opposition von Nord- und Südknoten; Koordinaten- und Modelldeklarationen.",
     whatItCannotProve: "Transparente Grenzen",
     finding: "Strukturelle Inkonsistenz",
     technicalDiagnostics: "Technische Diagnostik",

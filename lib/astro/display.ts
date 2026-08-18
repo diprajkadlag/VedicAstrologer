@@ -1,6 +1,9 @@
 import type { RasiName } from "./ephemeris";
 
-/** Sanskrit Rasi names shown in the interface, in sidereal zodiac order. */
+/**
+ * Stable Sanskrit transliterations used only by internal legacy calculations
+ * and serialization. Locale-aware UI must use localizedNames.ts instead.
+ */
 export const RASI_DISPLAY_NAMES_ORDERED = [
   "Mesha",
   "Vrishabha",
@@ -19,8 +22,8 @@ export const RASI_DISPLAY_NAMES_ORDERED = [
 export type SanskritRasiName = (typeof RASI_DISPLAY_NAMES_ORDERED)[number];
 
 /**
- * Presentation-only mapping. Ephemeris values deliberately retain their
- * stable computational names, while all user-facing text uses Sanskrit.
+ * Internal transliteration mapping. Ephemeris values deliberately retain
+ * stable computational names; this mapping must not drive user-facing copy.
  */
 export const RASI_DISPLAY_NAMES = {
   Aries: "Mesha",
@@ -37,7 +40,7 @@ export const RASI_DISPLAY_NAMES = {
   Pisces: "Meena",
 } as const satisfies Record<RasiName, SanskritRasiName>;
 
-/** Compact Sanskrit labels for dense SVG chart cells. */
+/** Legacy compact transliterations; not for locale-aware UI labels. */
 export const RASI_DISPLAY_ABBREVIATIONS = [
   "Mesha",
   "Vrish",

@@ -58,6 +58,10 @@ import {
   getLocalizedNakshatraName,
   getLocalizedRasiName,
 } from "@/lib/astro/localizedNames";
+import {
+  buildLocalizedBhavaRows,
+  type KundaliBhavaRow,
+} from "@/lib/export/kundaliSummary";
 import { INTL_LOCALES, type AppLocale } from "@/lib/i18n";
 import { calculateTransitAnalysis } from "@/lib/transits";
 
@@ -143,6 +147,9 @@ interface AnalysisCopy {
   boundaryNote: string;
   houseByHouse: string;
   housesIntro: string;
+  houseSignificance: string;
+  yourChart: string;
+  balancedTakeaway: string;
   readingSequence: string;
   houseTopic: string;
   signContext: string;
@@ -199,89 +206,92 @@ interface AnalysisCopy {
 
 const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
   en: {
-    analysis: "Jyotish analysis",
+    analysis: "Vedic astrology analysis",
     sections: "Analysis sections",
-    views: "Jyotish analysis views",
+    views: "Vedic astrology analysis views",
     overview: "Overview",
     positions: "Positions",
-    houses: "Bhavas",
-    nakshatras: "Nakshatras",
-    dashas: "Dashas",
-    horoscope: "Gochara",
+    houses: "Houses",
+    nakshatras: "Lunar mansions",
+    dashas: "Planetary periods",
+    horoscope: "Transits",
     assistant: "AI Astrologer",
-    guide: "Learn Jyotish",
+    guide: "Learn Vedic astrology",
     method: "Method & limits",
     coreSynthesis: "Core synthesis",
     rising: "rising",
-    moon: "Chandra",
-    lagna: "Lagna",
-    padaShort: "P",
-    house: "Bhava",
+    moon: "Moon",
+    lagna: "Ascendant",
+    padaShort: "Q",
+    house: "House",
     symbolicReading: "Traditional symbolic reading",
     computedPlacement: "Calculated placement",
     learnTerms: "Learn the terms",
     balancedSynthesis: "Balanced synthesis",
     synthesisIntro:
-      "Lagna describes the chart's outward orientation, while Chandra and its Nakshatra add a traditional lens on habit and response. Treat agreements and tensions between them as reflection prompts—not measured personality facts.",
+      "The Ascendant describes the chart's outward orientation, while the Moon and its lunar mansion add a traditional lens on habit and response. Treat agreements and tensions between them as reflection prompts—not measured personality facts.",
     constructivePossibilities: "Constructive possibilities",
     cautions: "Counter-patterns to examine",
-    birthNakshatra: "Birth Nakshatra",
+    birthNakshatra: "Birth lunar mansion",
     reflectionNotVerdict:
-      "Nakshatra imagery is a traditional symbolic layer. It is not a psychological measurement or a verdict about character.",
-    planetaryPositions: "Graha positions",
+      "Lunar-mansion imagery is a traditional symbolic layer. It is not a psychological measurement or a verdict about character.",
+    planetaryPositions: "Planetary positions",
     positionsIntro:
-      "Sidereal Lahiri-style longitudes in whole-sign Bhavas. Values are calculations; interpretive meanings are separate.",
-    graha: "Graha",
-    rasi: "Rasi",
+      "Sidereal Lahiri-style longitudes in whole-sign houses. Values are calculations; interpretive meanings are separate.",
+    graha: "Body",
+    rasi: "Zodiac sign",
     degree: "Degree",
-    nakshatra: "Nakshatra",
+    nakshatra: "Lunar mansion",
     lord: "Lord",
     motion: "Motion",
     direct: "Direct",
-    retrograde: "Vakri",
+    retrograde: "Retrograde",
     stationary: "Stationary",
     boundaryNote:
-      "A placement close to a Rasi, Nakshatra or Pada boundary can change under another ayanamsa or a small input/model difference. Near-station motion is also sensitive.",
-    houseByHouse: "Bhava-by-Bhava analysis",
+      "A placement close to a zodiac-sign, lunar-mansion, or quarter boundary can change under another ayanamsa or a small input/model difference. Near-station motion is also sensitive.",
+    houseByHouse: "House-by-house analysis",
     housesIntro:
-      "Open a Bhava to see its topic, Rasi context, Bhavesha pathway and resident grahas. Each layer can qualify another; no isolated placement is a final judgment.",
+      "Each card starts with a three-sentence summary: the house's traditional scope, this chart's calculated placements, and a balanced reflection. Open it for the full educational breakdown; no isolated placement is a final judgment.",
+    houseSignificance: "What this house signifies",
+    yourChart: "Your birth chart",
+    balancedTakeaway: "Balanced takeaway",
     readingSequence: "Reading sequence",
-    houseTopic: "Bhava topic",
-    signContext: "Rasi context",
-    houseLord: "Bhavesha",
-    residentGrahas: "Resident grahas",
-    bhavaFoundation: "Bhava foundation",
+    houseTopic: "House topic",
+    signContext: "Zodiac-sign context",
+    houseLord: "House ruler",
+    residentGrahas: "Resident bodies",
+    bhavaFoundation: "House foundation",
     domain: "Traditional domain",
     constructive: "Constructive expression",
     watchFor: "Watch for",
-    rasiContext: "Rasi context",
+    rasiContext: "Zodiac-sign context",
     rasiContextBody:
-      "This Rasi supplies a traditional style or condition for the Bhava. The app does not reduce the whole Bhava—or the person—to this one label.",
-    lordPathway: "Bhavesha pathway",
+      "This zodiac sign supplies a traditional style or condition for the house. The app does not reduce the whole house—or the person—to this one label.",
+    lordPathway: "House-ruler pathway",
     lordPathwayBody:
-      "Because this Rasi occupies the Bhava, its ruler becomes the Bhavesha. The ruler's natal Bhava links the two topic areas; this is a symbolic relationship, not an event forecast.",
-    noGrahas: "No resident grahas",
-    emptyHouseTitle: "An empty Bhava is not absent",
+      "Because this zodiac sign occupies the house, its planetary ruler becomes the house ruler. That ruler's natal house links the two topic areas; this is a symbolic relationship, not an event forecast.",
+    noGrahas: "No resident body",
+    emptyHouseTitle: "An empty house is not absent",
     emptyHouseBody:
-      "With no resident graha, interpretation relies more on the Rasi, its Bhavesha and timing. Empty does not automatically mean weak or inactive.",
-    residentTitle: "Resident grahas: educational synthesis",
+      "With no resident body, interpretation relies more on the zodiac sign, its ruler, and timing. Empty does not automatically mean weak or inactive.",
+    residentTitle: "Resident bodies: educational synthesis",
     reflection: "Reflection prompt",
-    highlightHouse: "Highlight this Bhava in the chart",
-    mansionsTitle: "The 27 Nakshatras",
+    highlightHouse: "Highlight this house in the chart",
+    mansionsTitle: "The 27 lunar mansions",
     mansionsIntro:
-      "Each is a 13°20′ sidereal segment with four Padas. Occupancy below is calculated; interpretive imagery remains traditional.",
-    birthMoon: "Birth Chandra",
+      "Each is a 13°20′ sidereal segment with four quarters. Occupancy below is calculated; interpretive imagery remains traditional.",
+    birthMoon: "Birth Moon",
     occupiedBy: "Occupied by",
-    notOccupied: "No natal graha in this segment",
-    timelineTitle: "Vimshottari Dasha timeline",
+    notOccupied: "No natal body in this segment",
+    timelineTitle: "Vimshottari period timeline",
     timelineIntro:
-      "Calculated from Chandra's computed progress through its birth Nakshatra. Dates use the disclosed 365.25-day-year convention.",
-    majorMeaningTitle: "Mahadasha · larger chapter",
+      "Calculated from the Moon's computed progress through its birth lunar mansion. Dates use the disclosed 365.25-day-year convention.",
+    majorMeaningTitle: "Major period · larger chapter",
     majorMeaningBody:
-      "The major lord supplies a long symbolic context. Its natal Rasi and Bhava show where its themes are anchored; they do not guarantee an event.",
-    minorMeaningTitle: "Antardasha · active channel",
+      "The major-period ruler supplies a long symbolic context. Its natal zodiac sign and house show where its themes are anchored; they do not guarantee an event.",
+    minorMeaningTitle: "Sub-period · active channel",
     minorMeaningBody:
-      "The minor lord describes a nearer-term symbolic channel inside the major period. Read both grahas together, including constructive and difficult expressions.",
+      "The sub-period ruler describes a nearer-term symbolic channel inside the major period. Read both planetary bodies together, including constructive and difficult expressions.",
     currentPeriod: "Current Vimshottari period",
     asOf: "As of",
     remaining: "remaining",
@@ -291,19 +301,19 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
     largerContext: "Larger-period context",
     activeChannel: "Sub-period focus",
     combinationCaution: "This synthesis does not establish that a specific event will occur.",
-    birthMahadasha: "Mahadasha at birth",
-    moonProgress: "Chandra's Nakshatra progress",
+    birthMahadasha: "Major period at birth",
+    moonProgress: "Moon's lunar-mansion progress",
     birthBalance: "Balance at birth",
     years: "years",
-    cycleTitle: "Mahadasha cycle containing the reference date",
+    cycleTitle: "Major-period cycle containing the reference date",
     starts: "Starts",
     ends: "Ends",
     status: "Status",
     current: "Current",
     atBirth: "At birth",
-    antardashaList: "Antardashas in the current Mahadasha",
+    antardashaList: "Sub-periods in the current major period",
     methodNote:
-      "Dasha is a traditional symbolic timing model, not a probability, diagnosis or promise. Other conventions can shift dates.",
+      "Vimshottari is a traditional symbolic timing model, not a probability, diagnosis or promise. Other conventions can shift dates.",
     tabPanel: "analysis",
   },
   hi: {
@@ -352,7 +362,10 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "राशि, नक्षत्र या पाद की सीमा के पास स्थिति दूसरी अयनांश-पद्धति या छोटे इनपुट/मॉडल अंतर से बदल सकती है। स्थिरता के पास गति भी संवेदनशील है।",
     houseByHouse: "भाव-दर-भाव विश्लेषण",
     housesIntro:
-      "भाव का विषय, राशि-सन्दर्भ, भावेश का मार्ग और निवासी ग्रह देखने के लिए भाव खोलें। प्रत्येक परत दूसरी को बदल सकती है; अकेली स्थिति अंतिम निर्णय नहीं।",
+      "हर कार्ड पहले तीन वाक्यों में भाव का पारंपरिक क्षेत्र, इस कुंडली की गणितीय स्थितियाँ और संतुलित चिंतन दिखाता है। पूरा शैक्षिक विवरण देखने के लिए कार्ड खोलें; अकेली स्थिति अंतिम निर्णय नहीं है।",
+    houseSignificance: "यह भाव क्या दर्शाता है",
+    yourChart: "आपकी जन्म-कुंडली",
+    balancedTakeaway: "संतुलित संकेत",
     readingSequence: "पढ़ने का क्रम",
     houseTopic: "भाव-विषय",
     signContext: "राशि-सन्दर्भ",
@@ -460,7 +473,10 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "राशी, नक्षत्र किंवा पादाच्या सीमेजवळील स्थिती दुसऱ्या अयनांशामुळे किंवा छोट्या इनपुट/मॉडेल फरकामुळे बदलू शकते. स्थिरतेजवळील गतीही संवेदनशील असते.",
     houseByHouse: "भावनिहाय विश्लेषण",
     housesIntro:
-      "भावविषय, राशीसंदर्भ, भावेशाचा मार्ग आणि निवासी ग्रह पाहण्यासाठी भाव उघडा. प्रत्येक स्तर दुसऱ्याला बदलू शकतो; एकच स्थिती अंतिम निर्णय नसते.",
+      "प्रत्येक कार्डमध्ये प्रथम तीन वाक्यांत भावाचे पारंपरिक क्षेत्र, या कुंडलीतील गणिती स्थिती आणि संतुलित चिंतन दिले आहे. संपूर्ण शैक्षणिक तपशीलासाठी कार्ड उघडा; एकच स्थिती अंतिम निर्णय नसते.",
+    houseSignificance: "हा भाव काय दर्शवतो",
+    yourChart: "तुमची जन्मकुंडली",
+    balancedTakeaway: "संतुलित संकेत",
     readingSequence: "वाचनक्रम",
     houseTopic: "भावविषय",
     signContext: "राशीसंदर्भ",
@@ -523,112 +539,115 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
     tabPanel: "विश्लेषण",
   },
   de: {
-    analysis: "Jyotish-Analyse",
+    analysis: "Analyse der vedischen Astrologie",
     sections: "Analysebereiche",
-    views: "Ansichten der Jyotish-Analyse",
+    views: "Analyseansichten der vedischen Astrologie",
     overview: "Überblick",
     positions: "Positionen",
-    houses: "Bhavas",
-    nakshatras: "Nakshatras",
-    dashas: "Dashas",
-    horoscope: "Gochara",
+    houses: "Häuser",
+    nakshatras: "Mondstationen",
+    dashas: "Planetenperioden",
+    horoscope: "Transite",
     assistant: "KI-Astrologe",
-    guide: "Jyotish verstehen",
+    guide: "Vedische Astrologie verstehen",
     method: "Methode & Grenzen",
     coreSynthesis: "Kernsynthese",
     rising: "aufsteigend",
-    moon: "Chandra",
-    lagna: "Lagna",
-    padaShort: "P",
-    house: "Bhava",
+    moon: "Mond",
+    lagna: "Aszendent",
+    padaShort: "V",
+    house: "Haus",
     symbolicReading: "Traditionelle symbolische Deutung",
     computedPlacement: "Berechnete Position",
     learnTerms: "Begriffe kennenlernen",
     balancedSynthesis: "Ausgewogene Synthese",
     synthesisIntro:
-      "Lagna beschreibt die äußere Ausrichtung des Horoskops. Chandra und sein Nakshatra ergänzen eine traditionelle Perspektive auf Gewohnheiten und Reaktionen. Übereinstimmungen und Spannungen sind Anregungen zur Reflexion, keine gemessenen Tatsachen über die Persönlichkeit.",
+      "Der Aszendent beschreibt die äußere Ausrichtung des Horoskops. Der Mond und seine Mondstation ergänzen eine traditionelle Perspektive auf Gewohnheiten und Reaktionen. Übereinstimmungen und Spannungen sind Anregungen zur Reflexion, keine gemessenen Tatsachen über die Persönlichkeit.",
     constructivePossibilities: "Konstruktive Möglichkeiten",
     cautions: "Gegenmuster kritisch prüfen",
-    birthNakshatra: "Geburts-Nakshatra",
+    birthNakshatra: "Mondstation bei der Geburt",
     reflectionNotVerdict:
-      "Die Bildsprache der Nakshatras ist eine traditionelle symbolische Ebene. Sie ist weder eine psychologische Messung noch ein Urteil über den Charakter.",
-    planetaryPositions: "Graha-Positionen",
+      "Die Bildsprache der Mondstationen ist eine traditionelle symbolische Ebene. Sie ist weder eine psychologische Messung noch ein Urteil über den Charakter.",
+    planetaryPositions: "Positionen der Himmelskörper",
     positionsIntro:
-      "Siderische Längen nach Lahiri-Art in Ganzzeichen-Bhavas. Die Werte sind Berechnungen; ihre interpretativen Bedeutungen sind davon zu unterscheiden.",
-    graha: "Graha",
-    rasi: "Rasi",
+      "Siderische Längen nach Lahiri-Art in Ganzzeichenhäusern. Die Werte sind Berechnungen; ihre interpretativen Bedeutungen sind davon zu unterscheiden.",
+    graha: "Himmelskörper",
+    rasi: "Tierkreiszeichen",
     degree: "Grad",
-    nakshatra: "Nakshatra",
+    nakshatra: "Mondstation",
     lord: "Herrscher",
     motion: "Bewegung",
     direct: "Direktläufig",
-    retrograde: "Vakri",
+    retrograde: "Rückläufig",
     stationary: "Stationär",
     boundaryNote:
-      "Eine Position nahe einer Rasi-, Nakshatra- oder Pada-Grenze kann sich bei einem anderen Ayanamsa oder kleinen Unterschieden in Eingabe und Modell ändern. Auch eine nahezu stationäre Bewegung ist empfindlich.",
-    houseByHouse: "Bhava-für-Bhava-Analyse",
+      "Eine Position nahe einer Grenze von Tierkreiszeichen, Mondstation oder Viertel kann sich bei einem anderen Ayanamsa oder kleinen Unterschieden in Eingabe und Modell ändern. Auch eine nahezu stationäre Bewegung ist empfindlich.",
+    houseByHouse: "Haus-für-Haus-Analyse",
     housesIntro:
-      "Öffne einen Bhava, um sein Thema, den Rasi-Kontext, den Weg des Bhavesha und die dort stehenden Grahas zu betrachten. Jede Ebene kann die anderen qualifizieren; keine einzelne Position erlaubt ein abschließendes Urteil.",
+      "Jede Karte beginnt mit drei Sätzen: dem traditionellen Bereich des Hauses, den berechneten Stellungen dieses Geburtshoroskops und einer ausgewogenen Reflexion. Öffne sie für die ausführliche Einordnung; keine einzelne Stellung erlaubt ein abschließendes Urteil.",
+    houseSignificance: "Wofür dieses Haus steht",
+    yourChart: "Dein Geburtshoroskop",
+    balancedTakeaway: "Ausgewogene Einordnung",
     readingSequence: "Lesereihenfolge",
-    houseTopic: "Thema des Bhava",
-    signContext: "Rasi-Kontext",
-    houseLord: "Bhavesha",
-    residentGrahas: "Grahas im Bhava",
-    bhavaFoundation: "Grundlage des Bhava",
+    houseTopic: "Thema des Hauses",
+    signContext: "Tierkreiszeichen-Kontext",
+    houseLord: "Hausherrscher",
+    residentGrahas: "Himmelskörper im Haus",
+    bhavaFoundation: "Grundlage des Hauses",
     domain: "Traditioneller Lebensbereich",
     constructive: "Konstruktiver Ausdruck",
     watchFor: "Kritisch beachten",
-    rasiContext: "Rasi-Kontext",
+    rasiContext: "Tierkreiszeichen-Kontext",
     rasiContextBody:
-      "Dieser Rasi gibt dem Bhava eine traditionelle Stil- oder Bedingungsebene. Die App reduziert weder den gesamten Bhava noch die Person auf dieses einzelne Merkmal.",
-    lordPathway: "Weg des Bhavesha",
+      "Dieses Tierkreiszeichen gibt dem Haus eine traditionelle Stil- oder Bedingungsebene. Die App reduziert weder das gesamte Haus noch die Person auf dieses einzelne Merkmal.",
+    lordPathway: "Weg des Hausherrschers",
     lordPathwayBody:
-      "Da dieser Rasi den Bhava einnimmt, wird sein Herrscher zum Bhavesha. Der natale Bhava dieses Herrschers verbindet die beiden Themenbereiche symbolisch; daraus folgt keine Ereignisprognose.",
-    noGrahas: "Keine Grahas im Bhava",
-    emptyHouseTitle: "Ein unbesetzter Bhava fehlt nicht",
+      "Da dieses Tierkreiszeichen das Haus einnimmt, wird sein planetarer Herrscher zum Hausherrscher. Das Geburtshaus dieses Herrschers verbindet die beiden Themenbereiche symbolisch; daraus folgt keine Ereignisprognose.",
+    noGrahas: "Kein Himmelskörper im Haus",
+    emptyHouseTitle: "Ein unbesetztes Haus fehlt nicht",
     emptyHouseBody:
-      "Ohne einen Graha im Bhava stützt sich die Deutung stärker auf Rasi, Bhavesha und zeitliche Modelle. Unbesetzt bedeutet nicht automatisch schwach oder inaktiv.",
-    residentTitle: "Grahas im Bhava: didaktische Synthese",
+      "Ohne einen Himmelskörper im Haus stützt sich die Deutung stärker auf Tierkreiszeichen, Hausherrscher und zeitliche Modelle. Unbesetzt bedeutet nicht automatisch schwach oder inaktiv.",
+    residentTitle: "Himmelskörper im Haus: didaktische Synthese",
     reflection: "Reflexionsfrage",
-    highlightHouse: "Diesen Bhava im Horoskop hervorheben",
-    mansionsTitle: "Die 27 Nakshatras",
+    highlightHouse: "Dieses Haus im Horoskop hervorheben",
+    mansionsTitle: "Die 27 Mondstationen",
     mansionsIntro:
-      "Jedes Nakshatra ist ein siderischer Abschnitt von 13°20′ mit vier Padas. Die Belegung unten ist berechnet; die zugehörige Bildsprache bleibt traditionell.",
-    birthMoon: "Geburts-Chandra",
+      "Jede Mondstation ist ein siderischer Abschnitt von 13°20′ mit vier Vierteln. Die Belegung unten ist berechnet; die zugehörige Bildsprache bleibt traditionell.",
+    birthMoon: "Mond bei der Geburt",
     occupiedBy: "Besetzt durch",
-    notOccupied: "Kein nataler Graha in diesem Abschnitt",
-    timelineTitle: "Zeitachse der Vimshottari-Dasha",
+    notOccupied: "Kein Himmelskörper der Geburtskarte in diesem Abschnitt",
+    timelineTitle: "Zeitachse der Vimshottari-Perioden",
     timelineIntro:
-      "Berechnet aus Chandras Fortschritt durch das Geburts-Nakshatra. Die Datumswerte verwenden die offengelegte Konvention eines Jahres mit 365,25 Tagen.",
-    majorMeaningTitle: "Mahadasha · übergeordneter Abschnitt",
+      "Berechnet aus dem Fortschritt des Mondes durch seine Mondstation bei der Geburt. Die Datumswerte verwenden die offengelegte Konvention eines Jahres mit 365,25 Tagen.",
+    majorMeaningTitle: "Hauptperiode · übergeordneter Abschnitt",
     majorMeaningBody:
-      "Der Herrscher der Mahadasha liefert einen langfristigen symbolischen Kontext. Sein nataler Rasi und Bhava zeigen, wo die Themen verankert werden; sie garantieren kein Ereignis.",
-    minorMeaningTitle: "Antardasha · aktiver Kanal",
+      "Der Herrscher der Hauptperiode liefert einen langfristigen symbolischen Kontext. Sein Tierkreiszeichen und Haus bei der Geburt zeigen, wo die Themen verankert werden; sie garantieren kein Ereignis.",
+    minorMeaningTitle: "Unterperiode · aktiver Kanal",
     minorMeaningBody:
-      "Der Herrscher der Antardasha beschreibt innerhalb der Mahadasha einen zeitlich näheren symbolischen Kanal. Beide Grahas sollten gemeinsam und mit konstruktiven wie schwierigen Ausdrucksformen gelesen werden.",
+      "Der Herrscher der Unterperiode beschreibt innerhalb der Hauptperiode einen zeitlich näheren symbolischen Kanal. Beide Himmelskörper sollten gemeinsam und mit konstruktiven wie schwierigen Ausdrucksformen gelesen werden.",
     currentPeriod: "Aktueller Vimshottari-Zeitraum",
     asOf: "Stand",
     remaining: "verbleibend",
-    major: "Mahadasha",
-    minor: "Antardasha",
+    major: "Hauptperiode",
+    minor: "Unterperiode",
     natalAnchors: "Natale Bezugspunkte",
-    largerContext: "Kontext der Mahadasha",
-    activeChannel: "Fokus der Antardasha",
+    largerContext: "Kontext der Hauptperiode",
+    activeChannel: "Fokus der Unterperiode",
     combinationCaution:
       "Diese Synthese belegt nicht, dass ein bestimmtes Ereignis eintreten wird.",
-    birthMahadasha: "Mahadasha bei der Geburt",
-    moonProgress: "Chandras Fortschritt im Nakshatra",
+    birthMahadasha: "Hauptperiode bei der Geburt",
+    moonProgress: "Fortschritt des Mondes in der Mondstation",
     birthBalance: "Verbleibende Zeit bei der Geburt",
     years: "Jahre",
-    cycleTitle: "Mahadasha-Zyklus mit dem Referenzdatum",
+    cycleTitle: "Hauptperioden-Zyklus mit dem Referenzdatum",
     starts: "Beginn",
     ends: "Ende",
     status: "Status",
     current: "Aktuell",
     atBirth: "Bei der Geburt",
-    antardashaList: "Antardashas der aktuellen Mahadasha",
+    antardashaList: "Unterperioden der aktuellen Hauptperiode",
     methodNote:
-      "Dasha ist ein traditionelles symbolisches Zeitmodell, keine Wahrscheinlichkeit, Diagnose oder Zusage. Andere Konventionen können die Datumswerte verschieben.",
+      "Vimshottari ist ein traditionelles symbolisches Zeitmodell, keine Wahrscheinlichkeit, Diagnose oder Zusage. Andere Konventionen können die Datumswerte verschieben.",
     tabPanel: "Analyse",
   },
 };
@@ -1008,12 +1027,14 @@ function HouseCard({
   chart,
   locale,
   copy,
+  bhavaSummary,
   onSelect,
 }: {
   houseNumber: HouseNumber;
   chart: VedicChart;
   locale: AppLocale;
   copy: AnalysisCopy;
+  bhavaSummary: KundaliBhavaRow;
   onSelect?: (house: HouseNumber) => void;
 }) {
   const house = chart.houses.find((item) => item.number === houseNumber)!;
@@ -1024,27 +1045,50 @@ function HouseCard({
 
   return (
     <details className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] open:bg-[var(--surface-soft)]">
-      <summary className="flex cursor-pointer list-none items-start justify-between gap-4 p-4 focus-visible:outline-2 focus-visible:outline-[var(--focus)]">
-        <div className="flex min-w-0 gap-3">
-          <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-violet-400/20 bg-violet-400/[0.08] text-sm font-semibold text-[var(--accent)]">
-            {house.number}
-          </span>
-          <div>
-            <h3 className="font-medium text-[var(--foreground)]">
-              {readLocalized(education.name, locale)}
-            </h3>
-            <p className="mt-1 text-xs text-[var(--muted)]">
-              {getLocalizedRasiName(house.sign.name, locale)} · {copy.lord}:{" "}
-              {getLocalizedGrahaName(lordId, locale)}
-            </p>
+      <summary className="cursor-pointer list-none p-4 focus-visible:outline-2 focus-visible:outline-[var(--focus)]">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex min-w-0 gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-violet-400/20 bg-violet-400/[0.08] text-sm font-semibold text-[var(--accent)]">
+              {house.number}
+            </span>
+            <div>
+              <h3 className="font-medium text-[var(--foreground)]">
+                {readLocalized(education.name, locale)}
+              </h3>
+              <p className="mt-1 text-xs text-[var(--muted)]">
+                {getLocalizedRasiName(house.sign.name, locale)} · {copy.lord}:{" "}
+                {getLocalizedGrahaName(lordId, locale)}
+              </p>
+            </div>
+          </div>
+          <div className="max-w-[42%] text-right text-xs text-[var(--muted)]">
+            {residents.length
+              ? residents
+                  .map((planet) => getLocalizedGrahaName(planet, locale))
+                  .join(" · ")
+              : copy.noGrahas}
           </div>
         </div>
-        <div className="max-w-[42%] text-right text-xs text-[var(--muted)]">
-          {residents.length
-            ? residents
-                .map((planet) => getLocalizedGrahaName(planet, locale))
-                .join(" · ")
-            : copy.noGrahas}
+
+        <div className="mt-4 grid gap-2.5 text-xs leading-5">
+          <p className="rounded-xl border border-violet-500/20 bg-violet-500/[0.055] px-3 py-2.5 text-[var(--muted)]">
+            <strong className="text-violet-700 dark:text-violet-300">
+              {copy.houseSignificance}:
+            </strong>{" "}
+            {bhavaSummary.significance}
+          </p>
+          <p className="rounded-xl border border-sky-500/20 bg-sky-500/[0.055] px-3 py-2.5 text-[var(--muted)]">
+            <strong className="text-sky-700 dark:text-sky-300">
+              {copy.yourChart}:
+            </strong>{" "}
+            {bhavaSummary.chartReading}
+          </p>
+          <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] px-3 py-2.5 text-[var(--muted)]">
+            <strong className="text-emerald-700 dark:text-emerald-300">
+              {copy.balancedTakeaway}:
+            </strong>{" "}
+            {bhavaSummary.reflection}
+          </p>
         </div>
       </summary>
 
@@ -1199,6 +1243,11 @@ function HousesTab({
   copy: AnalysisCopy;
   onSelectHouse?: (house: HouseNumber) => void;
 }) {
+  const bhavaSummaries = useMemo(
+    () => buildLocalizedBhavaRows(chart, locale),
+    [chart, locale],
+  );
+
   return (
     <section aria-labelledby="houses-title" className="space-y-4">
       <div>
@@ -1220,6 +1269,7 @@ function HousesTab({
             chart={chart}
             locale={locale}
             copy={copy}
+            bhavaSummary={bhavaSummaries[house.number - 1]}
             onSelect={onSelectHouse}
           />
         ))}

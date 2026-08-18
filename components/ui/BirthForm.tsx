@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import {
-  ArrowLeft,
   CalendarDays,
   Check,
   ChevronRight,
@@ -61,7 +60,7 @@ const messages = defineMessages({
     invalidName: "Enter a name between 1 and 100 characters.",
     missingGender: "Select a gender option.",
     invalidBirthDate: "Enter a valid birth date that is not in the future.",
-    birthTimeSeconds: "Enter the birth time including seconds.",
+    birthTimeSeconds: "Enter a valid birth time.",
     missingPlace:
       "Search for and select a birthplace, or use manual coordinates.",
     missingTimezone: "Confirm an IANA timezone for this birthplace.",
@@ -74,7 +73,7 @@ const messages = defineMessages({
     birthCoordinates: "Birth coordinates",
     title: "Generate your horoscope",
     intro:
-      "Seconds and the historical timezone can change the Lagna, so confirm them carefully.",
+      "Seconds and the historical timezone can change the Ascendant, so confirm them carefully.",
     fullName: "Full name",
     namePlaceholder: "Name for this chart",
     gender: "Gender",
@@ -128,7 +127,7 @@ const messages = defineMessages({
     invalidName: "1 से 100 अक्षरों के बीच नाम लिखें।",
     missingGender: "लिंग विकल्प चुनें।",
     invalidBirthDate: "मान्य जन्मतिथि लिखें जो भविष्य की न हो।",
-    birthTimeSeconds: "जन्म समय सेकंड सहित लिखें।",
+    birthTimeSeconds: "मान्य जन्म समय दर्ज करें।",
     missingPlace: "जन्मस्थान खोजकर चुनें या निर्देशांक स्वयं लिखें।",
     missingTimezone: "इस जन्मस्थान का IANA समय-क्षेत्र पक्का करें।",
     nonexistentTime:
@@ -194,7 +193,7 @@ const messages = defineMessages({
     invalidName: "1 ते 100 अक्षरांमधील नाव लिहा.",
     missingGender: "लिंग पर्याय निवडा.",
     invalidBirthDate: "भविष्यातील नसलेली वैध जन्मतारीख लिहा.",
-    birthTimeSeconds: "सेकंदांसह जन्मवेळ लिहा.",
+    birthTimeSeconds: "वैध जन्मवेळ लिहा.",
     missingPlace: "जन्मस्थळ शोधून निवडा किंवा निर्देशांक स्वतः लिहा.",
     missingTimezone: "या जन्मस्थळाचा IANA कालविभाग निश्चित करा.",
     nonexistentTime:
@@ -260,7 +259,7 @@ const messages = defineMessages({
     invalidName: "Gib einen Namen mit 1 bis 100 Zeichen ein.",
     missingGender: "Wähle eine Geschlechtsoption.",
     invalidBirthDate: "Gib ein gültiges Geburtsdatum ein, das nicht in der Zukunft liegt.",
-    birthTimeSeconds: "Gib eine vollständige Geburtszeit ein.",
+    birthTimeSeconds: "Gib eine gültige Geburtszeit ein.",
     missingPlace: "Suche und wähle einen Geburtsort oder verwende manuelle Koordinaten.",
     missingTimezone: "Bestätige die IANA-Zeitzone für diesen Geburtsort.",
     nonexistentTime: "Diese lokale Uhrzeit existierte wegen einer Zeitumstellung nicht. Gib eine andere dokumentierte Zeit ein.",
@@ -268,10 +267,10 @@ const messages = defineMessages({
     incompleteTime: "Gib ein vollständiges Datum, eine Uhrzeit und eine gültige Zeitzone ein.",
     resolvedFuture: "Der aufgelöste Geburtszeitpunkt darf nicht in der Zukunft liegen.",
     birthCoordinates: "Geburtsdaten",
-    title: "Erstelle deine Kundali",
-    intro: "Geburtszeit und historische Zeitzone können Lagna und Bhavas verändern. Prüfe die Angaben sorgfältig.",
+    title: "Erstelle dein Geburtshoroskop",
+    intro: "Geburtszeit und historische Zeitzone können Aszendent und Häuser verändern. Prüfe die Angaben sorgfältig.",
     fullName: "Vollständiger Name",
-    namePlaceholder: "Name für diese Kundali",
+    namePlaceholder: "Name für dieses Geburtshoroskop",
     gender: "Geschlecht",
     male: "Männlich",
     female: "Weiblich",
@@ -302,133 +301,61 @@ const messages = defineMessages({
     occurrenceHelp: "Wähle das im Geburtsnachweis dokumentierte Vorkommen.",
     earlier: "Früher",
     later: "Später",
-    generate: "Kundali erstellen",
+    generate: "Geburtshoroskop erstellen",
   },
 });
 
-const wizardMessages = defineMessages({
+const formMessages = defineMessages({
   en: {
-    step: "Step {current} of {total}",
-    progress: "Birth-data progress",
-    nameQuestion: "What should we call this Kundali?",
     nameHelp: "This name appears only in your chart and downloaded PDF.",
-    genderQuestion: "How would you like to be addressed?",
     genderHelp: "Optional. Gender does not change the astronomical calculation.",
-    choiceAdvances: "Choose an option to continue automatically.",
     preferNot: "Prefer not to say",
-    dateQuestion: "When were you born?",
     dateHelp: "Use the date recorded on the birth certificate when available.",
-    timeQuestion: "What time were you born?",
-    timeHelp: "Do not guess. Lagna and Bhavas can change quickly; an uncertain time should be checked before relying on them.",
+    timeHelp: "Do not guess. The Ascendant and houses can change quickly; an uncertain time should be checked before relying on them.",
     knowSeconds: "I know the exact seconds",
     minutePrecision: "Minute precision",
     secondPrecision: "Second precision",
-    placeQuestion: "Where were you born?",
     placeHelp: "Choose the matching place so latitude, longitude, and historical timezone can be resolved.",
-    reviewQuestion: "Please confirm your birth details",
-    reviewHelp: "The calculation starts only after you confirm. You can go back and correct any item.",
-    back: "Back",
-    continue: "Continue",
-    change: "Change",
     optional: "Optional",
-    nameSummary: "Name",
-    genderSummary: "Addressing",
-    dateSummary: "Date",
-    timeSummary: "Time",
-    placeSummary: "Place",
     privacy: "Calculation happens in your browser. Only the city search is sent to OpenStreetMap.",
   },
   hi: {
-    step: "चरण {current} / {total}",
-    progress: "जन्म-विवरण प्रगति",
-    nameQuestion: "इस कुंडली को किस नाम से रखें?",
     nameHelp: "यह नाम केवल आपकी कुंडली और डाउनलोड की गई PDF में दिखेगा।",
-    genderQuestion: "आपको किस प्रकार संबोधित किया जाए?",
     genderHelp: "वैकल्पिक। इससे खगोलीय गणना नहीं बदलती।",
-    choiceAdvances: "विकल्प चुनते ही अगला चरण खुल जाएगा।",
     preferNot: "नहीं बताना चाहते",
-    dateQuestion: "आपका जन्म कब हुआ?",
     dateHelp: "जहाँ संभव हो, जन्म प्रमाणपत्र में दर्ज तारीख उपयोग करें।",
-    timeQuestion: "आपका जन्म किस समय हुआ?",
     timeHelp: "अनुमान न लगाएँ। लग्न और भाव जल्दी बदल सकते हैं; अनिश्चित समय पर निर्भर होने से पहले उसे जाँचें।",
     knowSeconds: "मुझे सटीक सेकंड पता हैं",
     minutePrecision: "मिनट तक सटीक",
     secondPrecision: "सेकंड तक सटीक",
-    placeQuestion: "आपका जन्म कहाँ हुआ?",
     placeHelp: "सही स्थान चुनें ताकि अक्षांश, देशांतर और ऐतिहासिक समय-क्षेत्र मिल सके।",
-    reviewQuestion: "कृपया जन्म-विवरण की पुष्टि करें",
-    reviewHelp: "पुष्टि के बाद ही गणना शुरू होगी। किसी भी जानकारी को वापस जाकर बदल सकते हैं।",
-    back: "पीछे",
-    continue: "आगे",
-    change: "बदलें",
     optional: "वैकल्पिक",
-    nameSummary: "नाम",
-    genderSummary: "संबोधन",
-    dateSummary: "तारीख",
-    timeSummary: "समय",
-    placeSummary: "स्थान",
     privacy: "गणना आपके ब्राउज़र में होती है। केवल शहर की खोज OpenStreetMap को भेजी जाती है।",
   },
   mr: {
-    step: "पायरी {current} / {total}",
-    progress: "जन्ममाहिती प्रगती",
-    nameQuestion: "या कुंडलीला कोणते नाव द्यायचे?",
     nameHelp: "हे नाव फक्त तुमच्या कुंडलीत आणि डाउनलोड केलेल्या PDF मध्ये दिसेल.",
-    genderQuestion: "तुम्हाला कसे संबोधावे?",
     genderHelp: "ऐच्छिक. यामुळे खगोलीय गणना बदलत नाही.",
-    choiceAdvances: "पर्याय निवडताच पुढची पायरी उघडेल.",
     preferNot: "सांगायचे नाही",
-    dateQuestion: "तुमचा जन्म कधी झाला?",
     dateHelp: "शक्य असल्यास जन्मदाखल्यावरील तारीख वापरा.",
-    timeQuestion: "तुमचा जन्म किती वाजता झाला?",
     timeHelp: "अंदाज लावू नका. लग्न आणि भाव वेगाने बदलू शकतात; अनिश्चित वेळेवर अवलंबून राहण्यापूर्वी ती तपासा.",
     knowSeconds: "मला अचूक सेकंद माहीत आहेत",
     minutePrecision: "मिनिटांपर्यंत अचूक",
     secondPrecision: "सेकंदांपर्यंत अचूक",
-    placeQuestion: "तुमचा जन्म कुठे झाला?",
     placeHelp: "अक्षांश, रेखांश आणि ऐतिहासिक कालविभाग मिळण्यासाठी योग्य स्थळ निवडा.",
-    reviewQuestion: "कृपया जन्ममाहिती निश्चित करा",
-    reviewHelp: "निश्चित केल्यानंतरच गणना सुरू होईल. कोणतीही माहिती मागे जाऊन बदलता येते.",
-    back: "मागे",
-    continue: "पुढे",
-    change: "बदला",
     optional: "ऐच्छिक",
-    nameSummary: "नाव",
-    genderSummary: "संबोधन",
-    dateSummary: "तारीख",
-    timeSummary: "वेळ",
-    placeSummary: "स्थळ",
     privacy: "गणना तुमच्या ब्राउझरमध्ये होते. फक्त शहराचा शोध OpenStreetMap कडे पाठवला जातो.",
   },
   de: {
-    step: "Schritt {current} von {total}",
-    progress: "Fortschritt der Geburtsdaten",
-    nameQuestion: "Wie sollen wir diese Kundali nennen?",
-    nameHelp: "Der Name erscheint nur in deiner Kundali und der heruntergeladenen PDF.",
-    genderQuestion: "Wie möchtest du angesprochen werden?",
+    nameHelp: "Der Name erscheint nur in deinem Geburtshoroskop und der heruntergeladenen PDF.",
     genderHelp: "Optional. Diese Angabe verändert die astronomische Berechnung nicht.",
-    choiceAdvances: "Nach der Auswahl geht es automatisch weiter.",
     preferNot: "Keine Angabe",
-    dateQuestion: "Wann wurdest du geboren?",
     dateHelp: "Verwende nach Möglichkeit das Datum aus der Geburtsurkunde.",
-    timeQuestion: "Um welche Uhrzeit wurdest du geboren?",
-    timeHelp: "Bitte nicht raten. Lagna und Bhavas können sich schnell ändern; eine unsichere Zeit sollte vor der Deutung geprüft werden.",
+    timeHelp: "Bitte nicht raten. Aszendent und Häuser können sich schnell ändern; eine unsichere Zeit sollte vor der Deutung geprüft werden.",
     knowSeconds: "Ich kenne die genauen Sekunden",
     minutePrecision: "Minutengenau",
     secondPrecision: "Sekundengenau",
-    placeQuestion: "Wo wurdest du geboren?",
     placeHelp: "Wähle den passenden Ort, damit Koordinaten und historische Zeitzone bestimmt werden können.",
-    reviewQuestion: "Bitte bestätige deine Geburtsdaten",
-    reviewHelp: "Die Berechnung beginnt erst nach deiner Bestätigung. Du kannst jede Angabe vorher ändern.",
-    back: "Zurück",
-    continue: "Weiter",
-    change: "Ändern",
     optional: "Optional",
-    nameSummary: "Name",
-    genderSummary: "Anrede",
-    dateSummary: "Datum",
-    timeSummary: "Zeit",
-    placeSummary: "Ort",
     privacy: "Die Berechnung erfolgt in deinem Browser. Nur die Stadtanfrage wird an OpenStreetMap gesendet.",
   },
 });
@@ -476,8 +403,8 @@ type FormErrors = Partial<
 >;
 
 const inputClass =
-  "mt-2 w-full rounded-xl border border-white/10 bg-black/20 px-3.5 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-violet-300/50 focus:ring-2 focus:ring-violet-400/15 disabled:cursor-not-allowed disabled:opacity-50";
-const labelClass = "text-sm font-medium text-slate-200";
+  "mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-3.5 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted)] focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/15 disabled:cursor-not-allowed disabled:opacity-50";
+const labelClass = "text-sm font-medium text-[var(--foreground)]";
 
 function ErrorMessage({ id, children }: { id: string; children?: string }) {
   if (!children) return null;
@@ -503,7 +430,7 @@ function normalizeName(value: string): string {
 export default function BirthForm({ isGenerating = false, onGenerate }: BirthFormProps) {
   const { locale } = useAppPreferences();
   const t = useScopedTranslations(messages);
-  const tw = useScopedTranslations(wizardMessages);
+  const tw = useScopedTranslations(formMessages);
   const listboxId = useId();
   const requestSequence = useRef(0);
   const activeRequest = useRef<AbortController | null>(null);
@@ -513,7 +440,6 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
   const [birthDate, setBirthDate] = useState("");
   const [birthTime, setBirthTime] = useState("");
   const [showSeconds, setShowSeconds] = useState(false);
-  const [step, setStep] = useState(0);
   const [placeQuery, setPlaceQuery] = useState("");
   const [results, setResults] = useState<PlaceSearchResult[]>([]);
   const [selectedPlace, setSelectedPlace] = useState<SelectedPlace | null>(null);
@@ -530,7 +456,6 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
   const [manualTimeZone, setManualTimeZone] = useState("");
 
   const today = new Date().toISOString().slice(0, 10);
-  const totalSteps = 6;
   const normalizedBirthTime =
     birthTime.length === 5 ? `${birthTime}:00` : birthTime;
 
@@ -573,91 +498,8 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     }
   }, [birthDate, normalizedBirthTime, t, timeZone]);
 
-  function validateStep(currentStep: number): boolean {
-    const nextErrors: FormErrors = {};
-    if (currentStep === 0) {
-      const name = normalizeName(fullName);
-      if (name.length < 1 || name.length > 100) {
-        nextErrors.fullName = t("invalidName");
-      }
-    }
-    if (currentStep === 2 && (!birthDate || birthDate > today)) {
-      nextErrors.birthDate = t("invalidBirthDate");
-    }
-    if (
-      currentStep === 3 &&
-      !/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/.test(birthTime)
-    ) {
-      nextErrors.birthTime = t("birthTimeSeconds");
-    }
-    if (currentStep === 4) {
-      if (!selectedPlace) nextErrors.place = t("missingPlace");
-      if (!timeZone.trim()) nextErrors.timeZone = t("missingTimezone");
-      if (civilTime.error) nextErrors.birthTime = t("invalidLocalTime");
-      if (civilTime.resolution?.status === "nonexistent") {
-        nextErrors.birthTime = t("nonexistentTime");
-      }
-      if (civilTime.resolution?.status === "ambiguous" && !disambiguation) {
-        nextErrors.birthTime = t("chooseAmbiguous");
-      }
-      const chosen = selectedCandidate();
-      if (!chosen.candidate && !nextErrors.birthTime) {
-        nextErrors.birthTime = t("incompleteTime");
-      }
-      if (chosen.candidate && chosen.candidate.instant.getTime() > Date.now()) {
-        nextErrors.birthDate = t("resolvedFuture");
-      }
-    }
-    setErrors((current) => ({ ...current, ...nextErrors }));
-    return Object.keys(nextErrors).length === 0;
-  }
-
-  function focusStepHeading() {
-    window.requestAnimationFrame(() => {
-      document.getElementById("guided-birth-heading")?.focus();
-    });
-  }
-
-  function advanceFrom(expectedStep: number) {
-    setStep((current) =>
-      current === expectedStep
-        ? Math.min(totalSteps - 1, current + 1)
-        : current,
-    );
-    focusStepHeading();
-  }
-
-  function goNext() {
-    if (!validateStep(step)) return;
-    if (step === 1 && !gender) setGender("unspecified");
-    advanceFrom(step);
-  }
-
-  function goBack() {
-    setStep((current) => Math.max(0, current - 1));
-    focusStepHeading();
-  }
-
   function clearFieldError(field: keyof FormErrors) {
     setErrors((current) => ({ ...current, [field]: undefined, form: undefined }));
-  }
-
-  function uniquePastCandidate(zone: string): CivilTimeCandidate | null {
-    if (!zone || !birthDate || !normalizedBirthTime) return null;
-
-    try {
-      const resolution = analyzeCivilTime({
-        date: birthDate,
-        time: normalizedBirthTime,
-        timeZone: zone,
-      });
-      return resolution.status === "unique" &&
-        resolution.candidate.instant.getTime() <= Date.now()
-        ? resolution.candidate
-        : null;
-    } catch {
-      return null;
-    }
   }
 
   function handlePlaceInput(value: string) {
@@ -679,7 +521,6 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     requestSequence.current += 1;
     setIsSearching(false);
     const timeZones = place.timeZones ?? [];
-    const selectedZone = timeZones.length === 1 ? timeZones[0] : "";
     setSelectedPlace({
       id: place.id,
       label: place.label,
@@ -688,13 +529,12 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
       timeZones,
     });
     setPlaceQuery(place.label);
-    setTimeZone(selectedZone || timeZones[0] || "");
+    setTimeZone(timeZones[0] ?? "");
     setDisambiguation(null);
     setResults([]);
     setActiveResult(-1);
     setSearchMessage(t("selectedPlace", { place: place.label }));
     clearFieldError("place");
-    if (selectedZone && uniquePastCandidate(selectedZone)) advanceFrom(4);
   }
 
   async function searchPlaces() {
@@ -820,7 +660,6 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     setResults([]);
     setSearchMessage(t("usingCoordinates", { place: label }));
     setErrors((current) => ({ ...current, place: undefined, timeZone: undefined }));
-    if (uniquePastCandidate(zone)) advanceFrom(4);
   }
 
   function selectedCandidate(): {
@@ -874,7 +713,23 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     }
 
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0 || !selectedPlace || !chosen.candidate) return;
+    if (Object.keys(nextErrors).length > 0 || !selectedPlace || !chosen.candidate) {
+      const firstInvalidId = (
+        [
+          ["fullName", "full-name"],
+          ["birthDate", "birth-date"],
+          ["birthTime", "birth-time"],
+          ["place", "place-search"],
+          ["timeZone", "time-zone"],
+        ] as const
+      ).find(([field]) => Boolean(nextErrors[field]))?.[1];
+      if (firstInvalidId) {
+        window.requestAnimationFrame(() => {
+          document.getElementById(firstInvalidId)?.focus();
+        });
+      }
+      return;
+    }
 
     onGenerate({
       person: { fullName: name, gender: gender || "unspecified" },
@@ -905,183 +760,151 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
     civilTime.resolution?.status === "ambiguous"
       ? civilTime.resolution
       : null;
-  const stepCopy = [
-    [tw("nameQuestion"), tw("nameHelp")],
-    [tw("genderQuestion"), tw("genderHelp")],
-    [tw("dateQuestion"), tw("dateHelp")],
-    [tw("timeQuestion"), tw("timeHelp")],
-    [tw("placeQuestion"), tw("placeHelp")],
-    [tw("reviewQuestion"), tw("reviewHelp")],
-  ] as const;
-  const genderLabel =
-    gender === "unspecified"
-      ? tw("preferNot")
-      : gender
-        ? t(gender)
-        : tw("preferNot");
 
   return (
-    <form
-      noValidate
-      onSubmit={handleSubmit}
-      onKeyDown={(event) => {
-        if (
-          event.key === "Enter" &&
-          step < totalSteps - 1 &&
-          !event.defaultPrevented &&
-          !(event.target instanceof HTMLButtonElement)
-        ) {
-          event.preventDefault();
-          goNext();
-        }
-      }}
-      className="space-y-6"
-    >
-      <div>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300">
-            <Compass aria-hidden="true" className="size-4" />
-            <span className="text-xs font-semibold uppercase tracking-[0.24em]">
-              {t("birthCoordinates")}
-            </span>
-          </div>
-          <span className="text-xs font-medium text-[var(--muted)]">
-            {tw("step", { current: step + 1, total: totalSteps })}
+    <form noValidate onSubmit={handleSubmit} className="space-y-7">
+      <header>
+        <div className="flex items-center gap-2 text-violet-700 dark:text-violet-300">
+          <Compass aria-hidden="true" className="size-4" />
+          <span className="text-xs font-semibold uppercase tracking-[0.24em]">
+            {t("birthCoordinates")}
           </span>
         </div>
-        <div
-          role="progressbar"
-          aria-label={tw("progress")}
-          aria-valuemin={1}
-          aria-valuemax={totalSteps}
-          aria-valuenow={step + 1}
-          className="mt-4 grid grid-cols-6 gap-1.5"
-        >
-          {Array.from({ length: totalSteps }, (_, index) => (
-            <span
-              key={index}
-              className={`h-1.5 rounded-full transition ${
-                index <= step ? "bg-violet-600" : "bg-[var(--border)]"
-              }`}
-            />
-          ))}
-        </div>
-        <h2
-          id="guided-birth-heading"
-          tabIndex={-1}
-          className="mt-5 text-2xl font-semibold text-[var(--foreground)] outline-none"
-        >
-          {stepCopy[step][0]}
+        <h2 className="mt-3 text-2xl font-semibold text-[var(--foreground)]">
+          {t("title")}
         </h2>
-        <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-          {stepCopy[step][1]}
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-[var(--muted)]">
+          {t("intro")}
         </p>
+      </header>
+
+      <div className="grid gap-5 md:grid-cols-2">
+        <div>
+          <label htmlFor="full-name" className={labelClass}>
+            <span className="flex items-center gap-2">
+              <UserRound aria-hidden="true" className="size-4 text-[var(--muted)]" />
+              {t("fullName")}
+            </span>
+          </label>
+          <input
+            id="full-name"
+            name="fullName"
+            autoComplete="name"
+            required
+            value={fullName}
+            onChange={(event) => {
+              setFullName(event.target.value);
+              clearFieldError("fullName");
+            }}
+            aria-invalid={Boolean(errors.fullName)}
+            aria-describedby={errors.fullName ? "full-name-help full-name-error" : "full-name-help"}
+            placeholder={t("namePlaceholder")}
+            className={inputClass}
+          />
+          <p id="full-name-help" className="mt-2 text-xs leading-5 text-[var(--muted)]">
+            {tw("nameHelp")}
+          </p>
+          <ErrorMessage id="full-name-error">{errors.fullName}</ErrorMessage>
+        </div>
+
+        <fieldset>
+          <legend className={`${labelClass} flex items-center gap-2`}>
+            {t("gender")}
+            <span className="text-xs font-normal text-[var(--muted)]">
+              · {tw("optional")}
+            </span>
+          </legend>
+          <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-2">
+            {(
+              [
+                ["male", t("male")],
+                ["female", t("female")],
+                ["other", t("other")],
+                ["unspecified", tw("preferNot")],
+              ] as const
+            ).map(([option, label]) => (
+              <label
+                key={option}
+                className={`cursor-pointer rounded-xl border px-3 py-3 text-center text-sm transition focus-within:ring-2 focus-within:ring-violet-500/30 ${
+                  gender === option
+                    ? "border-violet-500/60 bg-violet-500/10 font-medium text-violet-700 dark:text-violet-200"
+                    : "border-[var(--border)] bg-[var(--surface-soft)] text-[var(--muted)] hover:border-violet-500/35 hover:text-[var(--foreground)]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="gender"
+                  value={option}
+                  checked={gender === option}
+                  onChange={() => setGender(option)}
+                  className="sr-only"
+                />
+                {label}
+              </label>
+            ))}
+          </div>
+          <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
+            {tw("genderHelp")}
+          </p>
+        </fieldset>
       </div>
 
-      {step === 0 ? <div>
-        <label htmlFor="full-name" className={labelClass}>
-          <span className="flex items-center gap-2">
-            <UserRound aria-hidden="true" className="size-4 text-slate-500" />
-            {t("fullName")}
-          </span>
-        </label>
-        <input
-          id="full-name"
-          name="fullName"
-          autoComplete="name"
-          value={fullName}
-          onChange={(event) => {
-            setFullName(event.target.value);
-            clearFieldError("fullName");
-          }}
-          aria-invalid={Boolean(errors.fullName)}
-          aria-describedby={errors.fullName ? "full-name-error" : undefined}
-          placeholder={t("namePlaceholder")}
-          className={inputClass}
-        />
-        <ErrorMessage id="full-name-error">{errors.fullName}</ErrorMessage>
-      </div> : null}
-
-      {step === 1 ? <fieldset
-        aria-invalid={Boolean(errors.gender)}
-        aria-describedby={errors.gender ? "gender-error" : undefined}
-      >
-        <legend className={`${labelClass} flex items-center gap-2`}>
-          {t("gender")}
-          <span className="text-xs font-normal text-[var(--muted)]">
-            · {tw("optional")}
-          </span>
-        </legend>
-        <div className="mt-2 grid grid-cols-2 gap-2">
-          {(
-            [
-              ["male", t("male")],
-              ["female", t("female")],
-              ["other", t("other")],
-              ["unspecified", tw("preferNot")],
-            ] as const
-          ).map(([option, label]) => (
-            <button
-              key={option}
-              type="button"
-              aria-pressed={gender === option}
-              onClick={() => {
-                setGender(option);
-                clearFieldError("gender");
-                advanceFrom(1);
-              }}
-              className={`rounded-xl border px-3 py-2.5 text-center text-sm capitalize transition focus-within:ring-2 focus-within:ring-violet-300/60 focus-within:ring-offset-2 focus-within:ring-offset-[#0d0f1d] ${
-                gender === option
-                  ? "border-violet-300/50 bg-violet-400/15 text-white"
-                  : "border-white/10 bg-black/20 text-slate-400 hover:border-white/20"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-        <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
-          {tw("choiceAdvances")}
-        </p>
-        <ErrorMessage id="gender-error">{errors.gender}</ErrorMessage>
-      </fieldset> : null}
-
-      {step === 2 ? (
+      <div className="grid gap-5 md:grid-cols-2">
         <div>
           <label htmlFor="birth-date" className={labelClass}>
             <span className="flex items-center gap-2">
-              <CalendarDays aria-hidden="true" className="size-4 text-slate-500" />
+              <CalendarDays aria-hidden="true" className="size-4 text-[var(--muted)]" />
               {t("dateOfBirth")}
             </span>
           </label>
           <input
             id="birth-date"
             type="date"
+            required
             max={today}
             value={birthDate}
             onChange={(event) => {
-              const value = event.target.value;
-              setBirthDate(value);
+              setBirthDate(event.target.value);
               setDisambiguation(null);
               clearFieldError("birthDate");
-              if (value && value <= today) advanceFrom(2);
             }}
             aria-invalid={Boolean(errors.birthDate)}
-            aria-describedby={errors.birthDate ? "birth-date-error" : undefined}
+            aria-describedby={errors.birthDate ? "birth-date-help birth-date-error" : "birth-date-help"}
             className={inputClass}
           />
+          <p id="birth-date-help" className="mt-2 text-xs leading-5 text-[var(--muted)]">
+            {tw("dateHelp")}
+          </p>
           <ErrorMessage id="birth-date-error">{errors.birthDate}</ErrorMessage>
         </div>
-      ) : null}
-      {step === 3 ? (
+
         <div>
           <label htmlFor="birth-time" className={labelClass}>
             <span className="flex items-center gap-2">
-              <Clock3 aria-hidden="true" className="size-4 text-slate-500" />
+              <Clock3 aria-hidden="true" className="size-4 text-[var(--muted)]" />
               {t("timeOfBirth")}
             </span>
           </label>
-          <label className="mt-2 flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3 text-sm text-[var(--foreground)]">
+          <input
+            id="birth-time"
+            type="time"
+            required
+            step={showSeconds ? 1 : 60}
+            value={birthTime}
+            onChange={(event) => {
+              setBirthTime(event.target.value);
+              setDisambiguation(null);
+              clearFieldError("birthTime");
+            }}
+            aria-invalid={Boolean(errors.birthTime)}
+            aria-describedby={errors.birthTime ? "birth-time-help birth-time-error" : "birth-time-help"}
+            className={inputClass}
+          />
+          <p id="birth-time-help" className="mt-2 text-xs leading-5 text-[var(--muted)]">
+            {tw("timeHelp")}
+          </p>
+          <ErrorMessage id="birth-time-error">{errors.birthTime}</ErrorMessage>
+          <label className="mt-3 flex cursor-pointer items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3 text-sm text-[var(--foreground)]">
             <input
               type="checkbox"
               checked={showSeconds}
@@ -1104,42 +927,28 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
               </span>
             </span>
           </label>
-          <input
-            id="birth-time"
-            type="time"
-            step={showSeconds ? 1 : 60}
-            value={birthTime}
-            onChange={(event) => {
-              const value = event.target.value;
-              setBirthTime(value);
-              setDisambiguation(null);
-              clearFieldError("birthTime");
-              const isComplete = showSeconds
-                ? /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/.test(value)
-                : /^([01]\d|2[0-3]):[0-5]\d$/.test(value);
-              if (isComplete) advanceFrom(3);
-            }}
-            aria-invalid={Boolean(errors.birthTime)}
-            aria-describedby={errors.birthTime ? "birth-time-error" : undefined}
-            className={inputClass}
-          />
-          <ErrorMessage id="birth-time-error">{errors.birthTime}</ErrorMessage>
         </div>
-      ) : null}
+      </div>
 
-      {step === 4 ? <div className="space-y-5">
-      <div>
-        <label htmlFor="place-search" className={labelClass}>
-          <span className="flex items-center gap-2">
-            <MapPin aria-hidden="true" className="size-4 text-slate-500" />
+      <section aria-labelledby="birthplace-heading" className="space-y-5 rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)] p-4 sm:p-5">
+        <div>
+          <h3 id="birthplace-heading" className="flex items-center gap-2 text-base font-semibold text-[var(--foreground)]">
+            <MapPin aria-hidden="true" className="size-4 text-violet-600 dark:text-violet-300" />
             {t("placeOfBirth")}
-          </span>
+          </h3>
+          <p className="mt-1 text-xs leading-5 text-[var(--muted)]">{tw("placeHelp")}</p>
+        </div>
+
+        <div>
+        <label htmlFor="place-search" className={labelClass}>
+          {t("locationLabel")}
         </label>
         <div className="relative mt-2">
           <div className="flex gap-2">
             <input
               id="place-search"
               role="combobox"
+              aria-required="true"
               aria-autocomplete="list"
               aria-expanded={results.length > 0}
               aria-controls={listboxId}
@@ -1150,13 +959,13 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
               onChange={(event) => handlePlaceInput(event.target.value)}
               onKeyDown={handlePlaceKeyDown}
               placeholder={t("placePlaceholder")}
-              className="min-w-0 flex-1 rounded-xl border border-white/10 bg-black/20 px-3.5 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-violet-300/50 focus:ring-2 focus:ring-violet-400/15"
+              className="min-w-0 flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 py-3 text-sm text-[var(--foreground)] outline-none transition placeholder:text-[var(--muted)] focus:border-violet-500/60 focus:ring-2 focus:ring-violet-500/15"
             />
             <button
               type="button"
               onClick={() => void searchPlaces()}
               disabled={isSearching}
-              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.07] px-4 text-sm font-medium text-white transition hover:bg-white/10 disabled:opacity-50"
+              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--foreground)] transition hover:border-violet-500/40 hover:text-violet-700 disabled:opacity-50 dark:hover:text-violet-200"
             >
               {isSearching ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : <Search aria-hidden="true" className="size-4" />}
               {t("search")}
@@ -1168,7 +977,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
               id={listboxId}
               role="listbox"
               aria-label={t("searchResults")}
-              className="absolute z-20 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-white/10 bg-[#151827] p-1.5 shadow-2xl shadow-black/60"
+              className="absolute z-20 mt-2 max-h-72 w-full overflow-y-auto rounded-xl border border-[var(--border)] bg-[var(--surface)] p-1.5 shadow-2xl shadow-black/20"
             >
               {results.map((place, index) => (
                 <li
@@ -1179,11 +988,11 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
                   onMouseDown={(event) => event.preventDefault()}
                   onClick={() => choosePlace(place)}
                   className={`cursor-pointer rounded-lg px-3 py-3 text-left transition ${
-                    index === activeResult ? "bg-violet-400/15" : "hover:bg-white/[0.06]"
+                    index === activeResult ? "bg-violet-500/10" : "hover:bg-[var(--surface-soft)]"
                   }`}
                 >
-                  <span className="block text-sm text-white">{place.label}</span>
-                  <span className="mt-1 block text-xs text-slate-500">
+                  <span className="block text-sm text-[var(--foreground)]">{place.label}</span>
+                  <span className="mt-1 block text-xs text-[var(--muted)]">
                     {place.latitude.toFixed(4)}, {place.longitude.toFixed(4)}
                     {place.timeZones?.[0] ? ` · ${place.timeZones[0]}` : ""}
                   </span>
@@ -1193,7 +1002,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           ) : null}
         </div>
 
-        <p id="place-search-status" aria-live="polite" className="mt-2 text-xs leading-5 text-slate-500">
+        <p id="place-search-status" aria-live="polite" className="mt-2 text-xs leading-5 text-[var(--muted)]">
           {searchMessage || t("searchHelp")}
         </p>
         <ErrorMessage id="place-error">{errors.place}</ErrorMessage>
@@ -1202,13 +1011,13 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           href="https://www.openstreetmap.org/copyright"
           target="_blank"
           rel="noreferrer"
-          className="mt-2 inline-flex text-xs text-slate-500 underline decoration-slate-700 underline-offset-4 transition hover:text-slate-300"
+          className="mt-2 inline-flex text-xs text-[var(--muted)] underline decoration-current underline-offset-4 transition hover:text-[var(--foreground)]"
         >
           {t("osmAttribution")}
         </a>
 
-        <details className="mt-3 rounded-xl border border-white/[0.08] bg-black/10 p-3">
-          <summary className="cursor-pointer text-xs font-medium text-slate-400">
+        <details className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
+          <summary className="cursor-pointer text-xs font-medium text-[var(--muted)]">
             {t("manualSummary")}
           </summary>
           <div className="mt-4 space-y-3">
@@ -1244,7 +1053,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
               aria-label={t("manualTimezone")}
               className={inputClass}
             />
-            <button type="button" onClick={useManualCoordinates} className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.06] px-3 py-2 text-xs text-white hover:bg-white/10">
+            <button type="button" onClick={useManualCoordinates} className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2 text-xs font-medium text-[var(--foreground)] hover:border-violet-500/40">
               <LocateFixed aria-hidden="true" className="size-3.5" />{" "}
               {t("useCoordinates")}
             </button>
@@ -1278,6 +1087,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
         <input
           id="time-zone"
           list="detected-timezones"
+          required
           value={timeZone}
           onChange={(event) => {
             setTimeZone(event.target.value);
@@ -1292,7 +1102,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
         <datalist id="detected-timezones">
           {selectedPlace?.timeZones.map((zone) => <option key={zone} value={zone} />)}
         </datalist>
-        <p id="timezone-help" className="mt-2 text-xs leading-5 text-slate-500">
+        <p id="timezone-help" className="mt-2 text-xs leading-5 text-[var(--muted)]">
           {t("timezoneHelp")}
         </p>
         <ErrorMessage id="time-zone-error">{errors.timeZone}</ErrorMessage>
@@ -1318,31 +1128,19 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
             {(["earlier", "later"] as const).map((choice) => {
               const candidate = ambiguousTime[choice];
               return (
-                <button
-                  key={choice}
-                  type="button"
-                  aria-pressed={disambiguation === choice}
-                  onClick={() => {
-                    setDisambiguation(choice);
-                    clearFieldError("birthTime");
-                    if (candidate.instant.getTime() > Date.now()) {
-                      setErrors((current) => ({
-                        ...current,
-                        birthDate: t("resolvedFuture"),
-                      }));
-                      return;
-                    }
-                    advanceFrom(4);
-                  }}
-                  className={`flex w-full items-center gap-3 rounded-lg border p-2.5 text-left text-xs transition ${
-                    disambiguation === choice
-                      ? "border-violet-400/45 bg-violet-400/12 text-violet-900 dark:text-violet-100"
-                      : "border-white/10 bg-black/15 text-slate-200 hover:border-violet-400/30"
-                  }`}
-                >
+                <label key={choice} className="flex items-center gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2.5 text-xs text-[var(--foreground)]">
+                  <input
+                    type="radio"
+                    name="time-disambiguation"
+                    checked={disambiguation === choice}
+                    onChange={() => {
+                      setDisambiguation(choice);
+                      clearFieldError("birthTime");
+                    }}
+                  />
                   <span>{t(choice)}</span>
-                  <span className="text-slate-500">{candidateLabel(candidate)}</span>
-                </button>
+                  <span className="text-[var(--muted)]">{candidateLabel(candidate)}</span>
+                </label>
               );
             })}
           </div>
@@ -1366,90 +1164,24 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           {t("invalidLocalTime")}
         </div>
       ) : null}
-      </div> : null}
-
-      {step === 5 ? (
-        <div className="space-y-3">
-          {[
-            [tw("nameSummary"), fullName, 0],
-            [tw("genderSummary"), genderLabel, 1],
-            [tw("dateSummary"), birthDate, 2],
-            [
-              tw("timeSummary"),
-              `${normalizedBirthTime} · ${
-                showSeconds ? tw("secondPrecision") : tw("minutePrecision")
-              }`,
-              3,
-            ],
-            [
-              tw("placeSummary"),
-              selectedPlace
-                ? `${selectedPlace.label} · ${timeZone}`
-                : t("missingPlace"),
-              4,
-            ],
-          ].map(([label, value, target]) => (
-            <div
-              key={String(label)}
-              className="flex items-start justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3.5"
-            >
-              <div className="min-w-0">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
-                  {String(label)}
-                </p>
-                <p className="mt-1 break-words text-sm font-medium text-[var(--foreground)]">
-                  {String(value)}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setStep(Number(target))}
-                className="shrink-0 rounded-lg border border-[var(--border)] px-2.5 py-1.5 text-xs text-[var(--accent)]"
-              >
-                {tw("change")}
-              </button>
-            </div>
-          ))}
-          <p className="flex items-start gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.055] p-3 text-xs leading-5 text-[var(--muted)]">
-            <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
-            {tw("privacy")}
-          </p>
-        </div>
-      ) : null}
+      </section>
 
       <ErrorMessage id="form-error">{errors.form}</ErrorMessage>
 
-      <div className="flex gap-2 border-t border-[var(--border)] pt-5">
-        {step > 0 ? (
-          <button
-            type="button"
-            onClick={goBack}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-4 text-sm font-semibold text-[var(--foreground)]"
-          >
-            <ArrowLeft aria-hidden="true" className="size-4" />
-            {tw("back")}
-          </button>
-        ) : null}
-        {step < totalSteps - 1 ? (
-          <button
-            type="button"
-            onClick={goNext}
-            className="group flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg shadow-violet-950/20 transition hover:brightness-110"
-          >
-            {tw("continue")}
-            <ChevronRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-        ) : (
-          <button
-            type="submit"
-            disabled={isGenerating}
-            className="group flex min-h-12 flex-1 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg shadow-violet-950/20 transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60"
-          >
-            {isGenerating ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : <Sparkles aria-hidden="true" className="size-4" />}
-            {t("generate")}
-            <ChevronRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
-          </button>
-        )}
+      <div className="border-t border-[var(--border)] pt-5">
+        <p className="mb-4 flex items-start gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/[0.055] p-3 text-xs leading-5 text-[var(--muted)]">
+          <Check aria-hidden="true" className="mt-0.5 size-4 shrink-0 text-emerald-600" />
+          {tw("privacy")}
+        </p>
+        <button
+          type="submit"
+          disabled={isGenerating}
+          className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg shadow-violet-950/20 transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60"
+        >
+          {isGenerating ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : <Sparkles aria-hidden="true" className="size-4" />}
+          {t("generate")}
+          <ChevronRight aria-hidden="true" className="size-4 transition-transform group-hover:translate-x-0.5" />
+        </button>
       </div>
     </form>
   );

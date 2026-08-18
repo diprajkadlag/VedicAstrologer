@@ -4,41 +4,62 @@ This changelog records portfolio milestones for the application. Version 0.1.0 i
 an initial, test-backed release candidate, not a claim of production or
 professional astrological certification.
 
-## [Unreleased] - 2026-07-29
+## [Unreleased] - 2026-08-18
 
 ### Added
 
 - German as a fourth application language alongside English, Hindi, and
-  Marathi, including the chart workspace, analysis, Gochara, AI prompt
+  Marathi, including the chart workspace, analysis, transits, AI prompt
   preparation, educational guide, and recovery states.
-- A guided six-step birth-data flow that asks for one item at a time, supports
-  optional seconds-level precision, validates each step, and offers a final
-  editable review before calculation.
-- A keyboard-operable illustrated feature showcase covering the 3D cosmos,
-  traditional charts, analysis, time navigation, and Kundali export.
-- Client-side Kundali summary PDF generation in the selected application
-  language, with bundled Noto Sans/Devanagari fonts, calculated natal
-  placements, Vimshottari periods, methodology, and limitations.
+- A compact single-page birth-data form with all required fields visible,
+  inline validation, optional seconds-level precision, place/timezone
+  resolution, and one final Generate action.
+- A keyboard-operable feature showcase covering the 3D cosmos, traditional
+  charts, analysis, time navigation, and birth-chart export, led by optimized
+  promotional WebP artwork for the cosmos, charts, and report.
+- Client-side birth-chart PDF generation in an independently selected language,
+  with bundled Noto Sans/Devanagari fonts, calculated natal placements,
+  Vimshottari periods, methodology, limitations, and three opening pages of
+  balanced conclusions for all twelve houses. Each house receives exactly
+  three color-coded, personalized sentences: significance, chart-specific
+  context, and balanced reflection.
 
 ### Changed
 
 - Light is now the first-visit default theme; the dark theme remains available
   and an explicit user choice is persisted.
-- User-facing zodiac, planetary, house, mansion, and quarter terminology is
-  Sanskrit-first in every language rather than substituting Western zodiac
-  names.
+- User-facing terminology is locale-native: English uses familiar English
+  planetary, zodiac, house, lunar-mansion, period, and transit terms; German
+  uses German terms and zodiac names such as *Löwe*, *Sonne*, and *Mond*;
+  Hindi and Marathi use native Devanagari.
+- Stable internal identifiers and transliterations remain unchanged for
+  calculation and serialization, then pass through centralized localization
+  before appearing in the interface or PDF. The AI projection emits
+  astronomical presentation references without parallel internal name IDs.
 - Localization lookups now retain a safe English fallback during partial
   development updates instead of crashing on a newly selected locale.
 - English is explicitly encoded and regression-tested as the first-visit
   language while valid returning-user language choices remain persisted.
 - The Geocentric Cosmos now uses a complete light-theme palette across its
   WebGL scene, controls, fullscreen view, and no-WebGL recovery state.
-- Guided birth entry now advances immediately after committed choices and
-  valid inputs, while retaining explicit confirmation for the name and final
-  review and preserving timezone/DST correctness gates.
+- Entering or leaving fullscreen now preserves the active WebGL renderer,
+  settles canvas sizing over the viewport transition, and automatically
+  recovers transient context loss with bounded retries before showing the
+  manual fallback.
+- Birth entry no longer uses a wizard or intermediate Continue actions. The
+  complete form is submitted once, while civil-time and DST correctness gates
+  remain in place.
+- A second, labeled global language selector remains visible with the generated
+  chart and updates every application surface after submission. The separate
+  PDF-language selector changes only the downloaded report.
+- AI-facing presentation references emit only locale-native astronomical
+  names. Stable internal name IDs remain in the calculation contract but are
+  not included as parallel labels in the localized AI payload or preview.
 - Portfolio documentation now distinguishes browser-local chart/PDF work,
   deployment-specific geocoding transport, deterministic calculations,
   traditional interpretation, and scientific evidence more explicitly.
+- Localization and PDF tests now cover familiar English names, native German
+  names, Devanagari labels, and stable multilingual PDF pagination.
 
 ### Responsibility boundary
 
@@ -69,8 +90,8 @@ professional astrological certification.
   including editorial focus scores and notices for Guru and Shani transits.
 - An AI Astrologer workspace that builds a structured chart, Dasha, and transit
   context plus an expert prompt for user questions and preset analyses.
-- English, Hindi, and Marathi interfaces, Sanskrit-derived Rasi and Graha names,
-  and light and dark themes.
+- English, Hindi, and Marathi interfaces, the initial Sanskrit-derived naming
+  layer later superseded by locale-native presentation, and light/dark themes.
 - Interactive explanations for commonly used Jyotish terms, Graha
   significations, Bhava meanings, and the way Graha themes are traditionally
   interpreted across Bhavas.

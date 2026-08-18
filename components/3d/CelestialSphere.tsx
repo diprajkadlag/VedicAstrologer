@@ -34,6 +34,7 @@ import {
   type WebGLCapability,
   type WebGLFailureReason,
 } from "@/components/3d/webgl-capability";
+import { getWebGLRecoveryDelay } from "@/components/3d/webgl-recovery";
 import {
   useAppPreferences,
   useScopedTranslations,
@@ -91,17 +92,17 @@ const ZODIAC_COLORS = [
 const COSMOS_MESSAGES = defineMessages({
   en: {
     sectionAria: "Interactive geocentric celestial sphere",
-    lagna: "Lagna",
-    bhava: "Bhava",
-    pada: "Pada",
+    lagna: "Ascendant",
+    bhava: "House",
+    pada: "Quarter",
     retrogradeShort: "R",
     retrogradeAriaSuffix: ", retrograde",
     geocentricSky: "Geocentric sidereal sky",
     lahiriAyanamsa: "Lahiri ayanamsa {value}°",
-    nakshatraLabels: "Nakshatra labels",
+    nakshatraLabels: "Lunar-mansion labels",
     ephemerisTrails: "Ephemeris trails",
     asterismNote:
-      "Nakshatra asterisms are illustrative; trails use sampled ephemeris positions.",
+      "Lunar-mansion asterisms are illustrative; trails use sampled ephemeris positions.",
     fullscreenUnsupportedError:
       "Fullscreen is not supported by this browser.",
     fullscreenFailedError:
@@ -137,7 +138,7 @@ const COSMOS_MESSAGES = defineMessages({
     webglDriverStep:
       "If it remains disabled, update the graphics driver or ask the device administrator to allow WebGL.",
     webglRestAvailable:
-      "Your Rasi chart, Dashas, transit calculations, and Jyotish analysis remain available.",
+      "Your zodiac chart, periods, transit calculations, and Vedic astrology analysis remain available.",
     webglRetry: "Retry WebGL",
     webglRetryAria: "Check WebGL support again",
     webglReason: "Technical reason: {reason}",
@@ -147,10 +148,10 @@ const COSMOS_MESSAGES = defineMessages({
     webglReasonLost: "graphics context lost",
     webglReasonRuntime: "renderer initialization failed",
     dragZoom: "Drag to orbit · Scroll to zoom",
-    selectGraha: "Select a graha",
+    selectGraha: "Select a planetary body",
     toolbarAria: "Select a planet in the celestial sphere",
     showGrahaAria:
-      "Show {planet}: {rasi}, Bhava {house}{retrograde}",
+      "Show {planet}: {rasi}, house {house}{retrograde}",
   },
   hi: {
     sectionAria: "इंटरैक्टिव भूकेंद्रीय खगोलीय गोला",
@@ -282,17 +283,17 @@ const COSMOS_MESSAGES = defineMessages({
   },
   de: {
     sectionAria: "Interaktive geozentrische Himmelssphäre",
-    lagna: "Lagna",
-    bhava: "Bhava",
-    pada: "Pada",
+    lagna: "Aszendent",
+    bhava: "Haus",
+    pada: "Viertel",
     retrogradeShort: "R",
     retrogradeAriaSuffix: ", rückläufig",
     geocentricSky: "Geozentrischer siderischer Himmel",
     lahiriAyanamsa: "Lahiri-Ayanamsa {value}°",
-    nakshatraLabels: "Nakshatra-Bezeichnungen",
+    nakshatraLabels: "Mondstationsbezeichnungen",
     ephemerisTrails: "Ephemeridenbahnen",
     asterismNote:
-      "Die Nakshatra-Sterngruppen sind illustrativ; die Bahnen beruhen auf stichprobenartig berechneten Ephemeridenpositionen.",
+      "Die Sterngruppen der Mondstationen sind illustrativ; die Bahnen beruhen auf stichprobenartig berechneten Ephemeridenpositionen.",
     fullscreenUnsupportedError:
       "Dieser Browser unterstützt den Vollbildmodus nicht.",
     fullscreenFailedError:
@@ -308,7 +309,7 @@ const COSMOS_MESSAGES = defineMessages({
     fullscreen: "Vollbild",
     unavailable: "Nicht verfügbar",
     webglUnavailable:
-      "WebGL ist in diesem Browser nicht verfügbar. Kundali und Analyse bleiben weiter unten zugänglich.",
+      "WebGL ist in diesem Browser nicht verfügbar. Geburtshoroskop und Analyse bleiben weiter unten zugänglich.",
     webglCheckingTitle: "3D-Grafikunterstützung wird geprüft",
     webglCheckingBody:
       "Die Himmelsdarstellung startet erst, nachdem der Browser einen nutzbaren WebGL-Kontext bestätigt hat.",
@@ -329,7 +330,7 @@ const COSMOS_MESSAGES = defineMessages({
     webglDriverStep:
       "Bleibt WebGL deaktiviert, aktualisiere den Grafiktreiber oder bitte die Geräteverwaltung, WebGL freizugeben.",
     webglRestAvailable:
-      "Rāśi-Kundali, Dashas, Gochara-Berechnungen und Jyotish-Analyse bleiben verfügbar.",
+      "Tierkreisdiagramm, Perioden, Transitberechnungen und die Analyse der vedischen Astrologie bleiben verfügbar.",
     webglRetry: "WebGL erneut prüfen",
     webglRetryAria: "WebGL-Unterstützung erneut prüfen",
     webglReason: "Technischer Grund: {reason}",
@@ -339,10 +340,10 @@ const COSMOS_MESSAGES = defineMessages({
     webglReasonLost: "Grafikkontext verloren",
     webglReasonRuntime: "Initialisierung der Darstellung fehlgeschlagen",
     dragZoom: "Ziehen zum Drehen · Scrollen zum Zoomen",
-    selectGraha: "Graha auswählen",
-    toolbarAria: "Graha in der Himmelssphäre auswählen",
+    selectGraha: "Himmelskörper auswählen",
+    toolbarAria: "Himmelskörper in der Himmelssphäre auswählen",
     showGrahaAria:
-      "{planet} anzeigen: {rasi}, Bhava {house}{retrograde}",
+      "{planet} anzeigen: {rasi}, Haus {house}{retrograde}",
   },
 });
 
@@ -465,13 +466,17 @@ function WebGLUnavailableView({
 }
 
 class WebGLRuntimeBoundary extends Component<
-  { children: ReactNode; fallback: ReactNode },
+  { children: ReactNode; fallback: ReactNode; onError: () => void },
   { failed: boolean }
 > {
   state = { failed: false };
 
   static getDerivedStateFromError(): { failed: boolean } {
     return { failed: true };
+  }
+
+  componentDidCatch() {
+    this.props.onError();
   }
 
   render() {
@@ -738,10 +743,50 @@ interface SceneProps {
 }
 
 /**
+ * Owns the WebGL event listeners for exactly as long as this Canvas owns its
+ * renderer. In particular, cleanup runs before R3F disposes an old renderer,
+ * so an intentional remount cannot be mistaken for a device context loss.
+ */
+function WebGLContextMonitor({
+  onContextLost,
+  onContextRestored,
+  onReady,
+}: {
+  onContextLost: (event: Event) => void;
+  onContextRestored: () => void;
+  onReady: () => void;
+}) {
+  const gl = useThree((state) => state.gl);
+  const invalidate = useThree((state) => state.invalidate);
+
+  useEffect(() => {
+    const canvas = gl.domElement;
+    const handleRestored = () => {
+      gl.resetState();
+      invalidate();
+      onContextRestored();
+    };
+
+    canvas.addEventListener("webglcontextlost", onContextLost);
+    canvas.addEventListener("webglcontextrestored", handleRestored);
+    onReady();
+
+    return () => {
+      canvas.removeEventListener("webglcontextlost", onContextLost);
+      canvas.removeEventListener("webglcontextrestored", handleRestored);
+    };
+  }, [gl, invalidate, onContextLost, onContextRestored, onReady]);
+
+  return null;
+}
+
+/**
  * R3F normally observes its own percentage-sized wrapper. A definite absolute
  * host plus this synchronization closes the mount-time race where that wrapper
  * can retain the canvas element's short intrinsic height while the surrounding
- * celestial panel has already grown to its responsive height.
+ * celestial panel has already grown to its responsive height. Fullscreen
+ * changes are sampled across several frames so the same renderer can be kept
+ * alive instead of deliberately destroying and recreating its WebGL context.
  */
 function CanvasHostResizeSync() {
   const gl = useThree((state) => state.gl);
@@ -755,25 +800,48 @@ function CanvasHostResizeSync() {
     if (!host) return;
 
     let animationFrame = 0;
+    let settleTimer = 0;
     const synchronize = () => {
       const rect = host.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return;
       setSize(rect.width, rect.height, rect.top, rect.left);
       invalidate();
     };
-    const schedule = () => {
+
+    const schedule = (frames = 1) => {
       cancelAnimationFrame(animationFrame);
-      animationFrame = requestAnimationFrame(synchronize);
+      const sample = (remaining: number) => {
+        animationFrame = requestAnimationFrame(() => {
+          synchronize();
+          if (remaining > 1) sample(remaining - 1);
+        });
+      };
+      sample(frames);
     };
-    const observer = new ResizeObserver(schedule);
+    const settleAfterViewportChange = () => {
+      window.clearTimeout(settleTimer);
+      schedule(4);
+      settleTimer = window.setTimeout(synchronize, 120);
+    };
+    const observer = new ResizeObserver(() => schedule());
 
     observer.observe(host);
+    document.addEventListener("fullscreenchange", settleAfterViewportChange);
+    window.addEventListener("resize", settleAfterViewportChange);
+    window.visualViewport?.addEventListener("resize", settleAfterViewportChange);
     synchronize();
-    animationFrame = requestAnimationFrame(synchronize);
+    schedule(2);
 
     return () => {
       cancelAnimationFrame(animationFrame);
+      window.clearTimeout(settleTimer);
       observer.disconnect();
+      document.removeEventListener("fullscreenchange", settleAfterViewportChange);
+      window.removeEventListener("resize", settleAfterViewportChange);
+      window.visualViewport?.removeEventListener(
+        "resize",
+        settleAfterViewportChange,
+      );
     };
   }, [gl, invalidate, setSize]);
 
@@ -1025,8 +1093,17 @@ export default function CelestialSphere({
   const isLight = theme === "light";
   const t = useScopedTranslations(COSMOS_MESSAGES);
   const [webglProbeAttempt, setWebglProbeAttempt] = useState(0);
+  const [rendererEpoch, setRendererEpoch] = useState(0);
   const [webglCapability, setWebglCapability] =
     useState<WebGLCapability>({ status: "checking" });
+  const [webglRecovery, setWebglRecovery] =
+    useState<WebGLCapability | null>(null);
+  const recoveryTimerRef = useRef<number | null>(null);
+  const recoveryStabilityTimerRef = useRef<number | null>(null);
+  const recoveryCycleRef = useRef(0);
+  const recoveryAttemptRef = useRef(0);
+  const recoveryRunningRef = useRef(false);
+  const recoveryReasonRef = useRef<WebGLFailureReason>("context-lost");
   const [internalSelectedId, setInternalSelectedId] = useState<GrahaId | null>(null);
   const [fullscreenError, setFullscreenError] =
     useState<FullscreenError>(null);
@@ -1040,6 +1117,100 @@ export default function CelestialSphere({
   );
   const reduceMotion = useReducedMotion() ?? false;
   const deferredChart = useDeferredValue(chart);
+
+  const clearRecoveryTimer = useCallback(() => {
+    if (recoveryTimerRef.current !== null) {
+      window.clearTimeout(recoveryTimerRef.current);
+      recoveryTimerRef.current = null;
+    }
+  }, []);
+
+  const clearRecoveryStabilityTimer = useCallback(() => {
+    if (recoveryStabilityTimerRef.current !== null) {
+      window.clearTimeout(recoveryStabilityTimerRef.current);
+      recoveryStabilityTimerRef.current = null;
+    }
+  }, []);
+
+  const completeAutomaticRecovery = useCallback(() => {
+    if (recoveryRunningRef.current) {
+      recoveryCycleRef.current += 1;
+      recoveryRunningRef.current = false;
+      clearRecoveryTimer();
+      setWebglRecovery(null);
+    }
+
+    // Do not immediately renew the budget. A renderer that repeatedly starts
+    // and fails must eventually stop retrying instead of creating a GPU loop.
+    clearRecoveryStabilityTimer();
+    recoveryStabilityTimerRef.current = window.setTimeout(() => {
+      recoveryAttemptRef.current = 0;
+      recoveryStabilityTimerRef.current = null;
+    }, 2_500);
+  }, [clearRecoveryStabilityTimer, clearRecoveryTimer]);
+
+  const beginAutomaticRecovery = useCallback(
+    (reason: WebGLFailureReason) => {
+      recoveryReasonRef.current = reason;
+      if (recoveryRunningRef.current) return;
+
+      recoveryRunningRef.current = true;
+      clearRecoveryStabilityTimer();
+      const cycle = ++recoveryCycleRef.current;
+      setWebglRecovery({ status: "checking" });
+
+      const tryNextContext = () => {
+        if (cycle !== recoveryCycleRef.current) return;
+
+        const delay = getWebGLRecoveryDelay(recoveryAttemptRef.current);
+        if (delay === null) {
+          recoveryRunningRef.current = false;
+          recoveryTimerRef.current = null;
+          setWebglRecovery(null);
+          setWebglCapability({
+            status: "unsupported",
+            reason: recoveryReasonRef.current,
+          });
+          return;
+        }
+
+        recoveryAttemptRef.current += 1;
+        recoveryTimerRef.current = window.setTimeout(() => {
+          recoveryTimerRef.current = null;
+          if (cycle !== recoveryCycleRef.current) return;
+
+          const capability = probeWebGLCapability();
+          if (capability.status === "supported") {
+            setWebglCapability(capability);
+            setRendererEpoch((epoch) => epoch + 1);
+
+            // The new monitor cancels this watchdog through onReady. If Canvas
+            // fails before mounting, the next bounded attempt proceeds itself.
+            recoveryTimerRef.current = window.setTimeout(tryNextContext, 1_200);
+            return;
+          }
+
+          recoveryReasonRef.current =
+            capability.status === "unsupported"
+              ? capability.reason
+              : "context-unavailable";
+          tryNextContext();
+        }, delay);
+      };
+
+      tryNextContext();
+    },
+    [clearRecoveryStabilityTimer],
+  );
+
+  useEffect(
+    () => () => {
+      recoveryCycleRef.current += 1;
+      clearRecoveryTimer();
+      clearRecoveryStabilityTimer();
+    },
+    [clearRecoveryStabilityTimer, clearRecoveryTimer],
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -1134,14 +1305,33 @@ export default function CelestialSphere({
   }, []);
 
   const retryWebGL = useCallback(() => {
+    recoveryCycleRef.current += 1;
+    recoveryRunningRef.current = false;
+    recoveryAttemptRef.current = 0;
+    clearRecoveryTimer();
+    clearRecoveryStabilityTimer();
+    setWebglRecovery(null);
     setWebglCapability({ status: "checking" });
     setWebglProbeAttempt((attempt) => attempt + 1);
-  }, []);
+  }, [clearRecoveryStabilityTimer, clearRecoveryTimer]);
 
-  const handleWebGLContextLost = useCallback((event: Event) => {
-    event.preventDefault();
-    setWebglCapability({ status: "unsupported", reason: "context-lost" });
-  }, []);
+  const handleWebGLContextLost = useCallback(
+    (event: Event) => {
+      // Preventing the default allows a browser-provided context restoration
+      // to arrive during the first backoff window.
+      event.preventDefault();
+      beginAutomaticRecovery("context-lost");
+    },
+    [beginAutomaticRecovery],
+  );
+
+  const handleWebGLContextRestored = useCallback(() => {
+    completeAutomaticRecovery();
+  }, [completeAutomaticRecovery]);
+
+  const handleWebGLRuntimeError = useCallback(() => {
+    beginAutomaticRecovery("runtime-error");
+  }, [beginAutomaticRecovery]);
 
   return (
     <section
@@ -1163,54 +1353,58 @@ export default function CelestialSphere({
           theme={theme}
         />
       ) : (
-        <WebGLRuntimeBoundary
-          key={`webgl-runtime-${webglProbeAttempt}`}
-          fallback={
-            <WebGLUnavailableView
-              capability={{ status: "unsupported", reason: "runtime-error" }}
-              onRetry={retryWebGL}
-              t={t}
-              theme={theme}
-            />
-          }
-        >
-          <>
-            <div
-              data-celestial-canvas-host
-              className="absolute inset-0 h-full min-h-0 w-full"
-              style={{ height: "100%", width: "100%" }}
-            >
-              <Canvas
-          // The browser Fullscreen API can change the containing block without
-          // delivering a usable ResizeObserver entry to R3F. Remounting only at
-          // the fullscreen boundary makes the renderer measure the new viewport
-          // immediately, including its drawing buffer and responsive camera.
-          key={isFullscreen ? "fullscreen-canvas" : "embedded-canvas"}
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            height: "100%",
-            width: "100%",
-          }}
-          camera={{ position: [0, 18.8, 20.2], fov: 46, near: 0.1, far: 140 }}
-          dpr={[1, 1.75]}
-          gl={{ antialias: true, alpha: false, powerPreference: "high-performance" }}
-          frameloop={reduceMotion ? "demand" : "always"}
-          onPointerMissed={() => selectPlanet(null)}
-          onCreated={({ gl }) => {
-            gl.domElement.addEventListener(
-              "webglcontextlost",
-              handleWebGLContextLost,
-              { once: true },
-            );
-          }}
-          fallback={
-            <div className="grid h-full min-h-[620px] place-items-center bg-[#050611] p-8 text-center text-sm text-slate-400">
-              {t("webglUnavailable")}
-            </div>
-          }
+        <>
+          <WebGLRuntimeBoundary
+            key={`webgl-runtime-${webglProbeAttempt}-${rendererEpoch}`}
+            onError={handleWebGLRuntimeError}
+            fallback={
+              <WebGLUnavailableView
+                capability={{ status: "unsupported", reason: "runtime-error" }}
+                onRetry={retryWebGL}
+                t={t}
+                theme={theme}
+              />
+            }
+          >
+            <>
+              <div
+                data-celestial-canvas-host
+                className="absolute inset-0 h-full min-h-0 w-full"
+                style={{ height: "100%", width: "100%" }}
               >
+                <Canvas
+                  aria-hidden="true"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    height: "100%",
+                    width: "100%",
+                  }}
+                  camera={{
+                    position: [0, 18.8, 20.2],
+                    fov: 46,
+                    near: 0.1,
+                    far: 140,
+                  }}
+                  dpr={[1, 1.75]}
+                  gl={{
+                    antialias: true,
+                    alpha: false,
+                    powerPreference: "high-performance",
+                  }}
+                  frameloop={reduceMotion ? "demand" : "always"}
+                  onPointerMissed={() => selectPlanet(null)}
+                  fallback={
+                    <div className="grid h-full min-h-[620px] place-items-center bg-[#050611] p-8 text-center text-sm text-slate-400">
+                      {t("webglUnavailable")}
+                    </div>
+                  }
+                >
+                <WebGLContextMonitor
+                  onContextLost={handleWebGLContextLost}
+                  onContextRestored={handleWebGLContextRestored}
+                  onReady={completeAutomaticRecovery}
+                />
                 <Suspense fallback={null}>
                   <Scene
                     chart={chart}
@@ -1402,7 +1596,16 @@ export default function CelestialSphere({
         </div>
             </div>
           </>
-        </WebGLRuntimeBoundary>
+          </WebGLRuntimeBoundary>
+          {webglRecovery ? (
+            <WebGLUnavailableView
+              capability={webglRecovery}
+              onRetry={retryWebGL}
+              t={t}
+              theme={theme}
+            />
+          ) : null}
+        </>
       )}
     </section>
   );

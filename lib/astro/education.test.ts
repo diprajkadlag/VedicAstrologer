@@ -10,8 +10,12 @@ import {
   buildGrahaInBhavaReading,
   getEducationForAstroTerm,
   getEducationTerm,
+  getGenericNakshatraReading,
 } from "./education";
 import { ASTRO_TERM_IDS } from "./glossary";
+
+const OBSOLETE_EN_DE_PRIMARY_TERMS =
+  /\b(?:Lagna|Rasi|Bhava|Graha|Nakshatra|Pada|Mahadasha|Antardasha|Gochara|Dasha|Surya|Chandra|Mesha|Meena|Shukra|Mangala|Guru|Shani|Budha|Kundali|Jyotish|Rahu|Ketu|Ayanamsha|Ayanamsa|Shadbala|Varga|Drishti|Yuti|Navamsha)\b/i;
 
 describe("multilingual Jyotish education", () => {
   it("provides all foundational terms in every locale", () => {
@@ -109,5 +113,73 @@ describe("multilingual Jyotish education", () => {
       expect(limitation.de).not.toBe(limitation.en);
       expect(limitation.de).not.toContain("ÜBERSETZUNG-FEHLT");
     }
+  });
+
+  it("keeps English and German educational presentation locale-native", () => {
+    for (const locale of ["en", "de"] as const) {
+      const visibleText: string[] = [getGenericNakshatraReading(locale)];
+
+      for (const term of EDUCATION_TERMS) {
+        visibleText.push(
+          term.name[locale],
+          term.summary[locale],
+          term.detail[locale],
+          term.readingSequence[locale],
+        );
+      }
+
+      for (const profile of Object.values(GRAHA_EDUCATION)) {
+        visibleText.push(
+          profile.name[locale],
+          profile.astronomicalKind[locale],
+          profile.signifies[locale],
+          profile.constructive[locale],
+          profile.caution[locale],
+          profile.inquiry[locale],
+        );
+      }
+
+      for (const profile of Object.values(BHAVA_EDUCATION)) {
+        visibleText.push(
+          profile.name[locale],
+          profile.domain[locale],
+          profile.constructive[locale],
+          profile.caution[locale],
+        );
+      }
+
+      for (const limitation of Object.values(
+        LOCALIZED_ANALYSIS_LIMITATIONS,
+      )) {
+        visibleText.push(limitation[locale]);
+      }
+
+      for (const graha of GRAHA_IDS) {
+        for (let house = 1; house <= 12; house += 1) {
+          const reading = buildGrahaInBhavaReading(
+            graha,
+            house as keyof typeof BHAVA_EDUCATION,
+            locale,
+          );
+          visibleText.push(
+            reading.title,
+            reading.summary,
+            reading.constructive,
+            reading.caution,
+            reading.inquiry,
+            reading.methodNote,
+          );
+        }
+      }
+
+      expect(visibleText.join(" ")).not.toMatch(
+        OBSOLETE_EN_DE_PRIMARY_TERMS,
+      );
+    }
+
+    expect(GRAHA_EDUCATION.rahu.name.en).toBe("North Node");
+    expect(GRAHA_EDUCATION.ketu.name.en).toBe("South Node");
+    expect(GRAHA_EDUCATION.rahu.name.de).toBe("Nordknoten");
+    expect(GRAHA_EDUCATION.ketu.name.de).toBe("Südknoten");
   });
 });

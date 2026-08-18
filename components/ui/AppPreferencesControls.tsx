@@ -66,8 +66,47 @@ const localeLabels: Readonly<Record<AppLocale, keyof typeof messages.en>> = {
   de: "german",
 };
 
+export function AppLanguageSelect({
+  showLabel = false,
+  className = "",
+}: {
+  showLabel?: boolean;
+  className?: string;
+}) {
+  const { locale, setLocale } = useAppPreferences();
+  const t = useScopedTranslations(messages);
+
+  return (
+    <label
+      className={`inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-3 text-[var(--foreground)] transition hover:border-violet-500/35 ${className}`}
+    >
+      <Languages
+        aria-hidden="true"
+        className="size-4 shrink-0 text-violet-700 dark:text-violet-300"
+      />
+      {showLabel ? (
+        <span className="text-xs font-semibold">{t("language")}</span>
+      ) : (
+        <span className="sr-only">{t("language")}</span>
+      )}
+      <select
+        aria-label={t("language")}
+        value={locale}
+        onChange={(event) => setLocale(event.target.value as AppLocale)}
+        className="min-h-9 min-w-0 bg-transparent py-1.5 text-xs font-medium text-[var(--foreground)] outline-none"
+      >
+        {(Object.keys(localeLabels) as AppLocale[]).map((option) => (
+          <option key={option} value={option}>
+            {t(localeLabels[option])}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
 export default function AppPreferencesControls() {
-  const { locale, setLocale, theme, toggleTheme } = useAppPreferences();
+  const { theme, toggleTheme } = useAppPreferences();
   const t = useScopedTranslations(messages);
 
   return (
@@ -75,25 +114,7 @@ export default function AppPreferencesControls() {
       aria-label={t("preferences")}
       className="flex flex-wrap items-center gap-2"
     >
-      <label className="relative inline-flex items-center">
-        <Languages
-          aria-hidden="true"
-          className="pointer-events-none absolute left-3 size-4 text-violet-700 dark:text-violet-300"
-        />
-        <span className="sr-only">{t("language")}</span>
-        <select
-          aria-label={t("language")}
-          value={locale}
-          onChange={(event) => setLocale(event.target.value as AppLocale)}
-          className="min-h-10 appearance-none rounded-xl border border-white/10 bg-white/[0.055] py-2 pl-9 pr-8 text-xs font-medium text-slate-200 outline-none transition hover:bg-white/10 focus:border-violet-600/50 dark:focus:border-violet-300/50"
-        >
-          {(Object.keys(localeLabels) as AppLocale[]).map((option) => (
-            <option key={option} value={option}>
-              {t(localeLabels[option])}
-            </option>
-          ))}
-        </select>
-      </label>
+      <AppLanguageSelect />
 
       <button
         type="button"

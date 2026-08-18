@@ -25,18 +25,18 @@ const SOUTH_CHART_MESSAGES = defineMessages({
   en: {
     ariaLabel: "South Indian Vedic birth chart",
     description:
-      "Twelve fixed Rasis around a four by four South Indian grid. The Lagna marks Bhava one. Select a Rasi-Bhava cell or graha for details.",
-    rasi: "RĀŚI",
+      "Twelve fixed zodiac signs around a four by four South Indian grid. The Ascendant marks house one. Select a sign-house cell or planetary body for details.",
+    rasi: "ZODIAC",
     lahiri: "D1 · LĀHIRI",
     chartTitle: "South Indian chart",
     selectedGraha: "{glyph} {planet} · {rasi}",
-    selectedBhava: "Bhava {house} · {rasi}",
-    lagnaSummary: "Lagna · {rasi}",
-    signsFixed: "Rasis fixed · Bhavas from Lagna",
-    bhavaShort: "B",
-    lagnaShort: "LAGNA",
+    selectedBhava: "House {house} · {rasi}",
+    lagnaSummary: "Ascendant · {rasi}",
+    signsFixed: "Signs fixed · houses from Ascendant",
+    bhavaShort: "H",
+    lagnaShort: "ASC",
     figcaption:
-      "South Indian chart. Rasis are fixed; the Lagna Rasi begins Bhava one.",
+      "South Indian chart. Zodiac signs are fixed; the Ascendant sign begins house one.",
   },
   hi: {
     ariaLabel: "दक्षिण भारतीय वैदिक जन्म कुंडली",
@@ -71,20 +71,20 @@ const SOUTH_CHART_MESSAGES = defineMessages({
       "दक्षिण भारतीय कुंडली. राशी स्थिर असतात; लग्न राशीपासून पहिला भाव सुरू होतो.",
   },
   de: {
-    ariaLabel: "Südindische vedische Geburtskundali",
+    ariaLabel: "Südindisches vedisches Geburtshoroskop",
     description:
-      "Zwölf feste Rāśis um ein südindisches Vier-mal-vier-Raster. Das Lagna kennzeichnet Bhava eins. Wähle eine Rāśi-Bhava-Zelle oder ein Graha aus, um Details anzuzeigen.",
-    rasi: "RĀŚI",
+      "Zwölf feste Tierkreiszeichen um ein südindisches Vier-mal-vier-Raster. Der Aszendent kennzeichnet Haus eins. Wähle eine Zeichen-Haus-Zelle oder einen Himmelskörper aus, um Details anzuzeigen.",
+    rasi: "TIERKREIS",
     lahiri: "D1 · LĀHIRI",
-    chartTitle: "Südindische Kundali",
+    chartTitle: "Südindisches Geburtshoroskop",
     selectedGraha: "{glyph} {planet} · {rasi}",
-    selectedBhava: "Bhava {house} · {rasi}",
-    lagnaSummary: "Lagna · {rasi}",
-    signsFixed: "Rāśis fest · Bhavas ab Lagna",
-    bhavaShort: "B",
-    lagnaShort: "LAGNA",
+    selectedBhava: "Haus {house} · {rasi}",
+    lagnaSummary: "Aszendent · {rasi}",
+    signsFixed: "Zeichen fest · Häuser ab Aszendent",
+    bhavaShort: "H",
+    lagnaShort: "ASZ",
     figcaption:
-      "Südindische Kundali. Die Rāśis sind fest angeordnet; mit der Lagna-Rāśi beginnt Bhava eins.",
+      "Südindisches Geburtshoroskop. Die Tierkreiszeichen sind fest angeordnet; mit dem Aszendent-Zeichen beginnt Haus eins.",
   },
 });
 

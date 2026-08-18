@@ -4,6 +4,9 @@ import { APP_LOCALES } from "../i18n";
 import { ASTRO_TERM_IDS } from "./glossary";
 import { getLocalizedAstroGlossaryEntry } from "./localizedGlossary";
 
+const OBSOLETE_EN_DE_PRIMARY_TERMS =
+  /\b(?:Lagna|Rasi|Bhava|Graha|Nakshatra|Pada|Mahadasha|Antardasha|Gochara|Dasha|Surya|Chandra|Mesha|Meena|Shukra|Mangala|Guru|Shani|Budha|Kundali|Jyotish|Rahu|Ketu|Ayanamsha|Ayanamsa|Shadbala|Varga|Drishti|Yuti|Navamsha)\b/i;
+
 describe("localized AstroTerm glossary", () => {
   it("covers every clickable term in every app language", () => {
     for (const locale of APP_LOCALES) {
@@ -78,6 +81,50 @@ describe("localized AstroTerm glossary", () => {
         expect(german.calculation).toBeTruthy();
         expect(german.calculation).not.toBe(english.calculation);
       }
+    }
+  });
+
+  it("uses only locale-native visible terminology in English and German", () => {
+    for (const locale of ["en", "de"] as const) {
+      for (const id of ASTRO_TERM_IDS) {
+        const entry = getLocalizedAstroGlossaryEntry(id, locale);
+        const visibleText = [
+          entry.title,
+          entry.short,
+          entry.detailed,
+          entry.calculation,
+          ...entry.readingTips,
+        ]
+          .filter(Boolean)
+          .join(" ");
+
+        expect(entry.sanskrit).toBeUndefined();
+        expect(visibleText).not.toMatch(OBSOLETE_EN_DE_PRIMARY_TERMS);
+      }
+    }
+
+    expect(getLocalizedAstroGlossaryEntry("lagna", "en").title).toBe(
+      "Ascendant",
+    );
+    expect(getLocalizedAstroGlossaryEntry("lagna", "de").title).toBe(
+      "Aszendent",
+    );
+    expect(getLocalizedAstroGlossaryEntry("rahu-ketu", "en").title).toBe(
+      "Lunar nodes",
+    );
+    expect(getLocalizedAstroGlossaryEntry("rahu-ketu", "de").title).toBe(
+      "Mondknoten",
+    );
+  });
+
+  it("retains native-script terminology metadata for Hindi and Marathi", () => {
+    for (const locale of ["hi", "mr"] as const) {
+      expect(
+        getLocalizedAstroGlossaryEntry("lagna", locale).sanskrit,
+      ).toBeTruthy();
+      expect(
+        getLocalizedAstroGlossaryEntry("nakshatra", locale).sanskrit,
+      ).toBeTruthy();
     }
   });
 });

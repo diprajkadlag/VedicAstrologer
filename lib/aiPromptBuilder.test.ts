@@ -2,6 +2,12 @@ import { describe, expect, it } from "vitest";
 
 import { calculateVedicChart, GRAHA_IDS, RASIS } from "./astro/ephemeris";
 import { getRasiDisplayName } from "./astro/display";
+import {
+  getLocalizedGrahaName,
+  getLocalizedNakshatraName,
+  getLocalizedRasiName,
+} from "./astro/localizedNames";
+import { APP_LOCALES } from "./i18n";
 import { calculateTransitAnalysis } from "./transits";
 import {
   AI_ASTROLOGER_PRESETS,
@@ -11,6 +17,7 @@ import {
   buildAiAstrologerPrompt,
   buildAstrologyContext,
   getAiAstrologerPreset,
+  projectAstrologyContextForLocale,
   sanitizeAstrologerQuestion,
   stableStringify,
 } from "./aiPromptBuilder";
@@ -85,13 +92,111 @@ describe("buildAstrologyContext", () => {
     expect(() => JSON.stringify(context)).not.toThrow();
   });
 
-  it("serializes only Sanskrit Rasi names", () => {
-    const serialized = JSON.stringify(makeContext());
-    expect(serialized).not.toMatch(/"(?:Aries|Taurus|Gemini|Cancer|Leo|Virgo|Libra|Scorpio|Sagittarius|Capricorn|Aquarius|Pisces)"/u);
-    for (const rasi of RASIS) {
-      expect(serialized).toContain(getRasiDisplayName(rasi));
-    }
+  it.each(APP_LOCALES)(
+    "projects locale-native astronomical names without exposing internal name IDs for %s",
+    (locale) => {
+      const context = makeContext();
+      const projected = projectAstrologyContextForLocale(context, locale);
+      const natalSun = chart.planets.find((planet) => planet.id === "sun")!;
+      const transitSun = transitFixture.positions.find(
+        (planet) => planet.id === "sun",
+      )!;
+      const projectedNatalSun = projected.natal.planets.find(
+        (planet) =>
+          planet.planet.name === getLocalizedGrahaName("sun", locale),
+      )!;
+      const projectedTransitSun = projected.transits.positions.find(
+        (planet) =>
+          planet.planet.name === getLocalizedGrahaName("sun", locale),
+      )!;
+
+      expect(projected.schemaVersion).toBe(
+        "vedic-astrologer-presentation/v1",
+      );
+      expect(projected.sourceSchemaVersion).toBe(context.schemaVersion);
+      expect(projected.presentationLocale).toBe(locale);
+      expect(projected.natal.ascendant.sign).toEqual({
+        name: getLocalizedRasiName(
+          chart.ascendant.sign.name,
+          locale,
+        ),
+        index: chart.ascendant.sign.index,
+      });
+      expect(projectedNatalSun.planet).toEqual({
+        name: getLocalizedGrahaName("sun", locale),
+      });
+      expect(projectedNatalSun.sign).toEqual({
+        name: getLocalizedRasiName(natalSun.sign.name, locale),
+        index: natalSun.sign.index,
+      });
+      expect(projectedNatalSun.nakshatra.name).toBe(
+        getLocalizedNakshatraName(natalSun.nakshatra.name, locale),
+      );
+      expect(projectedNatalSun.nakshatra).not.toHaveProperty("id");
+      expect(projectedNatalSun.planet).not.toHaveProperty("id");
+      expect(projectedNatalSun.sign).not.toHaveProperty("id");
+      expect(projectedTransitSun.planet.name).toBe(
+        getLocalizedGrahaName("sun", locale),
+      );
+      expect(projectedTransitSun.sign.name).toBe(
+        getLocalizedRasiName(
+          RASIS[transitSun.signIndex],
+          locale,
+        ),
+      );
+      expect(projectedTransitSun.nakshatra.name).toBe(
+        getLocalizedNakshatraName(transitSun.nakshatra, locale),
+      );
+      expect(projected.vimshottari.mahadasha.lord.name).toBe(
+        getLocalizedGrahaName(
+          context.vimshottari.mahadasha.lord,
+          locale,
+        ),
+      );
+    },
+  );
+
+  it("does not expose raw English transit narratives in the German projection", () => {
+    const projected = projectAstrologyContextForLocale(
+      makeContext(),
+      "de",
+    );
+    const serialized = JSON.stringify(projected);
+
+    expect(projected.transits.daily).not.toHaveProperty("headline");
+    expect(projected.transits.daily).not.toHaveProperty("summary");
+    expect(projected.transits.daily).not.toHaveProperty("focus");
+    expect(projected.transits.daily.ruleContributions[0]).not.toHaveProperty(
+      "explanation",
+    );
+    expect(serialized).not.toContain(transitFixture.daily.headline);
+    expect(serialized).not.toContain(transitFixture.daily.summary);
+    expect(serialized).not.toContain(transitFixture.monthly.headline);
+    expect(serialized).not.toContain(
+      transitFixture.majorTransits.jupiter.summary,
+    );
+    expect(projected.interpretationBoundary).toMatch(
+      /^Vedische Astrologie wird/u,
+    );
   });
+
+  it.each([
+    ["en", "North Node", "South Node"],
+    ["de", "Nordknoten", "Südknoten"],
+  ] as const)(
+    "uses familiar lunar-node names in the %s presentation schema",
+    (locale, northNode, southNode) => {
+      const projected = projectAstrologyContextForLocale(
+        makeContext(),
+        locale,
+      );
+      const planetName = (id: "rahu" | "ketu") =>
+        projected.natal.planets[GRAHA_IDS.indexOf(id)].planet.name;
+
+      expect(planetName("rahu")).toBe(northNode);
+      expect(planetName("ketu")).toBe(southNode);
+    },
+  );
 
   it("is deterministic for identical explicit instants", () => {
     const first = buildAstrologyContext({ chart, birthInstant, asOf, transits: transitFixture });
@@ -154,6 +259,21 @@ describe("AI astrologer presets", () => {
       expect(getAiAstrologerPreset(preset.id)).toBe(preset);
     }
   });
+
+  it("uses familiar English terminology in preset copy", () => {
+    const copy = AI_ASTROLOGER_PRESETS.flatMap((preset) => [
+      preset.label,
+      preset.shortLabel,
+      preset.question,
+    ]).join(" ");
+
+    expect(copy).toContain("lunar mansion");
+    expect(copy).toContain("Ascendant Ruler");
+    expect(copy).toContain("main period and sub-period");
+    expect(copy).not.toMatch(
+      /\b(?:Nakshatra|Gochara|Lagna|Bhava|Lagnesha|Dasha|Mahadasha|Antardasha|Kundali|Rahu|Ketu|Pada)\b/u,
+    );
+  });
 });
 
 describe("question and prompt assembly", () => {
@@ -190,8 +310,26 @@ describe("question and prompt assembly", () => {
     expect(first.system).toMatch(/medical, legal, financial/i);
     expect(first.system).toMatch(/If indicators conflict/i);
     expect(first.system).toMatch(/Do not flatter/i);
+    expect(first.system).toContain("Aries through Pisces");
+    expect(first.system).toContain("Sun, Moon, Mercury");
+    expect(first.system).toContain("North Node and South Node");
+    expect(first.system).not.toMatch(
+      /\b(?:Nakshatra|Gochara|Lagna|Bhava|Lagnesha|Dasha|Mahadasha|Antardasha|Kundali|Rahu|Ketu|Pada|Jyotish)\b/u,
+    );
+    expect(first.system).not.toContain(
+      "Name every Rasi only by its Sanskrit transliteration",
+    );
     const envelope = JSON.parse(first.user);
-    expect(envelope.astrologyContext.schemaVersion).toBe("vedic-astrologer-context/v1");
+    expect(envelope.astrologyContext.schemaVersion).toBe(
+      "vedic-astrologer-presentation/v1",
+    );
+    expect(envelope.astrologyContext.presentationLocale).toBe("en");
+    expect(
+      envelope.astrologyContext.natal.planets.find(
+        (planet: { planet: { name: string } }) =>
+          planet.planet.name === "Sun",
+      ).planet.name,
+    ).toBe("Sun");
     expect(envelope.userQuestion).toBe("What does my current Dasha emphasize?");
   });
 
@@ -204,10 +342,19 @@ describe("question and prompt assembly", () => {
     expect(prompt.system).toMatch(/^आप वैदिक ज्योतिष/u);
     expect(prompt.system).toContain("पूरा उत्तर देवनागरी हिन्दी में दें");
     expect(prompt.system).toContain("वैज्ञानिक रूप से सिद्ध कारण-सम्बन्ध नहीं");
-    expect(prompt.system).toContain("स्थिर मशीन-पठनीय स्कीमा");
+    expect(prompt.system).toContain("खगोलीय नाम पहले से माँगी गई भाषा में हैं");
+    expect(prompt.system).toContain("मशीन-पठनीय प्रस्तुति-स्कीमा");
     expect(prompt.system).not.toContain(
       "You are an expert Vedic astrology",
     );
+    const context = JSON.parse(prompt.user).astrologyContext;
+    expect(context.presentationLocale).toBe("hi");
+    expect(
+      context.natal.planets.find(
+        (planet: { planet: { name: string } }) =>
+          planet.planet.name === "सूर्य",
+      ).planet.name,
+    ).toBe("सूर्य");
   });
 
   it("localizes Marathi system policy as well as the requested answer language", () => {
@@ -219,9 +366,55 @@ describe("question and prompt assembly", () => {
     expect(prompt.system).toMatch(/^तुम्ही वैदिक ज्योतिषावर/u);
     expect(prompt.system).toContain("संपूर्ण उत्तर देवनागरी मराठीत द्या");
     expect(prompt.system).toContain("वैज्ञानिकरीत्या सिद्ध कारणसंबंध");
-    expect(prompt.system).toContain("स्थिर मशीन-वाचनीय स्कीमा");
+    expect(prompt.system).toContain("खगोलीय नावे आधीच मागितलेल्या भाषेत आहेत");
+    expect(prompt.system).toContain("मशीन-वाचनीय प्रस्तुती-स्कीमा");
     expect(prompt.system).not.toContain(
       "You are an expert Vedic astrology",
+    );
+    const context = JSON.parse(prompt.user).astrologyContext;
+    expect(context.presentationLocale).toBe("mr");
+    expect(
+      context.natal.planets.find(
+        (planet: { planet: { name: string } }) =>
+          planet.planet.name === "मंगळ",
+      ).planet.name,
+    ).toBe("मंगळ");
+  });
+
+  it("uses familiar German names and a German-only presentation context", () => {
+    const prompt = buildAiAstrologerPrompt({
+      context: makeContext(),
+      question:
+        "Wie kann ich meinen aktuellen Jupitertransit ausgewogen einordnen?",
+      responseLocale: "de",
+    });
+    const envelope = JSON.parse(prompt.user);
+    const context = envelope.astrologyContext;
+    const sun = context.natal.planets.find(
+      (planet: { planet: { name: string } }) =>
+        planet.planet.name === "Sonne",
+    );
+
+    expect(prompt.system).toMatch(/^Sie sind ein fachkundiger/u);
+    expect(prompt.system).toContain("Widder bis Fische");
+    expect(prompt.system).toContain("Sonne, Mond, Merkur");
+    expect(prompt.system).toContain("Nordknoten und Südknoten");
+    expect(prompt.system).not.toMatch(
+      /\b(?:Nakshatra|Gochara|Lagna|Bhava|Lagnesha|Dasha|Mahadasha|Antardasha|Kundali|Rahu|Ketu|Pada|Jyotish)\b/u,
+    );
+    expect(prompt.system).not.toContain(
+      "Mesha, Vrishabha, Mithuna",
+    );
+    expect(context.presentationLocale).toBe("de");
+    expect(sun.planet.name).toBe("Sonne");
+    expect(sun.sign.name).toBe(
+      getLocalizedRasiName(
+        chart.planets.find((planet) => planet.id === "sun")!.sign.name,
+        "de",
+      ),
+    );
+    expect(JSON.stringify(context)).not.toContain(
+      transitFixture.daily.summary,
     );
   });
 

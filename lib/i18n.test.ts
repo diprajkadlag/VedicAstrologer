@@ -27,11 +27,11 @@ describe("app internationalization primitives", () => {
 
   it("interpolates known values and leaves unknown tokens visible", () => {
     expect(
-      formatMessage("{name}: Bhava {house}; {unknown}", {
-        name: "Surya",
+      formatMessage("{name}: House {house}; {unknown}", {
+        name: "Sun",
         house: 10,
       }),
-    ).toBe("Surya: Bhava 10; {unknown}");
+    ).toBe("Sun: House 10; {unknown}");
   });
 
   it("keeps scoped dictionaries aligned across all four languages", () => {

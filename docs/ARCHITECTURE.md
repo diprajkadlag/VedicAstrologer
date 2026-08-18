@@ -5,12 +5,12 @@
 Vedic Celestial Visualizer is a single Next.js App Router application that combines:
 
 - browser-side astronomical and Jyotish calculations;
-- a guided, stepwise birth-data workflow;
+- a compact, single-page birth-data workflow with one submission boundary;
 - an interactive React Three Fiber celestial scene;
-- North and South Indian SVG Rasi charts;
-- deterministic natal, Vimshottari Dasha, and Gochara analysis;
+- North and South Indian SVG birth charts;
+- deterministic natal, Vimshottari-period, and transit analysis;
 - an interactive multilingual Jyotish guide;
-- a localized client-side Kundali PDF summary;
+- a localized client-side birth-chart PDF summary;
 - an illustrated, keyboard-operable feature showcase;
 - a local AI-prompt preparation interface; and
 - deployment-aware place search backed by OpenStreetMap Nominatim.
@@ -26,8 +26,8 @@ flowchart LR
     U[User]
 
     subgraph Browser["Browser — Next.js client application"]
-        PREF[AppPreferencesProvider<br/>locale and theme]
-        TOUR[FeatureShowcase<br/>illustrated product tour]
+        PREF[AppPreferencesProvider<br/>locale and theme;<br/>header and post-submit controls]
+        TOUR[FeatureShowcase<br/>promotional product tour]
         FORM[BirthForm]
         CIVIL[civil-time.ts<br/>IANA civil time to UTC instant]
         APP[VedicAstrologyApp<br/>orchestration and shared selection]
@@ -36,11 +36,12 @@ flowchart LR
         WEBGL[CelestialSphere<br/>React Three Fiber]
         SVG[ChartWorkspace<br/>North and South SVG charts]
         PANEL[InterpretationPanel]
-        RULES[interpretations.ts<br/>rule tables and Dashas]
-        TRANSIT[transits.ts<br/>deterministic Gochara]
+        RULES[interpretations.ts<br/>rule tables and periods]
+        TRANSIT[transits.ts<br/>deterministic transits]
         AUDIT[analysisAudit.ts<br/>structural consistency]
         GUIDE[Jyotish guide and glossary]
-        PDF[Kundali PDF<br/>localized natal summary]
+        PDFLANG[PDF-language selector]
+        PDF[Birth-chart PDF<br/>localized natal summary]
         PROMPT[aiPromptBuilder.ts<br/>stable local prompt]
 
         PREF --> FORM
@@ -60,11 +61,12 @@ flowchart LR
         PANEL --> GUIDE
         PANEL --> PDF
         AUDIT --> PDF
+        PDFLANG --> PDF
         PANEL --> PROMPT
         TRANSIT --> PROMPT
-        WEBGL <-->|selected graha| APP
-        SVG <-->|selected graha or Bhava| APP
-        PANEL -->|highlight graha or Bhava| APP
+        WEBGL <-->|selected planet| APP
+        SVG <-->|selected planet or house| APP
+        PANEL -->|highlight planet or house| APP
     end
 
     subgraph Server["Next.js Node.js route"]
@@ -107,7 +109,7 @@ calculation is deliberately local:
 
 - civil-time validation and DST disambiguation;
 - natal and simulated ephemeris calculation;
-- Dasha and interpretation assembly;
+- Vimshottari-period and interpretation assembly;
 - transit comparison and scoring;
 - structural chart audits;
 - SVG chart layout;
@@ -150,19 +152,19 @@ is offline” would not be: place search is still a network operation.
 | Layer | Primary modules | Responsibility |
 | --- | --- | --- |
 | App shell | `app/layout.tsx`, `app/page.tsx`, `app/globals.css` | Metadata, preference bootstrap, global theme tokens, responsive base styles |
-| Orchestration | `components/VedicAstrologyApp.tsx` | Owns natal/display chart state, time simulation, error state, and synchronized graha/Bhava selection |
-| Input and time | `components/ui/BirthForm.tsx`, `components/ui/TimeNavigator.tsx`, `lib/astro/civil-time.ts`, `lib/astro/instants.ts` | Six-step guided entry, per-step validation, place selection, optional seconds, IANA civil-time resolution, DST fold/gap handling, absolute-instant normalization |
-| Astronomy | `lib/astro/ephemeris.ts` | Lahiri sidereal conversion, apparent geocentric grahas, Lagna, mean nodes, motion, whole-sign houses, and trajectory samples |
-| Jyotish rules | `lib/astro/interpretations.ts`, `lib/astro/education.ts`, `lib/astro/glossary.ts` | House/graha/Nakshatra lookup data, personality synthesis, 108 graha-in-Bhava educational readings, and Vimshottari timelines |
+| Orchestration | `components/VedicAstrologyApp.tsx` | Owns natal/display chart state, time simulation, error state, and synchronized planet/house selection |
+| Input and time | `components/ui/BirthForm.tsx`, `components/ui/TimeNavigator.tsx`, `lib/astro/civil-time.ts`, `lib/astro/instants.ts` | Single-page entry, whole-form and inline-field validation, place selection, optional seconds, IANA civil-time resolution, DST fold/gap handling, absolute-instant normalization |
+| Astronomy | `lib/astro/ephemeris.ts` | Lahiri sidereal conversion, apparent geocentric planets, Ascendant, mean nodes, motion, whole-sign houses, and trajectory samples |
+| Jyotish rules | `lib/astro/interpretations.ts`, `lib/astro/education.ts`, `lib/astro/glossary.ts` | House/planet/lunar-mansion lookup data, personality synthesis, 108 planet-in-house educational readings, and Vimshottari timelines |
 | Analysis integrity | `lib/astro/analysisAudit.ts` | Internal consistency checks and explicit methodological limitations |
-| Transit engine | `lib/transits.ts` | Recalculates a chart at an explicit instant and compares Gochara from natal Lagna and Janma Rasi |
-| AI handoff | `lib/aiPromptBuilder.ts`, `components/dashboard/AiAstrologerTab.tsx` | Validates and serializes chart context, separates system policy from user JSON, previews and copies a prompt |
-| Document export | `components/export/*`, `lib/export/*`, `public/fonts/*` | Builds a selected-language Kundali summary from the natal snapshot and downloads it locally with bundled fonts |
-| Product introduction | `components/marketing/FeatureShowcase.tsx`, `public/features/*` | Keyboard-operable visual tour with lightweight repository-owned SVG illustrations |
-| 3D presentation | `components/3d/*` | WebGL capability probe, responsive camera, Earth/celestial sphere, grahas, Nakshatras, trails, controls, and fullscreen |
+| Transit engine | `lib/transits.ts` | Recalculates a chart at an explicit instant and compares transits from the natal Ascendant and birth Moon sign |
+| AI handoff | `lib/aiPromptBuilder.ts`, `lib/aiContextLocalization.ts`, `components/dashboard/AiAstrologerTab.tsx` | Validates and serializes chart context, projects astronomical references into locale-only presentation names, separates system policy from user JSON, previews and copies a prompt |
+| Document export | `components/export/*`, `lib/export/*`, `public/fonts/*` | Builds a selected-language birth-chart summary from the natal snapshot and downloads it locally with bundled fonts |
+| Product introduction | `components/marketing/FeatureShowcase.tsx`, `public/features/*` | Keyboard-operable visual tour led by repository-owned, optimized WebP promotional art for the cosmos, charts, and report, with lightweight supporting artwork |
+| 3D presentation | `components/3d/*` | WebGL capability probe, responsive camera, Earth/celestial sphere, planets, lunar-mansion sectors, trails, controls, and fullscreen |
 | 2D presentation | `components/chart/*`, `components/dashboard/ChartWorkspace.tsx` | Interactive North and South Indian SVG chart layouts |
-| Analysis UI | `components/analysis/*`, `components/dashboard/HoroscopeTab.tsx` | Overview, positions, Bhavas, Nakshatras, Dashas, Gochara, guide, methodology, and prompt tabs |
-| Localization | `lib/i18n.ts`, `lib/astro/localizedNames.ts`, `lib/astro/localizedGlossary.ts`, component dictionaries | English, Hindi, Marathi, and German text, Sanskrit-first names, glossary content, and locale-aware number/date display |
+| Analysis UI | `components/analysis/*`, `components/dashboard/HoroscopeTab.tsx` | Overview, positions, houses, lunar mansions, Vimshottari periods, transits, guide, methodology, and prompt tabs |
+| Localization | `lib/i18n.ts`, `lib/astro/localizedNames.ts`, `lib/astro/localizedGlossary.ts`, component dictionaries | English, Hindi, Marathi, and German text, locale-native astronomical labels, glossary content, and locale-aware number/date display |
 | Geocoding | `app/api/geocode/route.node.ts`, `lib/geocoding/*` | Deployment-selected proxy/browser Nominatim transport, response normalization, timezone lookup, throttling, and HTTP errors |
 
 ## 5. Astronomy and Jyotish are separate domains
@@ -180,11 +182,13 @@ personality or predictive meaning:
 - Sidereal longitude subtracts a documented Lahiri-style ayanamsa built from a
   J2000 anchor, IAU-1976 precession, and a truncated nutation correction.
 - Rahu and Ketu are mean lunar nodes and are constructed 180 degrees apart.
-- Lagna is the rising intersection of the true ecliptic with the local horizon.
-- Bhavas use the whole-sign convention from the Lagna Rasi.
+- The Ascendant is the rising intersection of the true ecliptic with the local
+  horizon; it is stored as `lagna` in the internal chart contract.
+- Houses use the whole-sign convention from the Ascendant's zodiac sign.
 - Motion is sampled across a one-day centered window; the stored speed drives
   direct, stationary, and retrograde labels.
-- Rasi, Nakshatra, and Pada are derived from normalized sidereal longitude.
+- Zodiac sign, lunar mansion, and quarter are derived from normalized sidereal
+  longitude.
 
 The resulting object declares its coordinate system, house system, node model,
 ayanamsa, observer location, and accuracy note. Consumers therefore do not have
@@ -195,16 +199,26 @@ to infer which convention produced a placement.
 `lib/astro/interpretations.ts` and `lib/astro/education.ts` consume calculated
 placements and apply explicit lookup rules:
 
-- twelve Bhava meanings and nine-graha archetypes;
-- a graha-in-Bhava effect for every supported combination;
-- 27 Nakshatra profiles;
-- Lagna and Moon-Nakshatra personality synthesis;
-- Vimshottari Mahadasha and Antardasha periods; and
+- twelve house meanings and nine planetary archetypes;
+- a planet-in-house effect for every supported combination;
+- 27 lunar-mansion profiles;
+- Ascendant and Moon-lunar-mansion personality synthesis;
+- Vimshottari major and subperiods; and
 - constructive, cautionary, and reflective readings.
 
 Vimshottari uses the canonical nine-lord 120-year sequence with a disclosed
 365.25-day year. Other software or lineages can produce different boundary
 dates when they use a different year convention.
+
+`buildLocalizedBhavaRows` is the shared presentation boundary for the
+twelve-house summary in both `InterpretationPanel` and the PDF. Every house has
+exactly three localized, chart-specific sentences: a violet significance
+sentence describing the house's traditional scope, a blue chart-reading
+sentence naming the calculated sign, ruler pathway, and resident bodies, and a
+green balanced-reflection sentence describing a constructive possibility and
+caution without fixing the user's character or predicting an event. Keeping
+these fields separate preserves the color semantics in HTML and React PDF and
+prevents the two reports from drifting.
 
 `lib/transits.ts` uses the astronomical engine again at an explicit `asOf`
 instant, then applies named, inspectable rule contributions. Scores start at
@@ -214,24 +228,26 @@ summaries, not probabilities or measured forecasts.
 ### Integrity boundary
 
 `auditVedicChart` checks that derived fields agree with the chart's own rules:
-Rasi/Nakshatra/Pada boundaries, graha membership, whole-sign ordering, motion
-flags, coordinate metadata, and the Rahu–Ketu opposition. Passing the audit
-means internal structural consistency only. The Methodology and Guide tabs
-state that this does not validate astrology as a scientific predictive method.
+zodiac-sign/lunar-mansion/quarter boundaries, planet membership, whole-sign
+ordering, motion flags, coordinate metadata, and the Rahu–Ketu opposition.
+Passing the audit means internal structural consistency only. The Methodology
+and Guide tabs state that this does not validate astrology as a scientific
+predictive method.
 
 ## 6. UI state and synchronization
 
-Before any chart exists, `BirthForm` owns a six-step wizard: name, optional
-addressing/gender, date, time, place/timezone, and confirmation. Each transition
-validates only the current responsibility, while Back and review-card Edit
-actions preserve prior inputs. Time entry defaults to minute precision and can
-be expanded to seconds. A final submission normalizes the civil time and hands
-one immutable request to the chart orchestrator.
+Before any chart exists, `BirthForm` presents name, optional addressing/gender,
+date, time, place, timezone, and manual fallback controls in one responsive
+form. There are no wizard steps or intermediate Continue actions. Inline field
+errors keep corrections close to their inputs; the single Generate action
+validates the complete form, resolves any daylight-saving ambiguity, normalizes
+the civil time, and hands one immutable request to the chart orchestrator. Time
+entry defaults to minute precision and can be expanded to seconds.
 
 `VedicAstrologyApp` keeps two chart objects for two distinct purposes:
 
 - `natalChart` remains fixed at the resolved birth instant and feeds natal
-  interpretation, Dashas, transits, methodology, and AI context.
+  interpretation, Vimshottari periods, transits, methodology, and AI context.
 - `displayChart` follows the time navigator and feeds the 3D scene, headline
   positions, and SVG chart workspace.
 
@@ -249,22 +265,23 @@ stateDiagram-v2
 
     state NatalReady {
         [*] --> NoSelection
-        NoSelection --> GrahaSelected: select in 3D, SVG, or analysis
-        GrahaSelected --> NoSelection: clear
-        NoSelection --> BhavaSelected: select Bhava
-        BhavaSelected --> GrahaSelected: select resident graha
-        GrahaSelected --> BhavaSelected: clear graha, retain/select Bhava
+        NoSelection --> PlanetSelected: select in 3D, SVG, or analysis
+        PlanetSelected --> NoSelection: clear
+        NoSelection --> HouseSelected: select house
+        HouseSelected --> PlanetSelected: select resident planet
+        PlanetSelected --> HouseSelected: clear planet, retain/select house
     }
 ```
 
-Generation calculates both chart objects, initializes Bhava 1, and resets
-graha selection. Time changes are coalesced through
+Generation calculates both chart objects, initializes House 1, and resets
+planet selection. Time changes are coalesced through
 `requestAnimationFrame` and committed through a React transition, preventing a
 rapid slider stream from scheduling redundant chart renders. The 3D scene also
 defers the chart used for trajectory sampling.
 
-Graha selection is shared by the 3D scene and SVG workspace. Selecting a graha
-also selects its Bhava; directly selecting a Bhava clears the graha. Analysis
+Planet selection is shared by the 3D scene and SVG workspace. Selecting a
+planet also selects its house; directly selecting a house clears the planet.
+Analysis
 buttons reuse the same callbacks, so an explanatory panel can highlight the
 corresponding visual object.
 
@@ -272,6 +289,14 @@ The analysis panel owns view-specific state: active tab and a selected transit
 reference date. Its keyboard-operable tab list supports arrow, Home, and End
 navigation. Chart-style choice, time-window choice, guide filters, and prompt
 drafts remain local to their respective components.
+
+After generation, the chart header renders a labeled global language selector
+in addition to the preference controls in the page header. It writes through
+the same preference store, so a change immediately reprojects the 3D labels,
+SVG charts, analysis, guide, transits, and AI workspace without recalculating
+the natal chart. `KundaliPdfDownload` owns a separate report-language selection:
+changing it affects the next PDF only and does not change the application
+locale.
 
 `analysisAsOf` is initialized to the current time and refreshed once per minute
 while a natal chart exists. All lower-level calculation functions accept
@@ -281,8 +306,8 @@ explicit instants; they do not read the machine clock themselves.
 
 `CelestialSphere` builds a geocentric React Three Fiber scene from the same
 `displayChart` used by the SVG workspace. The scene contains a central Earth,
-stars, a zodiac band, 27 Nakshatra sectors, Lagna, graha nodes, and sampled
-ephemeris trails. `OrbitControls` provides rotate, pan, and zoom, while
+stars, a zodiac band, 27 lunar-mansion sectors, the Ascendant, planet nodes, and
+sampled ephemeris trails. `OrbitControls` provides rotate, pan, and zoom, while
 `AdaptiveDpr` adjusts rendering density.
 
 The renderer has several containment layers:
@@ -297,18 +322,22 @@ The renderer has several containment layers:
    English/Hindi/Marathi/German explanation, recovery guidance, and retry
    action while the SVG charts and analysis remain usable.
 4. **Runtime containment.** A React error boundary catches renderer
-   initialization failures. A `webglcontextlost` listener replaces a failed
-   scene with the same safe fallback.
+   initialization failures. Canvas-lifecycle listeners handle
+   `webglcontextlost` and `webglcontextrestored`; transient failures use a
+   finite 180/480/900 ms recovery budget before the safe manual fallback.
 5. **Responsive sizing.** A `ResizeObserver` synchronizes the actual canvas
    host size with React Three Fiber. Camera distance is recalculated from the
    measured aspect ratio and the scene radius.
-6. **Fullscreen transition.** The canvas remounts at the embedded/fullscreen
-   boundary so its drawing buffer is measured against the new containing
-   viewport.
+6. **Fullscreen transition.** The same renderer stays mounted at the
+   embedded/fullscreen boundary. Fullscreen, window, and visual-viewport
+   changes trigger several animation-frame measurements plus a final settled
+   measurement, avoiding both stale drawing-buffer size and false context loss.
 7. **Motion and device sensitivity.** Reduced-motion preferences disable
    continuous decorative movement, and labels/trails use responsive defaults.
 
-The cosmos is intentionally a dark-sky surface in both application themes.
+The cosmos follows the active application theme. Light mode uses a pale,
+high-contrast celestial palette for the canvas and overlays; dark mode retains
+the dark-sky treatment. The WebGL fallback follows the same theme contract.
 
 ## 8. Localization and themes
 
@@ -323,20 +352,36 @@ Hindi, Marathi, and German dictionaries must implement the same keys at compile
 time. A runtime English fallback also protects development hot reloads and
 persisted preferences while a new dictionary is temporarily incomplete; it is
 a resilience measure, not permission to ship untranslated user flows.
-Components own scoped dictionaries, while canonical Graha, Rasi, Nakshatra,
-glossary, and educational text live in shared localization modules.
+Components own scoped dictionaries, while canonical internal planet,
+zodiac-sign, and lunar-mansion IDs plus glossary and educational text live in
+shared localization modules.
 
 `INTL_LOCALES` maps the four application locales to `en-IN`, `hi-IN`, `mr-IN`,
-and `de-DE` for locale-aware formatting. User-facing terminology remains
-Sanskrit-first: names such as Mesha, Mithuna, Simha, Graha, Bhava, Nakshatra,
-and Pada are localized or explained without replacing them with Western zodiac
-names. The presentation mapping is centralized rather than allowing each
-visual surface to invent labels.
+and `de-DE` for locale-aware formatting. User-facing terminology is
+locale-native: English uses familiar English planet, zodiac-sign, house,
+lunar-mansion, quarter, period, and transit terms; German uses German terms and
+zodiac names such as *Löwe*, *Sonne*, and *Mond*; Hindi and Marathi use native
+Devanagari. Technical method names such as Lahiri and Vimshottari remain where
+they identify a real calculation convention.
+
+Stable internal enum IDs, JSON keys, and typed transliterations are calculation
+and integration contracts, not display policy. Central presentation adapters
+localize those values before they reach visual labels, accessible names, or
+PDFs. The AI projection is stricter for astronomical references: it emits only
+the selected locale's `name` and does not include a parallel internal planet,
+zodiac-sign, or lunar-mansion name ID in the presentation payload. Non-name
+schema keys, numeric sign indexes, method identifiers, and rule IDs remain
+stable machine fields, but the readable interface preview deliberately does
+not render those machine keys as user-facing labels.
+
+The application locale can be changed before or after chart generation. The
+post-submit global selector controls the whole interface and remains distinct
+from the PDF-language selector, which controls only document generation.
 
 `AstroTerm` exposes glossary entries through a native modal dialog rendered in
 a portal. The separate Jyotish Guide provides searchable core terms, all nine
-graha profiles, an interactive 9 × 12 graha/Bhava explorer, and the structural
-integrity limitations in every supported language.
+planetary profiles, an interactive 9 × 12 planet/house explorer, and the
+structural integrity limitations in every supported language.
 
 The formatting primitive intentionally supports simple named interpolation,
 not a full ICU message grammar. Plural and grammatical variations are
@@ -420,22 +465,32 @@ handoff:
 
 1. `buildAstrologyContext` verifies that the natal chart, birth instant,
    transit instant, and transit natal reference agree.
-2. It emits a versioned, JSON-safe payload containing the natal model,
-   placements, whole-sign rulers, current Dasha, and transits.
+2. It emits a versioned, JSON-safe calculation payload containing the natal
+   model, placements, whole-sign rulers, current Vimshottari period, and
+   transits; `projectAstrologyContextForLocale` then creates the selected-
+   language handoff used by the readable snapshot and copied prompt.
 3. `sanitizeAstrologerQuestion` normalizes the question, removes control and
    delimiter-like characters, and enforces a 1,200-character limit.
 4. `buildAiAstrologerPrompt` keeps policy in a system string and untrusted
    context/question data in stable-key-order user JSON.
-5. The UI previews both parts and copies them only after an explicit action.
+5. The UI previews the localized policy plus a readable, localized chart
+   snapshot. It copies the complete machine-readable handoff only after an
+   explicit action, rather than exposing schema keys as interface labels.
 
-System instructions require the selected app language, Sanskrit Rasi names,
-separation of calculated data from traditional rules and inference, disclosure
-of conflicts and missing methods, and non-deterministic language.
+System instructions require the selected app language and its locale-native
+terminology, separation of calculated data from traditional rules and
+inference, disclosure of conflicts and missing methods, and non-deterministic
+language. Stable English JSON keys and non-name machine identifiers remain
+explicit machine data and do not force English wording in a future answer.
+Astronomical references are different: their presentation objects
+contain only locale-native names, without parallel internal planet,
+zodiac-sign, or lunar-mansion name IDs.
 
-The generated JSON contains birth coordinates and chart data. The UI warns the
-user to review it before sharing. Because there is no configured LLM transport,
-provider authentication, streaming response, or server-side secret management
-in this repository, those concerns remain outside the current architecture.
+The copied JSON contains birth coordinates and chart data. The UI warns the
+user through a localized readable summary before sharing. Because there is no
+configured LLM transport, provider authentication, streaming response, or
+server-side secret management in this repository, those concerns remain
+outside the current architecture.
 
 ## 11. Testing and quality gates
 
@@ -451,13 +506,13 @@ The tests emphasize pure boundaries and invariants:
 
 | Test area | Representative guarantees |
 | --- | --- |
-| Ephemeris | angle wrapping, Rasi/Nakshatra/Pada boundaries, Lahiri reference values, complete whole-sign charts, mean-node opposition, ascendant orientation, retrograde motion, trajectories, invalid inputs |
+| Ephemeris | angle wrapping, zodiac-sign/lunar-mansion/quarter boundaries, Lahiri reference values, complete whole-sign charts, mean-node opposition, Ascendant orientation, retrograde motion, trajectories, invalid inputs |
 | Civil time | calendar validation, historical offsets, IANA zones, DST gaps, DST folds, explicit disambiguation |
-| Interpretation | complete lookup tables, every graha/Bhava pair, all 27 Nakshatras, deterministic analysis, Dasha continuity and exact boundaries |
+| Interpretation | complete lookup tables, every planet/house pair, all 27 lunar mansions, deterministic analysis, Vimshottari-period continuity and exact boundaries |
 | Analysis audit | detection of inconsistent placements, houses, nodes, motion, coordinates, and model metadata |
 | Transits | whole-sign reference mapping, deterministic dates, named score arithmetic, Saturn/Jupiter notices, validation |
-| AI handoff | complete JSON-safe context, Sanskrit Rasi names, timestamp/reference consistency, stable serialization, localized safety policy, adversarial question separation |
-| Localization and education | four-language key parity, Devanagari labels, Sanskrit-first names, clickable glossary coverage, nine grahas, twelve Bhavas, and all 108 educational combinations |
+| AI handoff | complete JSON-safe context, locale-only astronomical references with no parallel internal name IDs, timestamp/reference consistency, stable serialization, localized safety policy, adversarial question separation |
+| Localization and education | four-language key parity, familiar English labels, German labels such as Löwe/Sonne/Mond, native Devanagari, clickable glossary coverage, nine planetary profiles, twelve houses, and all 108 educational combinations |
 | Geocoding | query and URL safety, upstream field whitelisting, timezone lookup, coalescing, request spacing, cache/error semantics |
 | Charts and 3D helpers | traditional SVG layout maps, localized accessibility text, responsive camera math, and WebGL disabled/lost/fallback classification |
 
@@ -491,7 +546,7 @@ Web Worker implementation.
 
 ### Explicit Jyotish convention
 
-Lahiri sidereal coordinates, whole-sign Bhavas, and mean lunar nodes make the
+Lahiri sidereal coordinates, whole-sign houses, and mean lunar nodes make the
 model reproducible. They do not represent every Jyotish convention, and
 boundary placements can differ under another ayanamsa, true nodes, or another
 house system.
@@ -519,12 +574,17 @@ where to use it.
 
 ### Client-side PDF instead of a report service
 
-Generating the Kundali summary in the browser keeps the report tied to the
+Generating the birth-chart summary in the browser keeps the report tied to the
 audited natal snapshot and avoids uploading birth data to a document service.
 Bundled Noto fonts make Latin and Devanagari output reproducible across the four
-locales. The tradeoffs are a larger on-demand client chunk, browser-dependent
-download behavior, and a deliberately bounded report rather than a
-server-rendered archival document.
+locales. A PDF-specific selector chooses the report locale independently of the
+global interface locale. The report opens with three explicitly paginated pages
+covering all twelve houses. Each house repeats exactly the same three
+color-coded personalized sentences used in the interface: traditional
+significance, calculated chart context, and a balanced reflection. The
+tradeoffs are a larger on-demand client chunk, browser-dependent download
+behavior, and a deliberately bounded report rather than a server-rendered
+archival document.
 
 ## 13. Known model and product limitations
 
@@ -535,16 +595,17 @@ chart results.
 
 Additional constraints exposed by the code are:
 
-- birth-time or location uncertainty can materially change Lagna and Bhavas;
+- birth-time or location uncertainty can materially change the Ascendant and
+  houses;
 - exact geographic poles are unsupported by the ascendant calculation;
-- placements near Rasi, Nakshatra, or Pada boundaries should be treated as
-  uncertain at the declared ephemeris tolerance;
+- placements near zodiac-sign, lunar-mansion, or quarter boundaries should be
+  treated as uncertain at the declared ephemeris tolerance;
 - the custom Lahiri implementation is documented but is not independently
   certified against Swiss Ephemeris or JPL for every supported input;
 - the approximately one-arcminute figure is inherited as an engineering target,
   not a repository benchmark or universal certification;
 - mean-node positions can differ from true-node results near boundaries;
-- Dasha dates depend on the disclosed 365.25-day-year convention;
+- Vimshottari-period dates depend on the disclosed 365.25-day-year convention;
 - transit scores are app-specific symbolic summaries, not probabilities;
 - the downloadable PDF is a presentation of the same application model, not
   an independent ephemeris cross-check or professional certification;
