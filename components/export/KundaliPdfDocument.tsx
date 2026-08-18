@@ -521,11 +521,11 @@ function BhavaCard({
       <View style={styles.bhavaReadingRow}>
         <View style={styles.bhavaReadingCell}>
           <Text style={styles.label}>{copy.constructiveExpression}</Text>
-          <Text style={styles.positive}>{row.constructive}</Text>
+          <Text style={styles.positive}>{row.constructiveDetail}</Text>
         </View>
         <View style={styles.bhavaReadingCell}>
           <Text style={styles.label}>{copy.caution}</Text>
-          <Text style={styles.caution}>{row.caution}</Text>
+          <Text style={styles.caution}>{row.cautionDetail}</Text>
         </View>
       </View>
     </View>
@@ -576,10 +576,16 @@ export function KundaliPdfDocument({
   summary: KundaliSummary;
 }) {
   const { copy } = summary;
-  const bhavaGroups = [
+  const bhavaConclusionGroups = [
     summary.bhavas.slice(0, 4),
     summary.bhavas.slice(4, 8),
     summary.bhavas.slice(8, 12),
+  ] as const;
+  const bhavaDetailGroups = [
+    summary.bhavas.slice(0, 3),
+    summary.bhavas.slice(3, 6),
+    summary.bhavas.slice(6, 9),
+    summary.bhavas.slice(9, 12),
   ] as const;
 
   return (
@@ -671,7 +677,7 @@ export function KundaliPdfDocument({
         </View>
       </ReportPage>
 
-      {bhavaGroups.map((rows) => {
+      {bhavaConclusionGroups.map((rows) => {
         const first = rows[0].number;
         const last = rows[rows.length - 1].number;
         return (
@@ -747,7 +753,7 @@ export function KundaliPdfDocument({
         </View>
       </ReportPage>
 
-      {bhavaGroups.map((rows) => {
+      {bhavaDetailGroups.map((rows) => {
         const first = rows[0].number;
         const last = rows[rows.length - 1].number;
         return (

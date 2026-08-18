@@ -103,6 +103,12 @@ describe("KundaliPdfDocument browser render path", () => {
         asOf: new Date("2026-07-29T12:00:00.000Z"),
         locale,
       });
+      for (const bhava of summary.bhavas) {
+        expect(bhava.constructiveDetail).toBeTruthy();
+        expect(bhava.constructiveDetail).not.toBe(bhava.constructive);
+        expect(bhava.cautionDetail).toBeTruthy();
+        expect(bhava.cautionDetail).not.toBe(bhava.caution);
+      }
       const blob = await pdf(
         <KundaliPdfDocument summary={summary} />,
       ).toBlob();
@@ -115,7 +121,7 @@ describe("KundaliPdfDocument browser render path", () => {
       expect(blob.type).toBe("application/pdf");
       expect(signature).toBe("%PDF-");
       expect(bytes.byteLength).toBeGreaterThan(15_000);
-      expect(renderedPages).toHaveLength(9);
+      expect(renderedPages).toHaveLength(10);
     },
     30_000,
   );

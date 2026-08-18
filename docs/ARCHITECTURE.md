@@ -211,14 +211,16 @@ Vimshottari uses the canonical nine-lord 120-year sequence with a disclosed
 dates when they use a different year convention.
 
 `buildLocalizedBhavaRows` is the shared presentation boundary for the
-twelve-house summary in both `InterpretationPanel` and the PDF. Every house has
+standalone twelve-house result and the PDF. Every house has
 exactly three localized, chart-specific sentences: a violet significance
 sentence describing the house's traditional scope, a blue chart-reading
 sentence naming the calculated sign, ruler pathway, and resident bodies, and a
 green balanced-reflection sentence describing a constructive possibility and
 caution without fixing the user's character or predicting an event. Keeping
 these fields separate preserves the color semantics in HTML and React PDF and
-prevents the two reports from drifting.
+prevents the two reports from drifting. Separate `constructiveDetail` and
+`cautionDetail` fields supply two practical, conditional sentences without
+making the concise summary ungrammatical or deterministic.
 
 `lib/transits.ts` uses the astronomical engine again at an explicit `asOf`
 instant, then applies named, inspectable rule contributions. Scores start at
@@ -253,6 +255,12 @@ entry defaults to minute precision and can be expanded to seconds.
 
 This prevents a time-scrubber interaction from silently changing the natal
 foundation.
+
+After generation, the result order is deliberate: completion header, fixed
+natal twelve-house reading, time navigator, 3D cosmos, SVG chart workspace,
+then the remaining analysis tabs. The house cards are semantic articles rather
+than disclosures, so all twelve readings are immediately available and the
+analysis tab set does not duplicate them.
 
 ```mermaid
 stateDiagram-v2

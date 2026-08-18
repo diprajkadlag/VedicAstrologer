@@ -1236,7 +1236,14 @@ export interface BhavaEducationProfile {
   domain: LocalizedText;
   constructive: LocalizedText;
   caution: LocalizedText;
+  constructiveDetail: LocalizedText;
+  cautionDetail: LocalizedText;
 }
+
+type BhavaCoreEducationProfile = Omit<
+  BhavaEducationProfile,
+  "constructiveDetail" | "cautionDetail"
+>;
 
 const BHAVA_ROWS: readonly [
   HouseNumber,
@@ -1260,7 +1267,7 @@ const BHAVA_ROWS: readonly [
 ] as const;
 
 const BASE_BHAVA_EDUCATION: Readonly<
-  Record<HouseNumber, BhavaEducationProfile>
+  Record<HouseNumber, BhavaCoreEducationProfile>
 > = Object.fromEntries(
   BHAVA_ROWS.map(([number, name, domain, constructive, caution]) => [
     number,
@@ -1387,6 +1394,183 @@ const GERMAN_BHAVA_EDUCATION: Readonly<
   },
 };
 
+type BhavaDetailGuidance = Readonly<
+  Pick<BhavaEducationProfile, "constructiveDetail" | "cautionDetail">
+>;
+
+const BHAVA_DETAIL_GUIDANCE: Readonly<
+  Record<HouseNumber, BhavaDetailGuidance>
+> = {
+  1: {
+    constructiveDetail: localized(
+      "If this field is emphasized, steady body awareness, proportionate initiative, and routines that protect vitality can offer a practical outlet. Consider tracking which choices increase grounded confidence without making appearance or performance the measure of identity.",
+      "यदि यह क्षेत्र प्रमुख लगे, तो शरीर-जागरूकता, संतुलित पहल और जीवन-शक्ति सँभालने वाली दिनचर्या व्यावहारिक दिशा दे सकती हैं। देखिए कि कौन-से चुनाव रूप या प्रदर्शन को पहचान का माप बनाए बिना स्थिर आत्मविश्वास बढ़ाते हैं।",
+      "जर या क्षेत्रावर भर जाणवत असेल, तर देहजाणीव, संतुलित पुढाकार आणि जीवनशक्ती जपणारा दिनक्रम व्यावहारिक दिशा देऊ शकतो. रूप किंवा कामगिरीला ओळखीचे मोजमाप न बनवता कोणते निर्णय स्थिर आत्मविश्वास वाढवतात हे पाहा.",
+      "Wenn dieses Feld betont erscheint, können beständige Körperwahrnehmung, angemessene Eigeninitiative und kräfteschonende Routinen einen praktischen Ausdruck bieten. Beobachten Sie, welche Entscheidungen geerdetes Selbstvertrauen fördern, ohne Aussehen oder Leistung zum Maß der Identität zu machen.",
+    ),
+    cautionDetail: localized(
+      "When attention to self becomes strained, self-absorption, impulsive self-definition, or overreading bodily signals may become reflection points. Check patterns against lived context and qualified health advice rather than treating a house placement as a diagnosis or a fixed personality label.",
+      "जब स्वयं पर ध्यान तनावपूर्ण हो, तब आत्म-केंद्रण, जल्दबाज़ आत्म-परिभाषा या शारीरिक संकेतों को अधिक अर्थ देना चिंतन के विषय हो सकते हैं। भाव की स्थिति को निदान या स्थायी व्यक्तित्व-लेबल न मानें; वास्तविक संदर्भ और योग्य स्वास्थ्य-सलाह से जाँचें।",
+      "स्वतःकडे पाहणे तणावपूर्ण झाले, तर आत्मकेंद्रीपणा, घाईची स्वव्याख्या किंवा शारीरिक संकेतांचा अति अर्थ लावणे हे चिंतनाचे मुद्दे ठरू शकतात. भावस्थितीला निदान किंवा कायम व्यक्तिमत्त्वाचा शिक्का न मानता प्रत्यक्ष संदर्भ आणि पात्र आरोग्यसल्ल्याशी पडताळा.",
+      "Wenn die Beschäftigung mit dem Selbst angespannt wird, können Selbstbezogenheit, vorschnelle Selbstdefinition oder die Überdeutung körperlicher Signale zu Reflexionspunkten werden. Prüfen Sie Muster anhand des gelebten Kontexts und qualifizierter Gesundheitsberatung, statt eine Hausstellung als Diagnose oder festes Persönlichkeitsurteil zu lesen.",
+    ),
+  },
+  2: {
+    constructiveDetail: localized(
+      "If this field asks for attention, a simple budget, deliberate speech, and periodic review of values can make its themes concrete. Consider whether spending, saving, food choices, and words support both practical security and humane priorities.",
+      "यदि यह क्षेत्र ध्यान माँगे, तो सरल बजट, सोच-समझकर बोली गई वाणी और मूल्यों की नियमित समीक्षा इसके विषयों को व्यावहारिक बना सकती है। देखिए कि खर्च, बचत, भोजन और शब्द व्यावहारिक सुरक्षा के साथ मानवीय प्राथमिकताओं का भी समर्थन करते हैं या नहीं।",
+      "जर या क्षेत्राकडे लक्ष द्यावेसे वाटत असेल, तर साधे अंदाजपत्रक, विचारपूर्वक वाणी आणि मूल्यांचा नियमित आढावा हे विषय ठोस करू शकतात. खर्च, बचत, अन्ननिवड आणि शब्द व्यवहार्य सुरक्षिततेबरोबर मानवी प्राधान्यांना साथ देतात का ते पाहा.",
+      "Wenn dieses Feld Aufmerksamkeit verlangt, können ein einfacher Haushaltsplan, bedachte Sprache und eine regelmäßige Werteprüfung seine Themen greifbar machen. Prüfen Sie, ob Ausgaben, Sparen, Ernährung und Worte sowohl praktische Sicherheit als auch menschliche Prioritäten unterstützen.",
+    ),
+    cautionDetail: localized(
+      "Under strain, possessiveness, sharp speech, or measuring self-worth through resources may be useful patterns to notice. Verify financial choices with evidence and suitable professional advice instead of reading wealth, loss, or family outcomes from one placement.",
+      "तनाव में अधिकारभाव, कठोर वाणी या संसाधनों से आत्म-मूल्य नापना ध्यान देने योग्य प्रवृत्तियाँ हो सकती हैं। एक स्थिति से धन, हानि या परिवार का परिणाम न निकालें; वित्तीय निर्णय प्रमाण और उपयुक्त पेशेवर सलाह से जाँचें।",
+      "ताणाच्या वेळी मालकीभाव, कठोर वाणी किंवा साधनांवरून स्वमूल्य मोजणे या लक्षात घेण्यासारख्या शक्यता असू शकतात. एका स्थितीवरून धन, हानी किंवा कुटुंबाचा निकाल न काढता आर्थिक निर्णय पुरावे आणि योग्य व्यावसायिक सल्ल्याने तपासा.",
+      "Unter Belastung können Besitzdenken, verletzende Sprache oder die Messung des Selbstwerts an Ressourcen hilfreiche Beobachtungspunkte sein. Prüfen Sie finanzielle Entscheidungen anhand von Belegen und geeigneter Fachberatung, statt aus einer Stellung Vermögen, Verlust oder Familienergebnisse abzuleiten.",
+    ),
+  },
+  3: {
+    constructiveDetail: localized(
+      "If this field is active, deliberate practice, concise communication, and small self-directed projects can channel effort constructively. Consider setting a repeatable learning goal and checking whether messages are clear, accurate, and respectful before sending them.",
+      "यदि यह क्षेत्र सक्रिय लगे, तो नियमित अभ्यास, संक्षिप्त संवाद और छोटे स्व-निर्देशित काम प्रयास को रचनात्मक दिशा दे सकते हैं। दोहराए जा सकने वाला सीखने का लक्ष्य रखें और संदेश भेजने से पहले उसकी स्पष्टता, शुद्धता और सम्मान जाँचें।",
+      "जर हे क्षेत्र सक्रिय वाटत असेल, तर जाणीवपूर्वक सराव, नेमका संवाद आणि लहान स्वप्रेरित प्रकल्प प्रयत्नांना रचनात्मक दिशा देऊ शकतात. पुनरावृत्ती करता येईल असे शिकण्याचे ध्येय ठेवा आणि संदेश पाठवण्यापूर्वी त्याची स्पष्टता, अचूकता व आदर तपासा.",
+      "Wenn dieses Feld aktiv wirkt, können bewusstes Üben, präzise Kommunikation und kleine selbstbestimmte Vorhaben den Einsatz konstruktiv bündeln. Setzen Sie ein wiederholbares Lernziel und prüfen Sie vor dem Senden, ob Mitteilungen klar, korrekt und respektvoll sind.",
+    ),
+    cautionDetail: localized(
+      "If comparison, provocation, or scattered activity increases, pause and distinguish genuine courage from reactive motion. Check facts and relationship context rather than assuming that one house placement defines communication ability or sibling outcomes.",
+      "यदि तुलना, उकसावा या बिखरी गतिविधि बढ़े, तो रुककर वास्तविक साहस और प्रतिक्रियात्मक हलचल में भेद करें। एक भावस्थिति को संवाद-कौशल या सहोदर संबंधों का निश्चित परिणाम न मानें; तथ्य और संबंध-संदर्भ जाँचें।",
+      "जर तुलना, चिथावणी किंवा विखुरलेली कृती वाढत असेल, तर थांबून खरे धैर्य आणि प्रतिक्रियात्मक हालचाल यात फरक करा. एका भावस्थितीला संवादकौशल्य किंवा भावंडांच्या नात्याचा ठरलेला निकाल न मानता तथ्ये व नात्याचा संदर्भ तपासा.",
+      "Wenn Vergleich, Provokation oder zerstreute Aktivität zunehmen, halten Sie inne und unterscheiden Sie echten Mut von reaktiver Bewegung. Prüfen Sie Fakten und Beziehungskontext, statt einer einzelnen Hausstellung Kommunikationsfähigkeit oder Geschwisterbeziehungen zuzuschreiben.",
+    ),
+  },
+  4: {
+    constructiveDetail: localized(
+      "If this field needs support, restorative space, dependable home routines, and care with clear boundaries can strengthen inner grounding. Consider which private practices create belonging while still allowing independence and honest emotional expression.",
+      "यदि इस क्षेत्र को सहारा चाहिए, तो विश्रामदायक स्थान, भरोसेमंद घरेलू दिनचर्या और स्पष्ट सीमाओं वाली देखभाल आंतरिक आधार को मजबूत कर सकती है। देखिए कि कौन-से निजी अभ्यास अपनापन बनाते हुए स्वतंत्रता और ईमानदार भाव-अभिव्यक्ति भी रहने देते हैं।",
+      "जर या क्षेत्राला आधार हवा असेल, तर पुनर्स्थापक जागा, विश्वासार्ह घरगुती दिनक्रम आणि स्पष्ट मर्यादांसह काळजी अंतर्गत स्थैर्य वाढवू शकते. कोणत्या खाजगी सवयी आपलेपणा निर्माण करताना स्वातंत्र्य आणि प्रामाणिक भावनिक अभिव्यक्तीलाही जागा देतात ते पाहा.",
+      "Wenn dieses Feld Unterstützung braucht, können erholsame Räume, verlässliche häusliche Routinen und Fürsorge mit klaren Grenzen den inneren Halt stärken. Prüfen Sie, welche privaten Praktiken Zugehörigkeit schaffen und zugleich Unabhängigkeit sowie ehrlichen Gefühlsausdruck ermöglichen.",
+    ),
+    cautionDetail: localized(
+      "When comfort becomes avoidance, family projection, possessive care, or withdrawal may deserve closer observation. Use direct conversation and practical housing or family evidence rather than treating this placement as proof of childhood, property, or parental outcomes.",
+      "जब सुविधा पलायन बनने लगे, तब परिवार-प्रक्षेपण, अधिकारपूर्ण देखभाल या पीछे हटना ध्यान से देखने योग्य हो सकते हैं। इस स्थिति को बचपन, संपत्ति या माता-पिता के परिणाम का प्रमाण न मानें; सीधी बातचीत और व्यावहारिक पारिवारिक या आवास-संबंधी तथ्य देखें।",
+      "जेव्हा सोय टाळाटाळ बनते, तेव्हा कौटुंबिक प्रक्षेपण, मालकीची काळजी किंवा माघार यांचे बारकाईने निरीक्षण उपयोगी ठरू शकते. या स्थितीला बालपण, मालमत्ता किंवा पालकांबाबतचा पुरावा न मानता थेट संवाद आणि प्रत्यक्ष घर-कुटुंबातील तथ्ये पाहा.",
+      "Wenn Bequemlichkeit zur Vermeidung wird, können familiäre Projektion, vereinnahmende Fürsorge oder Rückzug eine genauere Beobachtung verdienen. Nutzen Sie direkte Gespräche und praktische Fakten zu Wohnen oder Familie, statt die Stellung als Beweis für Kindheit, Eigentum oder elterliche Entwicklungen zu behandeln.",
+    ),
+  },
+  5: {
+    constructiveDetail: localized(
+      "If this field invites expression, a regular creative practice, disciplined study, and ethical mentoring can help inspiration mature. Consider making room for play while giving ideas, learners, or children support that respects their separate agency.",
+      "यदि यह क्षेत्र अभिव्यक्ति माँगे, तो नियमित सृजन-अभ्यास, अनुशासित अध्ययन और नैतिक मार्गदर्शन प्रेरणा को परिपक्व कर सकते हैं। खेल और आनंद के लिए जगह रखें, साथ ही विचारों, विद्यार्थियों या बच्चों को उनकी स्वतंत्रता का सम्मान करने वाला सहारा दें।",
+      "जर हे क्षेत्र अभिव्यक्तीची मागणी करत असेल, तर नियमित सर्जनशील सराव, शिस्तबद्ध अध्ययन आणि नैतिक मार्गदर्शन प्रेरणेला परिपक्व करू शकतात. खेळासाठी जागा ठेवा आणि कल्पना, विद्यार्थी किंवा मुलांना त्यांच्या स्वतंत्र कर्तृत्वाचा आदर करणारा आधार द्या.",
+      "Wenn dieses Feld Ausdruck sucht, können regelmäßige kreative Praxis, diszipliniertes Lernen und ethische Begleitung Inspiration reifen lassen. Geben Sie dem Spiel Raum und unterstützen Sie zugleich Ideen, Lernende oder Kinder auf eine Weise, die deren eigene Handlungsfähigkeit achtet.",
+    ),
+    cautionDetail: localized(
+      "If approval-seeking, speculative risk, or projecting expectations onto others appears, slow the process and review motives. Do not use this house to infer fertility, a child's future, romance, or investment results; rely on consent, evidence, and qualified guidance.",
+      "यदि स्वीकृति की चाह, सट्टात्मक जोखिम या दूसरों पर अपेक्षाएँ थोपना दिखे, तो गति धीमी करके उद्देश्य जाँचें। इस भाव से प्रजनन, संतान का भविष्य, प्रेम या निवेश-परिणाम न निकालें; सहमति, प्रमाण और योग्य सलाह पर भरोसा करें।",
+      "जर मान्यतेची ओढ, सट्टेबाज जोखीम किंवा इतरांवर अपेक्षा लादणे दिसत असेल, तर प्रक्रिया मंद करून हेतू तपासा. या भावावरून प्रजनन, मुलांचे भविष्य, प्रणय किंवा गुंतवणुकीचा निकाल ठरवू नका; संमती, पुरावे आणि पात्र सल्ल्यावर विसंबा.",
+      "Wenn Anerkennungssuche, spekulatives Risiko oder übertragene Erwartungen auftreten, verlangsamen Sie den Prozess und prüfen Sie die Motive. Leiten Sie aus diesem Haus weder Fruchtbarkeit noch die Zukunft eines Kindes, Romantik oder Anlageergebnisse ab; stützen Sie sich auf Einwilligung, Belege und qualifizierte Beratung.",
+    ),
+  },
+  6: {
+    constructiveDetail: localized(
+      "If this field is prominent, sustainable routines, useful service, careful records, and stepwise problem-solving can turn friction into skill. Consider choosing one manageable habit and seeking qualified medical, legal, or financial help whenever the issue exceeds personal expertise.",
+      "यदि यह क्षेत्र प्रमुख हो, तो टिकाऊ दिनचर्या, उपयोगी सेवा, सावधानी से रखे अभिलेख और क्रमिक समस्या-समाधान कठिनाई को कौशल में बदल सकते हैं। एक संभालने योग्य आदत चुनें और विषय निजी विशेषज्ञता से बाहर हो तो योग्य चिकित्सकीय, कानूनी या वित्तीय सहायता लें।",
+      "जर हे क्षेत्र ठळक असेल, तर टिकाऊ दिनक्रम, उपयुक्त सेवा, काळजीपूर्वक नोंदी आणि टप्प्याटप्प्याने समस्या सोडवणे यामुळे घर्षण कौशल्यात बदलू शकते. एक सांभाळता येईल अशी सवय निवडा आणि विषय वैयक्तिक तज्ज्ञतेबाहेर असेल तर पात्र वैद्यकीय, कायदेशीर किंवा आर्थिक मदत घ्या.",
+      "Wenn dieses Feld hervortritt, können tragfähige Routinen, nützlicher Dienst, sorgfältige Aufzeichnungen und schrittweise Problemlösung Reibung in Können verwandeln. Wählen Sie eine überschaubare Gewohnheit und suchen Sie qualifizierte medizinische, rechtliche oder finanzielle Hilfe, sobald das Thema die eigene Fachkenntnis übersteigt.",
+    ),
+    cautionDetail: localized(
+      "If conflict, overwork, self-diagnosis, or a permanent struggle narrative grows, pause and assess workload, evidence, and available support. A house placement cannot establish illness, debt, litigation, or defeat, so consequential decisions need current facts and appropriate professionals.",
+      "यदि संघर्ष, अति-काम, स्व-निदान या स्थायी कठिनाई की कथा बढ़े, तो रुककर कार्यभार, प्रमाण और उपलब्ध सहायता का आकलन करें। भावस्थिति रोग, ऋण, मुकदमा या हार सिद्ध नहीं कर सकती, इसलिए गंभीर निर्णयों के लिए वर्तमान तथ्य और उपयुक्त विशेषज्ञ आवश्यक हैं।",
+      "जर संघर्ष, अतिश्रम, स्वयंनिदान किंवा कायम अडचणीची कथा वाढत असेल, तर थांबून कामाचा भार, पुरावे आणि उपलब्ध आधार तपासा. भावस्थिती आजार, कर्ज, खटला किंवा पराभव सिद्ध करू शकत नाही, त्यामुळे महत्त्वाच्या निर्णयांसाठी अद्ययावत तथ्ये आणि योग्य तज्ज्ञ आवश्यक आहेत.",
+      "Wenn Konflikt, Überarbeit, Selbstdiagnose oder eine dauerhafte Belastungserzählung zunimmt, halten Sie inne und prüfen Sie Arbeitslast, Belege und verfügbare Unterstützung. Eine Hausstellung kann Krankheit, Schulden, Rechtsstreit oder Niederlage nicht feststellen, daher brauchen folgenreiche Entscheidungen aktuelle Fakten und geeignete Fachleute.",
+    ),
+  },
+  7: {
+    constructiveDetail: localized(
+      "If this field is emphasized, explicit agreements, attentive listening, and boundaries that preserve both parties' agency can support reciprocity. Consider reviewing expectations aloud and checking whether cooperation remains voluntary, fair, and open to revision.",
+      "यदि यह क्षेत्र प्रमुख हो, तो स्पष्ट समझौते, ध्यान से सुनना और दोनों पक्षों की स्वतंत्रता बचाने वाली सीमाएँ पारस्परिकता को सहारा दे सकती हैं। अपेक्षाएँ खुलकर दोहराएँ और देखें कि सहयोग स्वैच्छिक, न्यायपूर्ण तथा संशोधन के लिए खुला रहता है या नहीं।",
+      "जर या क्षेत्रावर भर असेल, तर स्पष्ट करार, लक्षपूर्वक ऐकणे आणि दोन्ही बाजूंचे कर्तृत्व जपणाऱ्या मर्यादा परस्परतेला आधार देऊ शकतात. अपेक्षा उघडपणे तपासा आणि सहकार्य स्वेच्छेचे, न्याय्य व बदलासाठी खुले राहते का ते पाहा.",
+      "Wenn dieses Feld betont ist, können ausdrückliche Vereinbarungen, aufmerksames Zuhören und Grenzen, die beiden Seiten Handlungsspielraum lassen, Gegenseitigkeit fördern. Sprechen Sie Erwartungen offen durch und prüfen Sie, ob Zusammenarbeit freiwillig, fair und veränderbar bleibt.",
+    ),
+    cautionDetail: localized(
+      "If projection, dependency, or self-erasure for harmony appears, create space to identify each person's needs and choices. This placement does not determine marriage, separation, a partner's character, or contractual success, so use direct evidence and qualified advice where stakes are high.",
+      "यदि प्रक्षेपण, निर्भरता या सामंजस्य के लिए स्वयं को मिटाना दिखे, तो हर व्यक्ति की जरूरत और चुनाव अलग पहचानने की जगह बनाइए। यह स्थिति विवाह, अलगाव, साथी के चरित्र या अनुबंध की सफलता तय नहीं करती; बड़े दाँव पर सीधे प्रमाण और योग्य सलाह लें।",
+      "जर प्रक्षेपण, अवलंबन किंवा सलोख्यासाठी स्वतःला पुसून टाकणे दिसत असेल, तर प्रत्येकाच्या गरजा व निवडी वेगळ्या ओळखण्यासाठी अवकाश तयार करा. ही स्थिती विवाह, विभक्तता, जोडीदाराचा स्वभाव किंवा कराराचे यश ठरवत नाही; मोठ्या परिणामांच्या वेळी थेट पुरावे आणि पात्र सल्ला घ्या.",
+      "Wenn Projektion, Abhängigkeit oder Selbstaufgabe zugunsten von Harmonie auftauchen, schaffen Sie Raum, um Bedürfnisse und Entscheidungen jeder Person getrennt zu erkennen. Diese Stellung bestimmt weder Ehe noch Trennung, Charakter eines Partners oder Vertragserfolg; bei hohem Einsatz zählen direkte Belege und qualifizierte Beratung.",
+    ),
+  },
+  8: {
+    constructiveDetail: localized(
+      "If this field is activated, transparent shared-resource agreements, informed consent, careful records, and contingency planning can support resilience. Consider approaching difficult change through paced research and honest conversation instead of demanding immediate certainty or control.",
+      "यदि यह क्षेत्र सक्रिय हो, तो साझा संसाधनों के पारदर्शी समझौते, सूचित सहमति, सावधान अभिलेख और वैकल्पिक योजना लचीलापन बढ़ा सकते हैं। कठिन परिवर्तन को तुरंत निश्चितता या नियंत्रण माँगने के बजाय क्रमिक शोध और ईमानदार संवाद से देखें।",
+      "जर हे क्षेत्र सक्रिय असेल, तर सामायिक साधनांचे पारदर्शक करार, माहितीपूर्ण संमती, काळजीपूर्वक नोंदी आणि पर्यायी नियोजन लवचिकतेला आधार देऊ शकतात. कठीण बदलाकडे तातडीची खात्री किंवा नियंत्रण मागण्याऐवजी टप्प्याटप्प्याच्या संशोधनाने आणि प्रामाणिक संवादाने पाहा.",
+      "Wenn dieses Feld aktiviert erscheint, können transparente Vereinbarungen über gemeinsame Ressourcen, informierte Einwilligung, sorgfältige Unterlagen und Notfallplanung Widerstandskraft fördern. Nähern Sie sich schwierigen Veränderungen mit schrittweiser Recherche und ehrlichem Gespräch, statt sofortige Gewissheit oder Kontrolle zu verlangen.",
+    ),
+    cautionDetail: localized(
+      "If secrecy, coercion, catastrophic thinking, or compulsive control develops, slow down and bring in trustworthy oversight. Never infer death, inheritance, abuse, crisis, or another person's hidden motives from this house; safety, legal, financial, and health concerns require direct evidence and qualified support.",
+      "यदि गोपनीयता, दबाव, विपत्ति-कल्पना या बाध्यकारी नियंत्रण बढ़े, तो गति धीमी करके विश्वसनीय निगरानी जोड़ें। इस भाव से मृत्यु, विरासत, दुर्व्यवहार, संकट या किसी के छिपे उद्देश्य न निकालें; सुरक्षा, कानूनी, वित्तीय और स्वास्थ्य विषयों में प्रत्यक्ष प्रमाण व योग्य सहायता चाहिए।",
+      "जर गुप्तता, दबाव, आपत्तीची कल्पना किंवा सक्तीचे नियंत्रण वाढत असेल, तर गती कमी करून विश्वासार्ह देखरेख घ्या. या भावावरून मृत्यू, वारसा, अत्याचार, संकट किंवा इतरांचा गुप्त हेतू ठरवू नका; सुरक्षा, कायदेशीर, आर्थिक व आरोग्यविषयक बाबींना थेट पुरावे आणि पात्र मदत लागते.",
+      "Wenn Geheimhaltung, Zwang, Katastrophendenken oder kontrollierendes Verhalten zunehmen, verlangsamen Sie den Prozess und beziehen Sie vertrauenswürdige Aufsicht ein. Leiten Sie aus diesem Haus niemals Tod, Erbschaft, Missbrauch, Krise oder verborgene Motive anderer ab; Sicherheits-, Rechts-, Finanz- und Gesundheitsfragen brauchen direkte Belege und qualifizierte Unterstützung.",
+    ),
+  },
+  9: {
+    constructiveDetail: localized(
+      "If this field seeks growth, tested principles, careful study, ethical mentors, and contact with unfamiliar perspectives can broaden judgment. Consider asking what evidence, lived experience, and consequences support a belief before using it to guide other people.",
+      "यदि यह क्षेत्र विकास चाहे, तो परखे हुए सिद्धांत, सावधान अध्ययन, नैतिक शिक्षक और अपरिचित दृष्टियों से संपर्क निर्णय को व्यापक बना सकते हैं। किसी मान्यता से दूसरों का मार्गदर्शन करने से पहले पूछें कि कौन-से प्रमाण, जीवित अनुभव और परिणाम उसका समर्थन करते हैं।",
+      "जर हे क्षेत्र वाढ शोधत असेल, तर तपासलेली तत्त्वे, काळजीपूर्वक अध्ययन, नैतिक मार्गदर्शक आणि अपरिचित दृष्टिकोन निर्णयक्षमता व्यापक करू शकतात. एखाद्या विश्वासाने इतरांना दिशा देण्यापूर्वी त्याला कोणते पुरावे, जगलेला अनुभव आणि परिणाम आधार देतात हे विचारा.",
+      "Wenn dieses Feld Wachstum sucht, können geprüfte Grundsätze, sorgfältiges Studium, ethische Lehrende und Begegnungen mit fremden Perspektiven das Urteil erweitern. Fragen Sie, welche Belege, Erfahrungen und Folgen eine Überzeugung tragen, bevor Sie damit andere anleiten.",
+    ),
+    cautionDetail: localized(
+      "If dogma, borrowed certainty, or deference to authority replaces inquiry, compare claims with evidence and multiple credible sources. This house cannot guarantee fortune, admission, travel, spiritual status, or a teacher's reliability, so practical verification remains necessary.",
+      "यदि कट्टरता, उधार की निश्चितता या अधिकार के आगे समर्पण जिज्ञासा की जगह ले, तो दावों को प्रमाण और कई विश्वसनीय स्रोतों से मिलाएँ। यह भाव भाग्य, प्रवेश, यात्रा, आध्यात्मिक दर्जा या शिक्षक की विश्वसनीयता की गारंटी नहीं देता, इसलिए व्यावहारिक जाँच आवश्यक है।",
+      "जर कट्टरता, उसनी खात्री किंवा अधिकारापुढील शरणागतीने चौकशीची जागा घेतली, तर दावे पुरावे आणि अनेक विश्वसनीय स्रोतांशी तपासा. हा भाव भाग्य, प्रवेश, प्रवास, आध्यात्मिक दर्जा किंवा शिक्षकाची विश्वासार्हता हमी देत नाही, म्हणून व्यवहार्य पडताळणी आवश्यक आहे.",
+      "Wenn Dogma, geliehene Gewissheit oder Autoritätsgläubigkeit die Prüfung ersetzt, vergleichen Sie Behauptungen mit Belegen und mehreren glaubwürdigen Quellen. Dieses Haus garantiert weder Glück noch Zulassung, Reise, spirituellen Rang oder Zuverlässigkeit eines Lehrers, daher bleibt praktische Überprüfung notwendig.",
+    ),
+  },
+  10: {
+    constructiveDetail: localized(
+      "If this field carries emphasis, accountable goals, durable work systems, skill development, and service to a clear purpose can support useful contribution. Consider defining success through quality, responsibility, and sustainable pace rather than visibility alone.",
+      "यदि यह क्षेत्र प्रमुख हो, तो जवाबदेह लक्ष्य, टिकाऊ कार्य-प्रणाली, कौशल-विकास और स्पष्ट उद्देश्य की सेवा उपयोगी योगदान को सहारा दे सकते हैं। सफलता को केवल दृश्यता से नहीं, बल्कि गुणवत्ता, जिम्मेदारी और टिकाऊ गति से परिभाषित करने पर विचार करें।",
+      "जर या क्षेत्रावर भर असेल, तर उत्तरदायी ध्येये, टिकाऊ कामपद्धती, कौशल्यविकास आणि स्पष्ट उद्देशाची सेवा उपयुक्त योगदानाला आधार देऊ शकतात. यशाची व्याख्या केवळ प्रसिद्धीने न करता गुणवत्ता, जबाबदारी आणि टिकाऊ गतीने करण्याचा विचार करा.",
+      "Wenn dieses Feld Gewicht trägt, können verantwortbare Ziele, belastbare Arbeitssysteme, Kompetenzaufbau und Dienst an einem klaren Zweck einen nützlichen Beitrag fördern. Definieren Sie Erfolg eher über Qualität, Verantwortung und ein tragfähiges Tempo als allein über Sichtbarkeit.",
+    ),
+    cautionDetail: localized(
+      "If status fixation, exhaustion, or identification with one role grows, review workload, authority, and the costs paid outside work. A house placement does not promise promotion, public recognition, job loss, or a single vocation, so career decisions need current evidence and relevant professional counsel.",
+      "यदि पद-आसक्ति, थकावट या एक भूमिका से पूरी पहचान जुड़ने लगे, तो कार्यभार, अधिकार और काम के बाहर चुकाई जा रही कीमत की समीक्षा करें। भावस्थिति पदोन्नति, प्रसिद्धि, नौकरी-हानि या एकमात्र व्यवसाय का वादा नहीं करती, इसलिए करियर निर्णयों को वर्तमान प्रमाण और उपयुक्त पेशेवर सलाह चाहिए।",
+      "जर पदासक्ती, थकवा किंवा एका भूमिकेशी संपूर्ण ओळख जोडली जात असेल, तर कामाचा भार, अधिकार आणि कामाबाहेर मोजावी लागणारी किंमत तपासा. भावस्थिती बढती, प्रसिद्धी, नोकरी जाणे किंवा एकमेव व्यवसायाचे वचन देत नाही, त्यामुळे करिअर निर्णयांना अद्ययावत पुरावे आणि योग्य व्यावसायिक सल्ला हवा.",
+      "Wenn Statusfixierung, Erschöpfung oder Identifikation mit einer einzigen Rolle zunehmen, prüfen Sie Arbeitslast, Autorität und die außerhalb der Arbeit entstehenden Kosten. Eine Hausstellung verspricht weder Beförderung noch Anerkennung, Arbeitsplatzverlust oder eine einzige Berufung; Karriereentscheidungen brauchen aktuelle Belege und passende Fachberatung.",
+    ),
+  },
+  11: {
+    constructiveDetail: localized(
+      "If this field is highlighted, reciprocal networks, measurable shared goals, and transparent distribution of benefits can make aspiration more grounded. Consider contributing before asking, inviting diverse viewpoints, and reviewing whether a group's incentives match its stated values.",
+      "यदि यह क्षेत्र उभरता हो, तो पारस्परिक नेटवर्क, मापे जा सकने वाले साझा लक्ष्य और लाभ का पारदर्शी वितरण आकांक्षा को अधिक धरातलीय बना सकते हैं। माँगने से पहले योगदान दें, विविध दृष्टियाँ बुलाएँ और जाँचें कि समूह के प्रोत्साहन उसके घोषित मूल्यों से मेल खाते हैं या नहीं।",
+      "जर हे क्षेत्र ठळक असेल, तर परस्पर जाळे, मोजता येणारी सामायिक ध्येये आणि लाभांचे पारदर्शक वाटप आकांक्षा अधिक वास्तववादी करू शकतात. मागण्यापूर्वी योगदान द्या, विविध दृष्टिकोनांना आमंत्रण द्या आणि समूहाची प्रोत्साहने त्याच्या जाहीर मूल्यांशी जुळतात का ते तपासा.",
+      "Wenn dieses Feld hervorgehoben ist, können wechselseitige Netzwerke, messbare gemeinsame Ziele und transparente Nutzenverteilung Bestrebungen erden. Tragen Sie bei, bevor Sie fordern, laden Sie unterschiedliche Sichtweisen ein und prüfen Sie, ob Gruppenanreize zu den erklärten Werten passen.",
+    ),
+    cautionDetail: localized(
+      "If relationships become instrumental, wanting becomes endless, or group approval suppresses judgment, step back and review reciprocity. This house cannot predict income, popularity, patronage, or social success, so plans should rest on realistic resources, consent, and observable commitments.",
+      "यदि संबंध केवल साधन बनें, चाह अंतहीन हो या समूह-स्वीकृति निर्णय दबाए, तो पीछे हटकर पारस्परिकता की समीक्षा करें। यह भाव आय, लोकप्रियता, संरक्षण या सामाजिक सफलता की भविष्यवाणी नहीं कर सकता, इसलिए योजना यथार्थ संसाधनों, सहमति और दिखने वाली प्रतिबद्धताओं पर रखें।",
+      "जर नाती केवळ साधने बनली, इच्छा अंतहीन झाली किंवा समूहमान्यतेने निर्णय दडपला, तर थोडे मागे हटून परस्परता तपासा. हा भाव उत्पन्न, लोकप्रियता, आश्रय किंवा सामाजिक यशाचे भाकीत करू शकत नाही, म्हणून योजना वास्तव साधने, संमती आणि दिसणाऱ्या बांधिलकीवर आधाराव्यात.",
+      "Wenn Beziehungen instrumentell werden, Wünsche kein Ende finden oder Gruppenzustimmung das Urteil verdrängt, treten Sie zurück und prüfen Sie Gegenseitigkeit. Dieses Haus kann Einkommen, Beliebtheit, Förderung oder sozialen Erfolg nicht vorhersagen; Pläne sollten auf realistischen Ressourcen, Einwilligung und beobachtbaren Zusagen beruhen.",
+    ),
+  },
+  12: {
+    constructiveDetail: localized(
+      "If this field calls for release, scheduled rest, sleep care, budgeted generosity, reflective solitude, and clear institutional boundaries can make withdrawal restorative. Consider naming what is complete and choosing a small closing practice that preserves necessary responsibilities.",
+      "यदि यह क्षेत्र छोड़ने की ओर बुलाए, तो नियोजित विश्राम, नींद की देखभाल, बजट में उदारता, चिंतनशील एकांत और संस्थागत सीमाएँ पीछे हटने को पुनर्स्थापक बना सकती हैं। जो पूरा हो चुका है उसे नाम दें और आवश्यक जिम्मेदारियाँ बचाते हुए एक छोटा समापन-अभ्यास चुनें।",
+      "जर हे क्षेत्र सोडून देण्याकडे बोलावत असेल, तर नियोजित विश्रांती, झोपेची काळजी, अंदाजपत्रकातील उदारता, चिंतनशील एकांत आणि संस्थात्मक मर्यादा माघार पुनर्स्थापक करू शकतात. जे पूर्ण झाले आहे त्याला नाव द्या आणि आवश्यक जबाबदाऱ्या जपत एक लहान समापनकृती निवडा.",
+      "Wenn dieses Feld zum Loslassen einlädt, können geplante Ruhe, Schlafpflege, eingeplante Großzügigkeit, reflektierte Einsamkeit und klare institutionelle Grenzen Rückzug erholsam machen. Benennen Sie, was abgeschlossen ist, und wählen Sie eine kleine Abschlusspraktik, die notwendige Verantwortung bewahrt.",
+    ),
+    cautionDetail: localized(
+      "If avoidance, resource leakage, isolation, or romanticizing loss increases, reconnect with practical schedules, trusted people, and documented needs. Do not infer hospitalization, exile, hidden enemies, or inevitable loss from this house; health, safety, and financial concerns require direct assessment and qualified support.",
+      "यदि पलायन, संसाधन-रिसाव, अलगाव या हानि का रोमानीकरण बढ़े, तो व्यावहारिक समय-सारणी, भरोसेमंद लोगों और दर्ज जरूरतों से फिर जुड़ें। इस भाव से अस्पताल, निर्वासन, छिपे शत्रु या अनिवार्य हानि न निकालें; स्वास्थ्य, सुरक्षा और वित्तीय चिंता को प्रत्यक्ष आकलन व योग्य सहायता चाहिए।",
+      "जर टाळाटाळ, साधनांची गळती, एकाकीपणा किंवा हानीचे रोमँटीकरण वाढत असेल, तर व्यवहार्य वेळापत्रक, विश्वासू माणसे आणि नोंदवलेल्या गरजांशी पुन्हा जोडा. या भावावरून रुग्णालय, निर्वासन, गुप्त शत्रू किंवा अटळ हानी ठरवू नका; आरोग्य, सुरक्षा व आर्थिक चिंतेला थेट मूल्यमापन आणि पात्र मदत हवी.",
+      "Wenn Vermeidung, Ressourcenverlust, Isolation oder romantisierte Verlusterzählungen zunehmen, verbinden Sie sich erneut mit praktischen Zeitplänen, vertrauten Menschen und dokumentierten Bedürfnissen. Leiten Sie aus diesem Haus weder Krankenhausaufenthalt noch Exil, verborgene Feinde oder unvermeidlichen Verlust ab; Gesundheits-, Sicherheits- und Finanzfragen brauchen direkte Einschätzung und qualifizierte Unterstützung.",
+    ),
+  },
+};
+
 export const BHAVA_EDUCATION: Readonly<
   Record<HouseNumber, BhavaEducationProfile>
 > = Object.fromEntries(
@@ -1397,6 +1581,7 @@ export const BHAVA_EDUCATION: Readonly<
       number,
       {
         ...profile,
+        ...BHAVA_DETAIL_GUIDANCE[number],
         name: addGerman(profile.name, german.name),
         domain: addGerman(profile.domain, german.domain),
         constructive: addGerman(
@@ -1442,8 +1627,8 @@ export function buildGrahaInBhavaReading(
       bhava: bhavaNumber,
       title: `${grahaName} — ${bhavaName}`,
       summary: `In der traditionellen vedischen Astrologie wird die Funktion von ${grahaName} — ${grahaFunction} — durch das Feld von ${bhavaName} gelesen: ${bhavaDomain}. Das deutet auf eine Betonung dieses Lebensfelds hin, nicht auf ein garantiertes Ereignis.`,
-      constructive: `${readLocalized(graha.constructive, locale)} kann sich stimmiger entfalten, wenn es mit ${readLocalized(bhava.constructive, locale)} verbunden wird.`,
-      caution: `Sowohl ${readLocalized(graha.caution, locale)} als auch ${readLocalized(bhava.caution, locale)} ohne Angst und ohne festes Etikett prüfen.`,
+      constructive: `${readLocalized(graha.constructive, locale)} kann sich stimmiger entfalten, wenn es mit ${readLocalized(bhava.constructive, locale)} verbunden wird. Eine kleine, wiederholbare Handlung kann beide Themen erproben; ihre tatsächliche Wirkung sollte beobachtet statt vorausgesetzt werden.`,
+      caution: `Falls ${readLocalized(graha.caution, locale)} mit ${readLocalized(bhava.caution, locale)} zusammentrifft, sollte das Muster nicht als feste Eigenschaft gelesen werden. Kontext, Häufigkeit und reale Folgen sollten geprüft werden; bei medizinischen, rechtlichen, finanziellen oder Sicherheitsfragen ist qualifizierte Hilfe angemessen.`,
       inquiry: readLocalized(graha.inquiry, locale),
       methodNote:
         "Diese pädagogische 9×12-Synthese verbindet ausschließlich Bedeutungen der Himmelskörper mit Hausthemen. Tierkreiszeichen, Hausherrscher, Aspekte, Konjunktionen, Würde, Planetenperioden und Transite wurden dabei nicht bewertet.",
@@ -1456,8 +1641,8 @@ export function buildGrahaInBhavaReading(
       bhava: bhavaNumber,
       title: `${grahaName} — ${bhavaName}`,
       summary: `पारंपरिक ज्योतिष में ${grahaName} के कारकत्व—${grahaFunction}—को यहाँ ${bhavaName} के क्षेत्र—${bhavaDomain}—के माध्यम से पढ़ा जाता है। इसका अर्थ उस क्षेत्र में अधिक ध्यान है, निश्चित घटना नहीं।`,
-      constructive: `${readLocalized(graha.constructive, locale)} को ${readLocalized(bhava.constructive, locale)} के साथ जोड़ने पर यह स्थिति अधिक रचनात्मक ढंग से व्यक्त हो सकती है।`,
-      caution: `${readLocalized(graha.caution, locale)} और ${readLocalized(bhava.caution, locale)}—दोनों की संभावना को बिना भय या अंतिम लेबल के जाँचें।`,
+      constructive: `${readLocalized(graha.constructive, locale)} को ${readLocalized(bhava.constructive, locale)} के साथ जोड़ने पर यह स्थिति अधिक रचनात्मक ढंग से व्यक्त हो सकती है। दोनों विषयों को व्यक्त करने वाला एक छोटा, दोहराया जा सकने वाला कदम चुनें और अनुमान लगाने के बजाय उसके वास्तविक प्रभाव को देखें।`,
+      caution: `यदि ${readLocalized(graha.caution, locale)} के साथ ${readLocalized(bhava.caution, locale)} दिखाई दे, तो इसे स्थायी गुण न मानें। संदर्भ, बारंबारता और वास्तविक परिणाम जाँचें; चिकित्सकीय, कानूनी, वित्तीय या सुरक्षा-विषयक प्रश्न में योग्य सहायता लें।`,
       inquiry: readLocalized(graha.inquiry, locale),
       methodNote:
         "यह 9×12 शैक्षिक संश्लेषण केवल ग्रह-कारकत्व और भाव-विषय जोड़ता है। राशि, भावेश, दृष्टि, युति, गरिमा, दशा और गोचर का निर्णय इसमें नहीं हुआ है।",
@@ -1470,8 +1655,8 @@ export function buildGrahaInBhavaReading(
       bhava: bhavaNumber,
       title: `${grahaName} — ${bhavaName}`,
       summary: `पारंपरिक ज्योतिषात ${grahaName}चे कारकत्व—${grahaFunction}—येथे ${bhavaName}च्या क्षेत्रातून—${bhavaDomain}—वाचले जाते. याचा अर्थ त्या क्षेत्रावर अधिक भर; निश्चित घटना नव्हे.`,
-      constructive: `${readLocalized(graha.constructive, locale)} याला ${readLocalized(bhava.constructive, locale)}शी जोडल्यास ही स्थिती अधिक रचनात्मकपणे व्यक्त होऊ शकते.`,
-      caution: `${readLocalized(graha.caution, locale)} आणि ${readLocalized(bhava.caution, locale)}—दोन्ही शक्यता भीती किंवा अंतिम शिक्का न लावता तपासा.`,
+      constructive: `${readLocalized(graha.constructive, locale)} याला ${readLocalized(bhava.constructive, locale)}शी जोडल्यास ही स्थिती अधिक रचनात्मकपणे व्यक्त होऊ शकते. दोन्ही विषय व्यक्त करणारी एक लहान, पुन्हा करता येणारी कृती निवडा आणि अंदाजाऐवजी तिचा प्रत्यक्ष परिणाम पाहा.`,
+      caution: `जर ${readLocalized(graha.caution, locale)} यासोबत ${readLocalized(bhava.caution, locale)} दिसत असेल, तर त्याला कायम गुण मानू नका. संदर्भ, वारंवारता आणि प्रत्यक्ष परिणाम तपासा; वैद्यकीय, कायदेशीर, आर्थिक किंवा सुरक्षाविषयक प्रश्नांसाठी पात्र मदत घ्या.`,
       inquiry: readLocalized(graha.inquiry, locale),
       methodNote:
         "हे 9×12 शैक्षणिक संश्लेषण फक्त ग्रहकारकत्व व भावविषय जोडते. राशी, भावेश, दृष्टी, युती, प्रतिष्ठा, दशा व गोचर यांचा निर्णय यात केलेला नाही.",
@@ -1483,8 +1668,8 @@ export function buildGrahaInBhavaReading(
     bhava: bhavaNumber,
     title: `${grahaName} — ${bhavaName}`,
     summary: `In traditional Vedic astrology, ${grahaName}'s function—${grahaFunction}—is read through ${bhavaName}'s field of ${bhavaDomain}. This suggests emphasis in that field, not a guaranteed event.`,
-    constructive: `${readLocalized(graha.constructive, locale)} can become more workable when joined with ${readLocalized(bhava.constructive, locale)}.`,
-    caution: `Examine both ${readLocalized(graha.caution, locale)} and ${readLocalized(bhava.caution, locale)} without fear or a fixed label.`,
+    constructive: `${readLocalized(graha.constructive, locale)} can become more workable when joined with ${readLocalized(bhava.constructive, locale)}. Consider one small repeatable action that expresses both themes, then review its actual effect rather than assuming an outcome.`,
+    caution: `If ${readLocalized(graha.caution, locale)} interacts with ${readLocalized(bhava.caution, locale)}, pause before treating the pattern as a fixed trait. Check context, frequency, and real-world consequences, and seek qualified help when the issue is medical, legal, financial, or safety-related.`,
     inquiry: readLocalized(graha.inquiry, locale),
     methodNote:
       "This 9×12 educational synthesis combines only planetary significations and house topics. It has not judged zodiac sign, house ruler, aspects, conjunctions, dignity, planetary periods, or transits.",

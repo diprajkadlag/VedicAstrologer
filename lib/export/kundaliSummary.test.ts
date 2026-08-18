@@ -77,7 +77,15 @@ describe("buildKundaliSummary", () => {
           `${bhava.significance} ${bhava.chartReading} ${bhava.reflection}`,
         );
         expect(bhava.constructive).toBeTruthy();
+        expect(bhava.constructiveDetail).toBeTruthy();
+        expect(bhava.constructiveDetail.length).toBeGreaterThan(
+          bhava.constructive.length,
+        );
         expect(bhava.caution).toBeTruthy();
+        expect(bhava.cautionDetail).toBeTruthy();
+        expect(bhava.cautionDetail.length).toBeGreaterThan(
+          bhava.caution.length,
+        );
       }
       expect(summary.dashas.mahadasha.lord).toBeTruthy();
       expect(summary.dashas.antardasha.lord).toBeTruthy();

@@ -15,7 +15,6 @@ import {
   CircleAlert,
   Compass,
   GraduationCap,
-  House,
   ListTree,
   MoonStar,
   Scale,
@@ -97,7 +96,6 @@ export interface InterpretationPanelProps {
 export type AnalysisTab =
   | "overview"
   | "positions"
-  | "houses"
   | "nakshatras"
   | "dashas"
   | "horoscope"
@@ -251,7 +249,7 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "A placement close to a zodiac-sign, lunar-mansion, or quarter boundary can change under another ayanamsa or a small input/model difference. Near-station motion is also sensitive.",
     houseByHouse: "House-by-house analysis",
     housesIntro:
-      "Each card starts with a three-sentence summary: the house's traditional scope, this chart's calculated placements, and a balanced reflection. Open it for the full educational breakdown; no isolated placement is a final judgment.",
+      "Every house is already shown in full: its traditional scope, this chart's calculated placements, a balanced reflection, and the complete educational breakdown. No isolated placement is a final judgment.",
     houseSignificance: "What this house signifies",
     yourChart: "Your birth chart",
     balancedTakeaway: "Balanced takeaway",
@@ -362,7 +360,7 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "राशि, नक्षत्र या पाद की सीमा के पास स्थिति दूसरी अयनांश-पद्धति या छोटे इनपुट/मॉडल अंतर से बदल सकती है। स्थिरता के पास गति भी संवेदनशील है।",
     houseByHouse: "भाव-दर-भाव विश्लेषण",
     housesIntro:
-      "हर कार्ड पहले तीन वाक्यों में भाव का पारंपरिक क्षेत्र, इस कुंडली की गणितीय स्थितियाँ और संतुलित चिंतन दिखाता है। पूरा शैक्षिक विवरण देखने के लिए कार्ड खोलें; अकेली स्थिति अंतिम निर्णय नहीं है।",
+      "हर भाव का पूरा विवरण पहले से खुला है: उसका पारंपरिक क्षेत्र, इस कुंडली की गणितीय स्थितियाँ, संतुलित चिंतन और संपूर्ण शैक्षिक विश्लेषण। अकेली स्थिति अंतिम निर्णय नहीं है।",
     houseSignificance: "यह भाव क्या दर्शाता है",
     yourChart: "आपकी जन्म-कुंडली",
     balancedTakeaway: "संतुलित संकेत",
@@ -473,7 +471,7 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "राशी, नक्षत्र किंवा पादाच्या सीमेजवळील स्थिती दुसऱ्या अयनांशामुळे किंवा छोट्या इनपुट/मॉडेल फरकामुळे बदलू शकते. स्थिरतेजवळील गतीही संवेदनशील असते.",
     houseByHouse: "भावनिहाय विश्लेषण",
     housesIntro:
-      "प्रत्येक कार्डमध्ये प्रथम तीन वाक्यांत भावाचे पारंपरिक क्षेत्र, या कुंडलीतील गणिती स्थिती आणि संतुलित चिंतन दिले आहे. संपूर्ण शैक्षणिक तपशीलासाठी कार्ड उघडा; एकच स्थिती अंतिम निर्णय नसते.",
+      "प्रत्येक भावाचा संपूर्ण तपशील आधीपासून उघडा आहे: त्याचे पारंपरिक क्षेत्र, या कुंडलीतील गणिती स्थिती, संतुलित चिंतन आणि पूर्ण शैक्षणिक विश्लेषण. एकच स्थिती अंतिम निर्णय नसते.",
     houseSignificance: "हा भाव काय दर्शवतो",
     yourChart: "तुमची जन्मकुंडली",
     balancedTakeaway: "संतुलित संकेत",
@@ -584,7 +582,7 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "Eine Position nahe einer Grenze von Tierkreiszeichen, Mondstation oder Viertel kann sich bei einem anderen Ayanamsa oder kleinen Unterschieden in Eingabe und Modell ändern. Auch eine nahezu stationäre Bewegung ist empfindlich.",
     houseByHouse: "Haus-für-Haus-Analyse",
     housesIntro:
-      "Jede Karte beginnt mit drei Sätzen: dem traditionellen Bereich des Hauses, den berechneten Stellungen dieses Geburtshoroskops und einer ausgewogenen Reflexion. Öffne sie für die ausführliche Einordnung; keine einzelne Stellung erlaubt ein abschließendes Urteil.",
+      "Jedes Haus ist bereits vollständig dargestellt: sein traditioneller Bereich, die berechneten Stellungen dieses Geburtshoroskops, eine ausgewogene Reflexion und die ausführliche didaktische Einordnung. Keine einzelne Stellung erlaubt ein abschließendes Urteil.",
     houseSignificance: "Wofür dieses Haus steht",
     yourChart: "Dein Geburtshoroskop",
     balancedTakeaway: "Ausgewogene Einordnung",
@@ -658,7 +656,6 @@ const TAB_DEFINITIONS: readonly {
     AnalysisCopy,
     | "overview"
     | "positions"
-    | "houses"
     | "nakshatras"
     | "dashas"
     | "horoscope"
@@ -670,7 +667,6 @@ const TAB_DEFINITIONS: readonly {
 }[] = [
   { id: "overview", labelKey: "overview", icon: Compass },
   { id: "positions", labelKey: "positions", icon: TableProperties },
-  { id: "houses", labelKey: "houses", icon: House },
   { id: "nakshatras", labelKey: "nakshatras", icon: MoonStar },
   { id: "dashas", labelKey: "dashas", icon: CalendarClock },
   { id: "horoscope", labelKey: "horoscope", icon: SunMedium },
@@ -1044,15 +1040,22 @@ function HouseCard({
   const residents = house.planets;
 
   return (
-    <details className="group rounded-2xl border border-[var(--border)] bg-[var(--surface)] open:bg-[var(--surface-soft)]">
-      <summary className="cursor-pointer list-none p-4 focus-visible:outline-2 focus-visible:outline-[var(--focus)]">
+    <article
+      data-house-number={house.number}
+      aria-labelledby={`house-${house.number}-analysis-title`}
+      className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)]"
+    >
+      <header className="p-4">
         <div className="flex items-start justify-between gap-4">
           <div className="flex min-w-0 gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-violet-400/20 bg-violet-400/[0.08] text-sm font-semibold text-[var(--accent)]">
               {house.number}
             </span>
             <div>
-              <h3 className="font-medium text-[var(--foreground)]">
+              <h3
+                id={`house-${house.number}-analysis-title`}
+                className="font-medium text-[var(--foreground)]"
+              >
                 {readLocalized(education.name, locale)}
               </h3>
               <p className="mt-1 text-xs text-[var(--muted)]">
@@ -1090,7 +1093,7 @@ function HouseCard({
             {bhavaSummary.reflection}
           </p>
         </div>
-      </summary>
+      </header>
 
       <div className="border-t border-[var(--border)] px-4 pb-5 pt-5">
         <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
@@ -1125,10 +1128,16 @@ function HouseCard({
             <p className="mt-3 text-xs leading-5 text-emerald-600 dark:text-emerald-200/75">
               <strong>{copy.constructive}:</strong>{" "}
               {readLocalized(education.constructive, locale)}
+              <span className="mt-1 block text-[var(--muted)]">
+                {readLocalized(education.constructiveDetail, locale)}
+              </span>
             </p>
             <p className="mt-2 text-xs leading-5 text-amber-700 dark:text-amber-200/70">
               <strong>{copy.watchFor}:</strong>{" "}
               {readLocalized(education.caution, locale)}
+              <span className="mt-1 block text-[var(--muted)]">
+                {readLocalized(education.cautionDetail, locale)}
+              </span>
             </p>
           </article>
 
@@ -1224,11 +1233,11 @@ function HouseCard({
             onClick={() => onSelect(house.number)}
             className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2 text-xs text-[var(--foreground)] hover:bg-[var(--surface-muted)]"
           >
-            {copy.highlightHouse}
+            {copy.highlightHouse} · {copy.house} {house.number}
           </button>
         ) : null}
       </div>
-    </details>
+    </article>
   );
 }
 
@@ -1275,6 +1284,31 @@ function HousesTab({
         ))}
       </div>
     </section>
+  );
+}
+
+export interface TwelveHouseSummaryProps {
+  chart: VedicChart;
+  onSelectHouse?: (house: HouseNumber) => void;
+}
+
+/**
+ * The complete natal house reading shown before the interactive workspaces.
+ * Cards are deliberately non-collapsible so no interpretation is hidden
+ * behind twelve separate disclosure controls.
+ */
+export function TwelveHouseSummary({
+  chart,
+  onSelectHouse,
+}: TwelveHouseSummaryProps) {
+  const { locale } = useAppPreferences();
+  return (
+    <HousesTab
+      chart={chart}
+      locale={locale}
+      copy={COPY[locale]}
+      onSelectHouse={onSelectHouse}
+    />
   );
 }
 
@@ -1854,14 +1888,6 @@ export default function InterpretationPanel(props: InterpretationPanelProps) {
             locale={locale}
             copy={copy}
             onSelectPlanet={props.onSelectPlanet}
-          />
-        ) : null}
-        {activeTab === "houses" ? (
-          <HousesTab
-            chart={props.chart}
-            locale={locale}
-            copy={copy}
-            onSelectHouse={props.onSelectHouse}
           />
         ) : null}
         {activeTab === "nakshatras" ? (

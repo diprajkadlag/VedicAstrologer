@@ -135,8 +135,14 @@ export interface KundaliBhavaRow {
   /** A balanced invitation to reflect, never a fixed trait or prediction. */
   reflection: string;
   conclusion: string;
+  /** Concise phrase retained for the three-sentence summary. */
   constructive: string;
+  /** Longer educational guidance used by detailed report views. */
+  constructiveDetail: string;
+  /** Concise phrase retained for the three-sentence summary. */
   caution: string;
+  /** Longer educational guidance used by detailed report views. */
+  cautionDetail: string;
 }
 
 export interface KundaliDashaPeriod {
@@ -660,7 +666,12 @@ export function buildLocalizedBhavaRows(
     const lord = getLocalizedGrahaName(lordId, locale);
     const domain = readLocalized(education.domain, locale);
     const constructive = readLocalized(education.constructive, locale);
+    const constructiveDetail = readLocalized(
+      education.constructiveDetail,
+      locale,
+    );
     const caution = readLocalized(education.caution, locale);
+    const cautionDetail = readLocalized(education.cautionDetail, locale);
     const residentFunctions = house.planets.map((id) => {
       const name = getLocalizedGrahaName(id, locale);
       const functionText = readLocalized(
@@ -706,7 +717,9 @@ export function buildLocalizedBhavaRows(
           : copy.noOccupants,
       ...narrative,
       constructive,
+      constructiveDetail,
       caution,
+      cautionDetail,
     };
   });
 }

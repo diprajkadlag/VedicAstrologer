@@ -128,9 +128,10 @@ birth form so visitors can understand the workflow before submitting data.
 - North Indian diamond and South Indian fixed-sign chart renderers
 - synchronized planet and house selection across 3D, SVG, and analysis views
 - core Ascendant/Sun/Moon placements and a detailed planetary position table
-- all 12 house cards begin with exactly three color-coded, personalized
-  sentences—traditional significance, this user's calculated chart context,
-  and a balanced reflection—then expand into the fuller educational reading
+- after generation, all 12 house cards appear before the 3D and chart tools;
+  each is already fully open, with three color-coded personalized sentences,
+  practical constructive guidance, balanced cautions, and resident-body
+  synthesis—no twelve-card accordion to work through
 - all 27 lunar mansions and Vimshottari major/subperiod timelines
 - interactive 22-term guide, nine planetary profiles, and all 108
   planet-in-house educational combinations
@@ -157,6 +158,8 @@ birth form so visitors can understand the workflow before submitting data.
   three color-coded, personalized sentences: its traditional significance,
   the user's calculated sign/ruler/resident-planet context, and a balanced
   reflection rather than a fixed judgment
+- four detailed house pages add longer constructive and cautionary guidance in
+  the independently selected report language
 - calculated placements, current Vimshottari periods, methodology, and
   limitation disclosures use the selected language's presentation vocabulary
 - browser-side generation with no PDF upload or report-storage service

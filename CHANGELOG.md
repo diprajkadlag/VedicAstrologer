@@ -49,6 +49,14 @@ professional astrological certification.
 - Birth entry no longer uses a wizard or intermediate Continue actions. The
   complete form is submitted once, while civil-time and DST correctness gates
   remain in place.
+- Generated results now begin with a prominent completion heading and the full
+  twelve-house reading. Every house is visible without opening a disclosure;
+  the time navigator, 3D cosmos, chart workspace, and remaining analysis tabs
+  follow it.
+- Constructive and cautionary house guidance now includes two practical,
+  conditional sentences per house in all four languages. The PDF carries the
+  same depth on four dedicated detail pages while preserving its concise
+  three-sentence summary pages.
 - A second, labeled global language selector remains visible with the generated
   chart and updates every application surface after submission. The separate
   PDF-language selector changes only the downloaded report.

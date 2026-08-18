@@ -18,7 +18,9 @@ import {
   Telescope,
 } from "lucide-react";
 
-import InterpretationPanel from "@/components/analysis/InterpretationPanel";
+import InterpretationPanel, {
+  TwelveHouseSummary,
+} from "@/components/analysis/InterpretationPanel";
 import ChartWorkspace from "@/components/dashboard/ChartWorkspace";
 import KundaliPdfDownload from "@/components/export/KundaliPdfDownload";
 import FeatureShowcase from "@/components/marketing/FeatureShowcase";
@@ -64,7 +66,7 @@ const messages = defineMessages({
     interactiveObservatory: "Interactive observatory",
     landingTitle: "One birth moment, viewed from every angle.",
     landingBody:
-      "Generate the natal chart first. The complete celestial workspace will then open with synchronized 3D, SVG, and interpretation views.",
+      "Generate the natal chart once. Your complete twelve-house reading appears first, followed by synchronized 3D, SVG, timing, and interpretation tools.",
     retrogradeShort: "R",
     selectedPlanetDetail: "{rasi} {degrees} · {nakshatra} quarter {pada} · house {house}",
     clearSelection: "Clear selection",
@@ -83,6 +85,7 @@ const messages = defineMessages({
     generated: "Natal chart generated",
     bornAt: "{place} · {date} at {time}",
     editBirth: "Edit birth data",
+    continueCosmos: "Continue to the 3D cosmos and interactive tools",
     displayedPositions: "Displayed positions · {moment}",
     natalMoment: "Natal moment",
     simulatedInstant: "Simulated instant",
@@ -120,7 +123,7 @@ const messages = defineMessages({
     interactiveObservatory: "संवादात्मक वेधशाला",
     landingTitle: "जन्म के एक क्षण को हर कोण से देखें।",
     landingBody:
-      "पहले जन्म कुण्डली बनाएँ। फिर समन्वित 3D, SVG और व्याख्या दृश्यों सहित पूरा खगोलीय कार्यक्षेत्र खुलेगा।",
+      "एक बार जन्म कुण्डली बनाएँ। पहले बारहों भावों का पूरा विश्लेषण दिखेगा, फिर समन्वित 3D, SVG, काल और व्याख्या साधन मिलेंगे।",
     retrogradeShort: "व",
     selectedPlanetDetail: "{rasi} {degrees} · {nakshatra} पाद {pada} · भाव {house}",
     clearSelection: "चयन हटाएँ",
@@ -139,6 +142,7 @@ const messages = defineMessages({
     generated: "जन्म कुण्डली तैयार",
     bornAt: "{place} · {date}, {time} बजे",
     editBirth: "जन्म विवरण बदलें",
+    continueCosmos: "3D ब्रह्माण्ड और संवादात्मक साधनों पर जाएँ",
     displayedPositions: "प्रदर्शित स्थितियाँ · {moment}",
     natalMoment: "जन्म क्षण",
     simulatedInstant: "अनुकृत क्षण",
@@ -176,7 +180,7 @@ const messages = defineMessages({
     interactiveObservatory: "परस्परसंवादी वेधशाळा",
     landingTitle: "जन्माचा एक क्षण प्रत्येक कोनातून पाहा.",
     landingBody:
-      "आधी जन्मकुंडली तयार करा. नंतर समक्रमित 3D, SVG आणि अर्थनिर्णय दृश्यांसह संपूर्ण खगोलीय कार्यक्षेत्र उघडेल.",
+      "एकदा जन्मकुंडली तयार करा. प्रथम बारा भावांचे संपूर्ण विश्लेषण दिसेल; त्यानंतर समक्रमित 3D, SVG, काल आणि अर्थनिर्णय साधने मिळतील.",
     retrogradeShort: "व",
     selectedPlanetDetail: "{rasi} {degrees} · {nakshatra} पाद {pada} · भाव {house}",
     clearSelection: "निवड काढा",
@@ -195,6 +199,7 @@ const messages = defineMessages({
     generated: "जन्मकुंडली तयार",
     bornAt: "{place} · {date}, {time} वाजता",
     editBirth: "जन्ममाहिती बदला",
+    continueCosmos: "3D ब्रह्मांड आणि परस्परसंवादी साधनांकडे जा",
     displayedPositions: "दर्शवलेल्या स्थिती · {moment}",
     natalMoment: "जन्म क्षण",
     simulatedInstant: "अनुकृत क्षण",
@@ -231,7 +236,7 @@ const messages = defineMessages({
     featureAnalysisBody: "Erkunde Häuser, Mondstationen, Deutungen und Vimshottari-Perioden.",
     interactiveObservatory: "Interaktives Observatorium",
     landingTitle: "Ein Geburtsmoment aus jeder Perspektive.",
-    landingBody: "Erstelle zuerst dein Geburtshoroskop. Danach öffnet sich der vollständige Arbeitsbereich mit synchronisierten 3D-, SVG- und Deutungsansichten.",
+    landingBody: "Erstelle dein Geburtshoroskop einmal. Zuerst erscheint die vollständige Deutung aller zwölf Häuser, danach folgen synchronisierte 3D-, SVG-, Zeit- und Analysewerkzeuge.",
     retrogradeShort: "R",
     selectedPlanetDetail: "{rasi} {degrees} · {nakshatra} Viertel {pada} · Haus {house}",
     clearSelection: "Auswahl aufheben",
@@ -248,6 +253,7 @@ const messages = defineMessages({
     generated: "Geburtshoroskop erstellt",
     bornAt: "{place} · {date} um {time}",
     editBirth: "Geburtsdaten ändern",
+    continueCosmos: "Weiter zum 3D-Kosmos und zu den interaktiven Werkzeugen",
     displayedPositions: "Angezeigte Positionen · {moment}",
     natalMoment: "Geburtsmoment",
     simulatedInstant: "Simulierter Zeitpunkt",
@@ -598,18 +604,24 @@ export default function VedicAstrologyApp() {
 
         {request && natalChart && displayChart && selectedInstant && analysisAsOf ? (
           <div id="observatory" className="scroll-mt-4 space-y-6">
-            <section className="rounded-[28px] border border-white/10 bg-[#0b0e1b]/90 p-5 shadow-xl shadow-black/20 sm:p-6">
+            <section
+              aria-labelledby="generated-chart-title"
+              className="rounded-[28px] border border-white/10 bg-[#0b0e1b]/90 p-5 shadow-xl shadow-black/20 sm:p-6"
+            >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 text-emerald-700 dark:text-emerald-300">
                     <Sparkles aria-hidden="true" className="size-4" />
-                    <span className="text-[10px] font-semibold uppercase tracking-[0.24em]">
+                    <h2
+                      id="generated-chart-title"
+                      className="text-2xl font-semibold text-white"
+                    >
                       {t("generated")}
-                    </span>
+                    </h2>
                   </div>
-                  <h2 className="mt-2 text-2xl font-semibold text-white">
+                  <p className="mt-2 text-lg font-medium text-white">
                     {request.person.fullName}
-                  </h2>
+                  </p>
                   <p className="mt-1 text-sm text-slate-400">
                     {t("bornAt", {
                       place: request.location.label,
@@ -702,6 +714,22 @@ export default function VedicAstrologyApp() {
                   </div>
                 </div>
               ) : null}
+            </section>
+
+            <section className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-xl shadow-black/10 sm:p-7">
+              <TwelveHouseSummary
+                chart={natalChart}
+                onSelectHouse={handleHouseSelection}
+              />
+              <div className="mt-6 flex justify-center border-t border-[var(--border)] pt-5">
+                <a
+                  href="#cosmos"
+                  className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/[0.07] px-4 py-2.5 text-sm font-medium text-[var(--accent)] transition hover:bg-violet-500/[0.12]"
+                >
+                  {t("continueCosmos")}
+                  <ArrowDown aria-hidden="true" className="size-4" />
+                </a>
+              </div>
             </section>
 
             <TimeNavigator
