@@ -294,12 +294,26 @@ npm test
 npm run build
 ```
 
+Phone-layout checks run in a real browser with Playwright. The first run
+downloads Chromium; the suite then builds and serves the app itself:
+
+```bash
+npx playwright install chromium
+npm run e2e
+```
+
+It emulates a 320 px viewport, an iPhone SE, and a Pixel 7, and asserts no
+horizontal overflow, 16 px form fields, a 24 px control floor, 40 px primary
+controls, and the cosmos touch opt-in. Screenshots of every section land in
+`e2e-artifacts/screens/` and are uploaded by CI.
+
 Current milestone result:
 
 ```text
 TypeScript passed
 ESLint passed
 Vitest passed
+Playwright passed
 Next.js production build passed
 ```
 
@@ -398,8 +412,8 @@ milestone and the complete `v0.1.0` baseline.
 
 Priorities for the next iteration:
 
-- add real desktop/mobile screenshots and browser-level visual regression;
-- add Playwright accessibility and end-to-end browser coverage;
+- extend the Playwright suite from layout and touch-target checks to
+  accessibility audits and visual regression against stored screenshots;
 - independently cross-check boundary-sensitive calculations;
 - introduce an opt-in server-side LLM gateway with structured outputs;
 - build a small expert-reviewed evaluation set for groundedness, citation

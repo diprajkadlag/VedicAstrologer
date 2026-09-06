@@ -7,6 +7,8 @@
 
 # Testing and coverage
 /coverage
+# Playwright output: screenshots, traces, HTML report
+/e2e-artifacts
 
 # Local tooling (portable Node is kept here in this environment)
 /.tools

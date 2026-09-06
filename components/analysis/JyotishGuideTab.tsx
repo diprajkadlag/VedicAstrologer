@@ -457,7 +457,7 @@ function GrahasSection({
       <div
         role="group"
         aria-label={copy.grahas}
-        className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-9"
+        className="mt-5 grid grid-cols-3 gap-1.5 sm:grid-cols-5 sm:gap-2 lg:grid-cols-9"
       >
         {GRAHA_IDS.map((id) => (
           <button
@@ -465,7 +465,7 @@ function GrahasSection({
             key={id}
             aria-pressed={selected === id}
             onClick={() => setSelected(id)}
-            className={`rounded-xl border px-3 py-3 text-sm font-medium transition ${
+            className={`min-h-11 rounded-xl border px-2 py-3 text-sm font-medium transition sm:px-3 ${
               selected === id
                 ? "border-[var(--accent)] bg-[var(--surface-muted)] text-[var(--foreground)]"
                 : "border-[var(--border)] bg-[var(--surface-soft)] text-[var(--muted)] hover:text-[var(--foreground)]"
@@ -568,7 +568,7 @@ function ExplorerSection({
             <legend className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--foreground)]">
               {copy.chooseGraha}
             </legend>
-            <div className="mt-3 grid grid-cols-3 gap-2">
+            <div className="mt-3 grid grid-cols-3 gap-1.5 sm:gap-2">
               {GRAHA_IDS.map((id) => (
                 <button
                   type="button"
@@ -578,7 +578,7 @@ function ExplorerSection({
                     setGrahaId(id);
                     onSelectPlanet?.(id);
                   }}
-                  className={`rounded-xl border px-2 py-2.5 text-xs font-medium ${
+                  className={`min-h-11 rounded-xl border px-2 py-2.5 text-xs font-medium ${
                     grahaId === id
                       ? "border-[var(--accent)] bg-[var(--surface-muted)] text-[var(--foreground)]"
                       : "border-[var(--border)] bg-[var(--surface-soft)] text-[var(--muted)]"
@@ -594,7 +594,7 @@ function ExplorerSection({
             <legend className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--foreground)]">
               {copy.chooseBhava}
             </legend>
-            <div className="mt-3 grid grid-cols-4 gap-2">
+            <div className="mt-3 grid grid-cols-4 gap-1.5 sm:gap-2">
               {Array.from({ length: 12 }, (_, index) => {
                 const number = (index + 1) as HouseNumber;
                 return (
@@ -610,7 +610,7 @@ function ExplorerSection({
                       setBhavaNumber(number);
                       onSelectHouse?.(number);
                     }}
-                    className={`aspect-square rounded-xl border text-sm font-semibold ${
+                    className={`aspect-square min-h-11 rounded-xl border text-sm font-semibold ${
                       bhavaNumber === number
                         ? "border-[var(--accent)] bg-[var(--surface-muted)] text-[var(--foreground)]"
                         : "border-[var(--border)] bg-[var(--surface-soft)] text-[var(--muted)]"

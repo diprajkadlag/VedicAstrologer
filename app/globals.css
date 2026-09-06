@@ -59,6 +59,50 @@ button:not(:disabled) {
   cursor: pointer;
 }
 
+/*
+ * Touch devices. These rules are intentionally unlayered so they win over
+ * Tailwind's layered text-sm/text-xs utilities without !important.
+ *
+ * - iOS Safari zooms the page when a focused field is smaller than 16px,
+ *   and leaves it zoomed. A 16px floor on coarse pointers stops that while
+ *   keeping pinch-zoom available (no maximum-scale in the viewport meta).
+ * - 44px is the platform minimum for a comfortable tap target.
+ */
+@media (pointer: coarse) {
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+    min-height: 2.75rem;
+  }
+
+  .time-slider {
+    height: 2.75rem;
+  }
+
+  .time-slider::-webkit-slider-thumb {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-top: -0.625rem;
+  }
+
+  .time-slider::-moz-range-thumb {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+/*
+ * Horizontal scrollers on narrow screens: fade the trailing edge so the
+ * cut-off content reads as "more to the right" instead of a hard clip.
+ */
+@media (max-width: 639px) {
+  .scroll-x-fade {
+    mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 2.5rem), transparent);
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;

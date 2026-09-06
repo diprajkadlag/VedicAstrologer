@@ -97,13 +97,22 @@ function activateCell(
   onActivate();
 }
 
+/**
+ * Enlargement in compact (phone) mode. Smaller than the North chart's factor
+ * because two marks must still fit side by side inside a 100-unit cell.
+ */
+const COMPACT_SCALE = 1.25;
+
 function southPlanetSlots(
   x: number,
   y: number,
   count: number,
+  compact = false,
 ): { x: number; y: number }[] {
   const columns = 2;
-  const gapX = 43;
+  // Compact marks are 46 units wide, so the pair spans 2 + 46 + 2 + 46 + 2.
+  const gapX = compact ? 48 : 43;
+  const gapY = compact ? 15 : 12;
 
   return Array.from({ length: count }, (_, index) => {
     const row = Math.floor(index / columns);
@@ -114,7 +123,7 @@ function southPlanetSlots(
 
     return {
       x: x + 50 - rowWidth / 2 + itemInRow * gapX,
-      y: y + 45 + row * 12,
+      y: y + 45 + row * gapY,
     };
   });
 }
@@ -128,7 +137,9 @@ export function SouthIndianChart({
   className = "",
   ariaLabel,
   locale = "en",
+  compact = false,
 }: VedicChartRendererProps) {
+  const scale = compact ? COMPACT_SCALE : 1;
   const messages = SOUTH_CHART_MESSAGES[locale];
   const t = (
     key: keyof typeof messages,
@@ -267,7 +278,7 @@ export function SouthIndianChart({
         <text
           aria-hidden="true"
           fill="#94a3b8"
-          fontSize="8.5"
+          fontSize={8.5 * scale}
           textAnchor="middle"
           x="200"
           y="239"
@@ -321,7 +332,7 @@ export function SouthIndianChart({
             >
               <text
                 fill="#c4b5fd"
-                fontSize="9"
+                fontSize={9 * scale}
                 fontWeight="650"
                 x={x + 7}
                 y={y + 15}
@@ -335,7 +346,7 @@ export function SouthIndianChart({
               </text>
               <text
                 fill={selectedHouse === house.number ? "#fde68a" : "#94a3b8"}
-                fontSize="8"
+                fontSize={8 * scale}
                 fontWeight="650"
                 textAnchor="end"
                 x={x + 93}
@@ -347,7 +358,7 @@ export function SouthIndianChart({
               {isAscendant ? (
                 <text
                   fill="#fcd34d"
-                  fontSize="7.2"
+                  fontSize={7.2 * scale}
                   fontWeight="750"
                   letterSpacing="1"
                   x={x + 7}
@@ -365,12 +376,14 @@ export function SouthIndianChart({
           const y = cell.row * 100;
           const house = getHouseForSign(chart, cell.signIndex);
           const planets = getPlanetsForHouse(chart, house.number);
-          const slots = southPlanetSlots(x, y, planets.length);
+          const slots = southPlanetSlots(x, y, planets.length, compact);
 
           return planets.map((planet, index) => (
             <ChartPlanetMark
               fontSize={8.4}
               height={11}
+              hitPadding={compact ? 4 : 2}
+              scale={scale}
               key={planet.id}
               onSelect={
                 onSelectPlanet
@@ -380,7 +393,7 @@ export function SouthIndianChart({
               planet={planet}
               locale={locale}
               selected={selectedPlanetId === planet.id}
-              width={39}
+              width={compact ? 36.8 : 39}
               x={slots[index].x}
               y={slots[index].y}
             />

@@ -53,11 +53,19 @@ const NORTH_CHART_MESSAGES = defineMessages({
 interface PlanetLayout {
   centerX: number;
   columns: number;
+  /**
+   * Column cap in compact (phone) mode. The narrow triangular houses cannot
+   * hold three enlarged marks in one row, so they wrap earlier.
+   */
+  compactColumns?: number;
   gapX: number;
   gapY: number;
   markWidth?: number;
   startY: number;
 }
+
+/** Enlargement of labels, marks, and slot spacing in compact mode. */
+const COMPACT_SCALE = 1.35;
 
 interface NorthHouseShape {
   labelAnchor?: "start" | "middle" | "end";
@@ -92,6 +100,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 100,
       startY: 21,
       columns: 3,
+      compactColumns: 2,
       gapX: 28,
       gapY: 17,
       markWidth: 26,
@@ -143,6 +152,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 100,
       startY: 348,
       columns: 3,
+      compactColumns: 2,
       gapX: 28,
       gapY: 16,
       markWidth: 26,
@@ -168,6 +178,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 300,
       startY: 348,
       columns: 3,
+      compactColumns: 2,
       gapX: 28,
       gapY: 16,
       markWidth: 26,
@@ -221,6 +232,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 300,
       startY: 21,
       columns: 3,
+      compactColumns: 2,
       gapX: 28,
       gapY: 17,
       markWidth: 26,
@@ -228,17 +240,24 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
   },
 };
 
-function planetSlots(layout: PlanetLayout, count: number) {
+function planetSlots(layout: PlanetLayout, count: number, scale = 1) {
+  const columns =
+    scale > 1 && layout.compactColumns
+      ? Math.min(layout.columns, layout.compactColumns)
+      : layout.columns;
+  const gapX = layout.gapX * scale;
+  const gapY = layout.gapY * scale;
+
   return Array.from({ length: count }, (_, index) => {
-    const row = Math.floor(index / layout.columns);
-    const itemInRow = index % layout.columns;
-    const itemsBeforeRow = row * layout.columns;
-    const itemsInRow = Math.min(layout.columns, count - itemsBeforeRow);
-    const rowWidth = (itemsInRow - 1) * layout.gapX;
+    const row = Math.floor(index / columns);
+    const itemInRow = index % columns;
+    const itemsBeforeRow = row * columns;
+    const itemsInRow = Math.min(columns, count - itemsBeforeRow);
+    const rowWidth = (itemsInRow - 1) * gapX;
 
     return {
-      x: layout.centerX - rowWidth / 2 + itemInRow * layout.gapX,
-      y: layout.startY + row * layout.gapY,
+      x: layout.centerX - rowWidth / 2 + itemInRow * gapX,
+      y: layout.startY + row * gapY,
     };
   });
 }
@@ -261,10 +280,12 @@ export function NorthIndianChart({
   className = "",
   ariaLabel,
   locale = "en",
+  compact = false,
 }: VedicChartRendererProps) {
   const messages = NORTH_CHART_MESSAGES[locale];
   const titleId = useId();
   const descriptionId = useId();
+  const scale = compact ? COMPACT_SCALE : 1;
 
   return (
     <figure className={`m-0 w-full ${className}`}>
@@ -333,19 +354,19 @@ export function NorthIndianChart({
               {isAscendant ? (
                 <text
                   fill="#fcd34d"
-                  fontSize="7.5"
+                  fontSize={7.5 * scale}
                   fontWeight="750"
                   letterSpacing="1.2"
                   textAnchor="middle"
                   x={shape.labelX}
-                  y={shape.labelY - 13}
+                  y={shape.labelY - 13 * scale}
                 >
                   {messages.lagnaShort}
                 </text>
               ) : null}
               <text
                 fill={selectedHouse === number ? "#fde68a" : "#c4b5fd"}
-                fontSize="9.2"
+                fontSize={9.2 * scale}
                 fontWeight="650"
                 textAnchor={shape.labelAnchor ?? "middle"}
                 x={shape.labelX}
@@ -365,11 +386,13 @@ export function NorthIndianChart({
         {HOUSE_NUMBERS.flatMap((number) => {
           const shape = NORTH_INDIAN_HOUSE_SHAPES[number];
           const planets = getPlanetsForHouse(chart, number);
-          const slots = planetSlots(shape.planetLayout, planets.length);
+          const slots = planetSlots(shape.planetLayout, planets.length, scale);
 
           return planets.map((planet, index) => (
             <ChartPlanetMark
               height={12}
+              hitPadding={compact ? 5 : 2}
+              scale={scale}
               key={planet.id}
               onSelect={
                 onSelectPlanet

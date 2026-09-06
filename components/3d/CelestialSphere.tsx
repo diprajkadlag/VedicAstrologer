@@ -4,7 +4,9 @@ import { AdaptiveDpr, Html, Line, OrbitControls, Stars } from "@react-three/drei
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { useReducedMotion } from "framer-motion";
 import {
+  Hand,
   LoaderCircle,
+  Lock,
   Maximize2,
   Minimize2,
   RefreshCw,
@@ -148,6 +150,12 @@ const COSMOS_MESSAGES = defineMessages({
     webglReasonLost: "graphics context lost",
     webglReasonRuntime: "renderer initialization failed",
     dragZoom: "Drag to orbit · Scroll to zoom",
+    touchExplore: "Touch to explore",
+    touchExploreAria:
+      "Enable touch control of the celestial sphere. Until then, swiping here scrolls the page.",
+    touchLock: "Lock",
+    touchLockAria:
+      "Return the celestial sphere to page scrolling; swiping will scroll instead of rotating",
     selectGraha: "Select a planetary body",
     toolbarAria: "Select a planet in the celestial sphere",
     showGrahaAria:
@@ -212,6 +220,12 @@ const COSMOS_MESSAGES = defineMessages({
     webglReasonLost: "ग्राफ़िक्स संदर्भ खो गया",
     webglReasonRuntime: "रेंडरर आरंभ नहीं हो सका",
     dragZoom: "कक्षा घुमाने के लिए खींचें · ज़ूम के लिए स्क्रोल करें",
+    touchExplore: "छूकर देखें",
+    touchExploreAria:
+      "खगोलीय गोले का स्पर्श नियंत्रण चालू करें। तब तक यहाँ स्वाइप करने से पृष्ठ स्क्रोल होगा।",
+    touchLock: "लॉक",
+    touchLockAria:
+      "खगोलीय गोले को पृष्ठ स्क्रोल पर लौटाएँ; स्वाइप करने से घूमने के बजाय स्क्रोल होगा",
     selectGraha: "ग्रह चुनें",
     toolbarAria: "खगोलीय गोले में ग्रह चुनें",
     showGrahaAria:
@@ -276,6 +290,12 @@ const COSMOS_MESSAGES = defineMessages({
     webglReasonLost: "ग्राफिक्स संदर्भ गमावला",
     webglReasonRuntime: "रेंडरर सुरू होऊ शकला नाही",
     dragZoom: "कक्षा फिरवण्यासाठी ड्रॅग करा · झूमसाठी स्क्रोल करा",
+    touchExplore: "स्पर्श करून पाहा",
+    touchExploreAria:
+      "खगोलीय गोलाचे स्पर्श नियंत्रण सुरू करा. तोपर्यंत येथे स्वाइप केल्यास पान स्क्रोल होईल.",
+    touchLock: "लॉक",
+    touchLockAria:
+      "खगोलीय गोल पुन्हा पान स्क्रोलवर आणा; स्वाइप केल्यास फिरण्याऐवजी स्क्रोल होईल",
     selectGraha: "ग्रह निवडा",
     toolbarAria: "खगोलीय गोलातील ग्रह निवडा",
     showGrahaAria:
@@ -340,6 +360,12 @@ const COSMOS_MESSAGES = defineMessages({
     webglReasonLost: "Grafikkontext verloren",
     webglReasonRuntime: "Initialisierung der Darstellung fehlgeschlagen",
     dragZoom: "Ziehen zum Drehen · Scrollen zum Zoomen",
+    touchExplore: "Antippen zum Erkunden",
+    touchExploreAria:
+      "Touch-Steuerung der Himmelskugel aktivieren. Bis dahin scrollt Wischen hier die Seite.",
+    touchLock: "Sperren",
+    touchLockAria:
+      "Himmelskugel wieder auf Seiten-Scrollen stellen; Wischen scrollt dann statt zu drehen",
     selectGraha: "Himmelskörper auswählen",
     toolbarAria: "Himmelskörper in der Himmelssphäre auswählen",
     showGrahaAria:
@@ -739,6 +765,8 @@ interface SceneProps {
   showPlanetTrajectories: boolean;
   autoRotate: boolean;
   reduceMotion: boolean;
+  /** False while a touch device has not yet opted into orbit control. */
+  interactive: boolean;
   trajectories: readonly GrahaTrajectory[];
 }
 
@@ -890,9 +918,11 @@ function ResponsiveCameraFraming() {
 function CelestialOrbitControls({
   autoRotate,
   reduceMotion,
+  interactive,
 }: {
   autoRotate: boolean;
   reduceMotion: boolean;
+  interactive: boolean;
 }) {
   const camera = useThree((state) => state.camera);
   const height = useThree((state) => state.size.height);
@@ -910,6 +940,10 @@ function CelestialOrbitControls({
   return (
     <OrbitControls
       makeDefault
+      // Note: disabling does not remove the touch-action:none that three.js
+      // sets on the canvas, so the touch overlay in CelestialSphere is what
+      // actually keeps page scrolling alive; this only blocks stray input.
+      enabled={interactive}
       enableDamping
       dampingFactor={0.075}
       enablePan
@@ -977,6 +1011,7 @@ function Scene({
   showPlanetTrajectories,
   autoRotate,
   reduceMotion,
+  interactive,
   trajectories,
 }: SceneProps) {
   const isLight = theme === "light";
@@ -1062,6 +1097,7 @@ function Scene({
       <CelestialOrbitControls
         autoRotate={autoRotate}
         reduceMotion={reduceMotion}
+        interactive={interactive}
       />
       <AdaptiveDpr pixelated />
     </>
@@ -1070,6 +1106,29 @@ function Scene({
 
 type FullscreenState = "active" | "available" | "unsupported";
 type FullscreenError = "unsupported" | "failed" | null;
+
+/**
+ * Whether the visitor is on a touch device, decided once per page load.
+ * The server renders "no", the client corrects it on hydration, and the
+ * value is deliberately never re-evaluated: a phone does not stop being a
+ * phone, and the Lock control already covers the rare hybrid device.
+ */
+let coarsePointerSnapshot: boolean | null = null;
+
+function getCoarsePointerSnapshot(): boolean {
+  coarsePointerSnapshot ??=
+    window.matchMedia("(pointer: coarse)").matches ||
+    navigator.maxTouchPoints > 0;
+  return coarsePointerSnapshot;
+}
+
+function getCoarsePointerServerSnapshot(): boolean {
+  return false;
+}
+
+function subscribeToNothing(): () => void {
+  return () => undefined;
+}
 
 function getFullscreenServerSnapshot(): FullscreenState {
   return "unsupported";
@@ -1117,6 +1176,17 @@ export default function CelestialSphere({
   );
   const reduceMotion = useReducedMotion() ?? false;
   const deferredChart = useDeferredValue(chart);
+
+  // Touch devices start "locked": OrbitControls puts touch-action:none on
+  // the canvas, which would otherwise swallow the swipe a visitor uses to
+  // scroll past a section taller than their screen. A transparent overlay
+  // receives those swipes until the visitor opts in.
+  const coarsePointer = useSyncExternalStore(
+    subscribeToNothing,
+    getCoarsePointerSnapshot,
+    getCoarsePointerServerSnapshot,
+  );
+  const [touchArmed, setTouchArmed] = useState(false);
 
   const clearRecoveryTimer = useCallback(() => {
     if (recoveryTimerRef.current !== null) {
@@ -1276,6 +1346,10 @@ export default function CelestialSphere({
   );
   const isFullscreen = fullscreenState === "active";
   const fullscreenSupported = fullscreenState !== "unsupported";
+  // Fullscreen has nothing to scroll, so touch control is always live there.
+  const touchInteractive = !coarsePointer || touchArmed || isFullscreen;
+  const showTouchOverlay =
+    coarsePointer && !touchArmed && !isFullscreen;
 
   const selectPlanet = useCallback(
     (planet: GrahaPosition | null) => {
@@ -1339,7 +1413,7 @@ export default function CelestialSphere({
       data-cosmos-ui
       data-cosmos-theme={theme}
       aria-label={t("sectionAria")}
-      className={`relative isolate h-[clamp(620px,78vh,920px)] min-h-[620px] overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-black/40 ${isFullscreen ? "!h-[100dvh] !min-h-0 !w-screen !max-w-none !rounded-none !border-0" : ""} ${className}`}
+      className={`relative isolate h-[clamp(360px,62dvh,520px)] min-h-[360px] overflow-hidden rounded-3xl border border-white/10 shadow-2xl shadow-black/40 sm:h-[clamp(620px,78vh,920px)] sm:min-h-[620px] ${isFullscreen ? "!h-[100dvh] !min-h-0 !w-screen !max-w-none !rounded-none !border-0" : ""} ${className}`}
       style={{
         backgroundColor: isLight ? "#e9eef7" : "#050611",
         ...(isFullscreen ? { height: "100dvh", width: "100vw" } : {}),
@@ -1395,7 +1469,7 @@ export default function CelestialSphere({
                   frameloop={reduceMotion ? "demand" : "always"}
                   onPointerMissed={() => selectPlanet(null)}
                   fallback={
-                    <div className="grid h-full min-h-[620px] place-items-center bg-[#050611] p-8 text-center text-sm text-slate-400">
+                    <div className="grid h-full min-h-full place-items-center bg-[#050611] p-8 text-center text-sm text-slate-400">
                       {t("webglUnavailable")}
                     </div>
                   }
@@ -1417,11 +1491,31 @@ export default function CelestialSphere({
                     showPlanetTrajectories={pathsVisible}
                     autoRotate={autoRotate}
                     reduceMotion={reduceMotion}
+                    interactive={touchInteractive}
                     trajectories={trajectories}
                   />
                 </Suspense>
               </Canvas>
             </div>
+
+      {/*
+        z-19 puts the overlay above every in-scene label (their zIndexRange
+        tops out at 18 for the Ascendant marker) and below the z-20 HUD.
+      */}
+      {showTouchOverlay ? (
+        <button
+          type="button"
+          data-testid="cosmos-touch-overlay"
+          onClick={() => setTouchArmed(true)}
+          aria-label={t("touchExploreAria")}
+          className="absolute inset-0 z-[19] flex touch-pan-y items-center justify-center bg-transparent outline-none focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-violet-300"
+        >
+          <span className="pointer-events-none inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 bg-[#080a15]/85 px-4 text-xs font-semibold uppercase tracking-[0.14em] text-slate-100 shadow-xl backdrop-blur-md">
+            <Hand aria-hidden="true" className="size-4" />
+            {t("touchExplore")}
+          </span>
+        </button>
+      ) : null}
 
       <div
         aria-hidden="true"
@@ -1437,17 +1531,17 @@ export default function CelestialSphere({
         <p className="text-[10px] font-semibold uppercase tracking-[0.22em] text-amber-200">
           {t("geocentricSky")}
         </p>
-        <p className="mt-0.5 text-[11px] text-slate-400">
+        <p className="mt-0.5 hidden text-[11px] text-slate-400 sm:block">
           {t("lahiriAyanamsa", {
             value: chart.ayanamsa.trueDegrees.toFixed(4),
           })}
         </p>
-        <div className="mt-2 flex gap-1.5">
+        <div className="mt-2 flex flex-wrap gap-1.5">
           <button
             type="button"
             onClick={() => setLabelsVisible((visible) => !visible)}
             aria-pressed={labelsVisible}
-            className={`rounded-md border px-2 py-1 text-[9px] font-medium transition ${labelsVisible ? "border-violet-300/25 bg-violet-400/15 text-violet-100" : "border-white/10 text-slate-500 hover:text-slate-200"}`}
+            className={`min-h-9 rounded-md border px-2.5 py-1 text-[11px] font-medium transition sm:min-h-0 sm:text-[9px] ${labelsVisible ? "border-violet-300/25 bg-violet-400/15 text-violet-100" : "border-white/10 text-slate-500 hover:text-slate-200"}`}
           >
             {t("nakshatraLabels")}
           </button>
@@ -1455,17 +1549,30 @@ export default function CelestialSphere({
             type="button"
             onClick={() => setPathsVisible((visible) => !visible)}
             aria-pressed={pathsVisible}
-            className={`rounded-md border px-2 py-1 text-[9px] font-medium transition ${pathsVisible ? "border-violet-300/25 bg-violet-400/15 text-violet-100" : "border-white/10 text-slate-500 hover:text-slate-200"}`}
+            className={`min-h-9 rounded-md border px-2.5 py-1 text-[11px] font-medium transition sm:min-h-0 sm:text-[9px] ${pathsVisible ? "border-violet-300/25 bg-violet-400/15 text-violet-100" : "border-white/10 text-slate-500 hover:text-slate-200"}`}
           >
             {t("ephemerisTrails")}
           </button>
         </div>
-        <p className="mt-1.5 text-[8px] text-slate-600">
+        <p className="mt-1.5 hidden text-[8px] text-slate-600 sm:block">
           {t("asterismNote")}
         </p>
       </div>
 
-      <div className="absolute right-4 top-4 z-30 sm:right-5 sm:top-5">
+      <div className="absolute right-4 top-4 z-30 flex flex-col items-end gap-2 sm:right-5 sm:top-5">
+        {coarsePointer && touchArmed && !isFullscreen ? (
+          <button
+            type="button"
+            data-testid="cosmos-touch-lock"
+            onClick={() => setTouchArmed(false)}
+            aria-label={t("touchLockAria")}
+            title={t("touchLock")}
+            className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#080a15]/85 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-200 shadow-xl backdrop-blur-md transition hover:border-violet-300/30 hover:bg-violet-400/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300"
+          >
+            <Lock aria-hidden="true" className="size-4" />
+            <span className="hidden sm:inline">{t("touchLock")}</span>
+          </button>
+        ) : null}
         <button
           type="button"
           onClick={toggleFullscreen}
@@ -1485,7 +1592,7 @@ export default function CelestialSphere({
                 : t("openFullscreenTitle")
               : t("fullscreenUnavailableTitle")
           }
-          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#080a15]/85 px-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-200 shadow-xl backdrop-blur-md transition hover:border-violet-300/30 hover:bg-violet-400/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 disabled:cursor-not-allowed disabled:text-slate-600 disabled:hover:border-white/10 disabled:hover:bg-[#080a15]/85"
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-[#080a15]/85 px-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-200 shadow-xl backdrop-blur-md transition hover:border-violet-300/30 hover:bg-violet-400/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 disabled:cursor-not-allowed disabled:text-slate-600 disabled:hover:border-white/10 disabled:hover:bg-[#080a15]/85"
         >
           {isFullscreen ? <Minimize2 aria-hidden="true" className="size-4" /> : <Maximize2 aria-hidden="true" className="size-4" />}
           <span className="hidden sm:inline">
@@ -1502,7 +1609,7 @@ export default function CelestialSphere({
         <div
           role="status"
           aria-live="polite"
-          className="pointer-events-none absolute left-4 right-4 top-[10.5rem] z-20 rounded-2xl border border-white/10 bg-[#080a15]/85 px-3 py-2 text-left shadow-xl backdrop-blur-md sm:left-auto sm:right-5 sm:top-[4.75rem] sm:max-w-[15rem] sm:text-right"
+          className="pointer-events-none absolute inset-x-3 bottom-[6rem] z-20 rounded-2xl border border-white/10 bg-[#080a15]/85 px-3 py-2 text-left shadow-xl backdrop-blur-md sm:inset-x-auto sm:bottom-auto sm:right-5 sm:top-[4.75rem] sm:max-w-[15rem] sm:text-right"
         >
           <p className="text-xs font-semibold text-white">
             {getLocalizedGrahaName(activePlanet.id, locale)}
@@ -1527,7 +1634,7 @@ export default function CelestialSphere({
 
       <p
         aria-live="polite"
-        className={`absolute bottom-28 left-1/2 z-30 max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl border border-rose-300/20 bg-rose-950/90 px-3 py-2 text-center text-[11px] text-rose-100 shadow-xl backdrop-blur-md ${fullscreenError ? "block" : "hidden"}`}
+        className={`absolute bottom-32 left-1/2 z-30 max-w-[calc(100%-2rem)] -translate-x-1/2 rounded-xl border border-rose-300/20 bg-rose-950/90 px-3 py-2 text-center text-[11px] text-rose-100 shadow-xl backdrop-blur-md ${fullscreenError ? "block" : "hidden"}`}
       >
         {fullscreenError === "unsupported"
           ? t("fullscreenUnsupportedError")
@@ -1536,9 +1643,9 @@ export default function CelestialSphere({
             : ""}
       </p>
 
-            <div className="absolute inset-x-3 bottom-3 z-20 sm:inset-x-5 sm:bottom-5">
-        <div className="mb-2 flex items-center justify-between px-1 text-[9px] uppercase tracking-[0.16em] text-slate-500">
-          <span>{t("dragZoom")}</span>
+            <div className="absolute inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-20 sm:inset-x-5 sm:bottom-5">
+        <div className="mb-2 flex items-center justify-between px-1 text-[11px] uppercase tracking-[0.16em] text-slate-500 sm:text-[9px]">
+          <span className="truncate">{t("dragZoom")}</span>
           <span className="hidden sm:inline">{t("selectGraha")}</span>
         </div>
         <div
@@ -1563,7 +1670,7 @@ export default function CelestialSphere({
                     : "",
                 })}
                 onClick={() => selectPlanet(selected ? null : planet)}
-                className="flex shrink-0 items-center gap-1.5 rounded-xl border px-2.5 py-1.5 text-[10px] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 sm:text-[11px]"
+                className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl border px-3 py-1.5 text-[11px] font-medium transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-300 sm:min-h-0 sm:px-2.5"
                 style={{
                   borderColor: selected
                     ? visual.color

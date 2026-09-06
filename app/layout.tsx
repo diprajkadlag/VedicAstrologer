@@ -13,9 +13,18 @@ export const metadata: Metadata = {
   description:
     "Explore a Lahiri-sidereal birth chart through an interactive 3D celestial sphere, traditional Vedic charts, and Jyotish analysis.",
   applicationName: "Jyotish Observatory",
+  appleWebApp: {
+    capable: true,
+    title: "Jyotish Observatory",
+    statusBarStyle: "black-translucent",
+  },
 };
 
 export const viewport: Viewport = {
+  // Lets the page extend under the iOS notch/home indicator so that
+  // env(safe-area-inset-*) padding in globals.css and the cosmos toolbar
+  // has something to measure. Zoom is deliberately left enabled.
+  viewportFit: "cover",
   colorScheme: "dark light",
   themeColor: [
     { media: "(prefers-color-scheme: dark)", color: "#060711" },

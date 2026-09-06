@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { Diamond, Grid2X2, MapPinned } from "lucide-react";
 
 import {
@@ -153,6 +153,30 @@ const WORKSPACE_MESSAGES = defineMessages({
   },
 });
 
+/**
+ * Below this many CSS pixels the 400-unit chart is drawn so small that its
+ * labels drop under ~6 px, so the renderers switch to compact mode.
+ */
+const COMPACT_CHART_WIDTH_PX = 360;
+
+/** Measured content width of an element; null until first measurement. */
+function useContainerWidth(ref: RefObject<HTMLElement | null>): number | null {
+  const [width, setWidth] = useState<number | null>(null);
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+    const measure = () => setWidth(element.clientWidth);
+    measure();
+    if (typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, [ref]);
+
+  return width;
+}
+
 function formatChartNumber(
   value: number,
   locale: AppLocale,
@@ -184,6 +208,10 @@ export default function ChartWorkspace({
   const { locale } = useAppPreferences();
   const t = useScopedTranslations(WORKSPACE_MESSAGES);
   const [style, setStyle] = useState<VedicChartStyle>("north");
+  const chartPanelRef = useRef<HTMLDivElement>(null);
+  const chartPanelWidth = useContainerWidth(chartPanelRef);
+  const compact =
+    chartPanelWidth !== null && chartPanelWidth < COMPACT_CHART_WIDTH_PX;
   const activeHouse = selectedHouse
     ? chart.houses.find((house) => house.number === selectedHouse) ?? null
     : null;
@@ -218,7 +246,7 @@ export default function ChartWorkspace({
             type="button"
             onClick={() => setStyle("north")}
             aria-pressed={style === "north"}
-            className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
+            className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
               style === "north"
                 ? "bg-violet-400/20 text-white"
                 : "text-slate-500 hover:text-slate-200"
@@ -231,7 +259,7 @@ export default function ChartWorkspace({
             type="button"
             onClick={() => setStyle("south")}
             aria-pressed={style === "south"}
-            className={`inline-flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
+            className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
               style === "south"
                 ? "bg-violet-400/20 text-white"
                 : "text-slate-500 hover:text-slate-200"
@@ -243,11 +271,15 @@ export default function ChartWorkspace({
         </div>
       </div>
 
-      <div className="grid gap-5 p-4 sm:p-6 lg:grid-cols-[minmax(0,1fr)_13rem]">
-        <div className="mx-auto w-full max-w-[650px] rounded-2xl border border-white/[0.07] bg-[#080a15]/70 p-3 sm:p-5">
+      <div className="grid gap-4 p-2.5 sm:gap-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_13rem]">
+        <div
+          ref={chartPanelRef}
+          className="mx-auto w-full max-w-[650px] rounded-2xl border border-white/[0.07] bg-[#080a15]/70 p-1.5 sm:p-5"
+        >
           {style === "north" ? (
             <NorthIndianChart
               chart={chart}
+              compact={compact}
               locale={locale}
               selectedHouse={selectedHouse}
               selectedPlanetId={selectedPlanetId}
@@ -262,6 +294,7 @@ export default function ChartWorkspace({
           ) : (
             <SouthIndianChart
               chart={chart}
+              compact={compact}
               locale={locale}
               selectedHouse={selectedHouse}
               selectedPlanetId={selectedPlanetId}
@@ -287,7 +320,7 @@ export default function ChartWorkspace({
                   {getLocalizedGrahaName(activePlanet.id, locale)}
                 </p>
                 {activePlanet.retrograde ? (
-                  <span className="rounded-full border border-rose-300/15 bg-rose-300/[0.07] px-2 py-1 text-[10px] text-rose-700 dark:text-rose-200">
+                  <span className="rounded-full border border-rose-300/15 bg-rose-300/[0.07] px-2 py-1 text-[11px] text-rose-700 dark:text-rose-200">
                     {t("retrograde")}
                   </span>
                 ) : null}
@@ -345,7 +378,7 @@ export default function ChartWorkspace({
               <button
                 type="button"
                 onClick={() => onSelectPlanet(null)}
-                className="mt-5 w-full rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-slate-400 transition hover:bg-white/[0.07] hover:text-white"
+                className="mt-5 min-h-11 w-full rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-slate-400 transition hover:bg-white/[0.07] hover:text-white"
               >
                 {t("showBhavaDetails")}
               </button>
@@ -378,7 +411,7 @@ export default function ChartWorkspace({
                         type="button"
                         onClick={() => onSelectPlanet(planet.id)}
                         aria-pressed={selectedPlanetId === planet.id}
-                        className={`w-full rounded-xl border px-3 py-2 text-left text-xs transition ${
+                        className={`min-h-11 w-full rounded-xl border px-3 py-2 text-left text-xs transition ${
                           selectedPlanetId === planet.id
                             ? "border-violet-300/30 bg-violet-400/10 text-white"
                             : "border-white/[0.07] bg-black/10 text-slate-300 hover:bg-white/[0.05]"

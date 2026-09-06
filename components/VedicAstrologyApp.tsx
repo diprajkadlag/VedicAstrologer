@@ -399,7 +399,7 @@ function SelectedPlanetStrip({
       <button
         type="button"
         onClick={onClear}
-        className="rounded-lg border border-white/10 px-2.5 py-1.5 text-[10px] font-medium uppercase tracking-wider text-slate-400 transition hover:bg-white/[0.06] hover:text-white"
+        className="min-h-9 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] font-medium uppercase tracking-wider text-slate-400 transition hover:bg-white/[0.06] hover:text-white"
       >
         {t("clearSelection")}
       </button>
@@ -527,15 +527,15 @@ export default function VedicAstrologyApp() {
   );
 
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#060711] text-slate-100">
-      <div aria-hidden="true" className="pointer-events-none fixed inset-0">
+    <main className="relative min-h-dvh overflow-x-clip bg-[#060711] text-slate-100">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute left-[8%] top-[-12rem] size-[34rem] rounded-full bg-violet-600/15 blur-[120px]" />
         <div className="absolute right-[-8rem] top-[18rem] size-[30rem] rounded-full bg-amber-400/10 blur-[120px]" />
         <div className="celestial-grid absolute inset-0 opacity-40" />
       </div>
 
-      <div className="relative mx-auto max-w-[1680px] px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-        <header className="mb-7 flex flex-wrap items-end justify-between gap-5 border-b border-white/10 pb-6">
+      <div className="relative mx-auto max-w-[1680px] px-4 py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] sm:px-6 sm:py-8 lg:px-8">
+        <header className="mb-7 flex flex-col gap-4 border-b border-white/10 pb-6 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-5">
           <div>
             <div className="mb-3 flex items-center gap-2 text-amber-700 dark:text-amber-300">
               <Orbit aria-hidden="true" className="size-5" />
@@ -543,16 +543,16 @@ export default function VedicAstrologyApp() {
                 {t("brand")}
               </span>
             </div>
-            <h1 className="max-w-4xl text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+            <h1 className="max-w-4xl text-[1.75rem] font-semibold leading-tight tracking-tight text-white sm:text-5xl">
               {t("title")}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400 sm:text-base">
               {t("subtitle")}
             </p>
           </div>
-          <div className="flex flex-col items-end gap-2">
+          <div className="flex flex-row flex-wrap items-center gap-2 sm:flex-col sm:items-end">
             <AppPreferencesControls />
-            <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-400">
+            <div className="flex min-h-10 items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-400">
               <span className="size-2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]" />
               {t("ready")}
             </div>
@@ -632,7 +632,7 @@ export default function VedicAstrologyApp() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <AppLanguageSelect showLabel />
-                  <span className="rounded-full border border-emerald-300/15 bg-emerald-300/[0.07] px-3 py-1.5 text-xs text-emerald-800 dark:text-emerald-100/75">
+                  <span className="inline-flex min-h-10 items-center rounded-full border border-emerald-300/15 bg-emerald-300/[0.07] px-3 py-1.5 text-xs text-emerald-800 dark:text-emerald-100/75">
                     {request.birth.utcOffset} · {request.birth.timeZone}
                   </span>
                   <KundaliPdfDownload
@@ -652,7 +652,8 @@ export default function VedicAstrologyApp() {
                         });
                       });
                     }}
-                    className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white"
+                    data-testid="edit-birth"
+                    className="inline-flex min-h-10 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white"
                   >
                     <Pencil aria-hidden="true" className="size-3" />
                     {t("editBirth")}
@@ -752,7 +753,7 @@ export default function VedicAstrologyApp() {
                     {t("geocentricCosmos")}
                   </h2>
                 </div>
-                <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                   {isNatalMoment ? t("natalMoment") : t("simulatedSky")}
                 </span>
               </div>
@@ -781,7 +782,8 @@ export default function VedicAstrologyApp() {
 
             <section
               aria-label={t("natalInterpretation")}
-              className="rounded-[28px] border border-white/10 bg-[#0b0e1b]/90 p-5 shadow-2xl shadow-black/20 sm:p-7"
+              data-testid="interpretation-panel"
+              className="rounded-[28px] border border-white/10 bg-[#0b0e1b]/90 p-4 shadow-2xl shadow-black/20 sm:p-7"
             >
               <InterpretationPanel
                 chart={natalChart}

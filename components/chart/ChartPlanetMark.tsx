@@ -28,6 +28,14 @@ interface ChartPlanetMarkProps {
   height?: number;
   fontSize?: number;
   locale?: AppLocale;
+  /** Multiplies width, height, and font size; used by compact phone charts. */
+  scale?: number;
+  /**
+   * Extra invisible margin (in viewBox units) around the visible pill that
+   * still counts as a tap. Enlarges the touch target without changing what
+   * is drawn.
+   */
+  hitPadding?: number;
 }
 
 export function ChartPlanetMark({
@@ -36,11 +44,17 @@ export function ChartPlanetMark({
   y,
   selected,
   onSelect,
-  width = 30,
-  height = 13,
-  fontSize = 8.2,
+  width: baseWidth = 30,
+  height: baseHeight = 13,
+  fontSize: baseFontSize = 8.2,
   locale = "en",
+  scale = 1,
+  hitPadding = 0,
 }: ChartPlanetMarkProps) {
+  const width = baseWidth * scale;
+  const height = baseHeight * scale;
+  const fontSize = baseFontSize * scale;
+  const devanagariFontSize = 7.4 * scale;
   const presentation = PLANET_PRESENTATION[planet.id];
   const label = describePlanet(planet, locale);
   const shortName = getLocalizedGrahaAbbreviation(planet.id, locale);
@@ -69,6 +83,17 @@ export function ChartPlanetMark({
       transform={`translate(${x - width / 2} ${y - height / 2})`}
     >
       <title>{label}</title>
+      {hitPadding > 0 ? (
+        // A transparent fill (unlike fill="none") still receives pointer
+        // events, so this rect widens the tap area of the group.
+        <rect
+          fill="transparent"
+          height={height + hitPadding * 2}
+          width={width + hitPadding * 2}
+          x={-hitPadding}
+          y={-hitPadding}
+        />
+      ) : null}
       <rect
         className="transition-[fill,stroke] group-hover:stroke-white/50 group-focus:stroke-amber-200"
         fill={selected ? `${presentation.color}2b` : "rgba(3, 7, 18, 0.58)"}
@@ -86,7 +111,7 @@ export function ChartPlanetMark({
         fontSize={
           locale === "en" || locale === "de"
             ? fontSize
-            : Math.min(fontSize, 7.4)
+            : Math.min(fontSize, devanagariFontSize)
         }
         fontWeight="650"
         textAnchor="middle"

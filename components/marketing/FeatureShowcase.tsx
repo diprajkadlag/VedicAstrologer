@@ -11,7 +11,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import Image from "next/image";
-import { type KeyboardEvent, useId, useState } from "react";
+import { type KeyboardEvent, type MouseEvent, useId, useState } from "react";
 
 import { useScopedTranslations } from "@/components/providers/AppPreferencesProvider";
 import { defineMessages } from "@/lib/i18n";
@@ -204,6 +204,17 @@ export default function FeatureShowcase() {
     { label: string; title: string; body: string; alt: string; image: string }
   >;
 
+  /** Keep the tapped tab centred in the strip on phones; scrolls only the strip. */
+  function centerTab(event: MouseEvent<HTMLButtonElement>) {
+    const button = event.currentTarget;
+    const strip = button.parentElement;
+    if (!strip || strip.scrollWidth <= strip.clientWidth) return;
+    strip.scrollTo({
+      left: button.offsetLeft - (strip.clientWidth - button.offsetWidth) / 2,
+      behavior: "smooth",
+    });
+  }
+
   function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
     if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
     event.preventDefault();
@@ -245,7 +256,7 @@ export default function FeatureShowcase() {
           ].map(([Icon, label]) => (
             <span
               key={String(label)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-2.5 py-1.5 text-[10px] font-medium text-[var(--muted)]"
+              className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-2.5 py-1.5 text-[11px] font-medium text-[var(--muted)]"
             >
               <Icon aria-hidden="true" className="size-3.5 text-[var(--accent)]" />
               {String(label)}
@@ -258,7 +269,7 @@ export default function FeatureShowcase() {
         <div
           role="tablist"
           aria-label={t("eyebrow")}
-          className="flex gap-1 overflow-x-auto"
+          className="scroll-x-fade flex gap-1 overflow-x-auto"
         >
           {FEATURE_IDS.map((id, index) => {
             const Icon = icons[id];
@@ -271,9 +282,12 @@ export default function FeatureShowcase() {
                 aria-selected={selected === id}
                 aria-controls={`${tabsId}-panel`}
                 tabIndex={selected === id ? 0 : -1}
-                onClick={() => setSelected(id)}
+                onClick={(event) => {
+                  setSelected(id);
+                  centerTab(event);
+                }}
                 onKeyDown={(event) => handleKeyDown(event, index)}
-                className={`flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition ${
+                className={`flex min-h-10 shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold transition ${
                   selected === id
                     ? "bg-[var(--surface)] text-[var(--foreground)] shadow-sm"
                     : "text-[var(--muted)] hover:text-[var(--foreground)]"
@@ -300,6 +314,7 @@ export default function FeatureShowcase() {
             alt={current.alt}
             width={800}
             height={520}
+            sizes="(min-width: 1280px) 40vw, (min-width: 1024px) 55vw, 100vw"
             className="aspect-[20/13] h-full w-full rounded-2xl object-cover"
           />
         </div>

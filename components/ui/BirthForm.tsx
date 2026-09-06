@@ -965,7 +965,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
               type="button"
               onClick={() => void searchPlaces()}
               disabled={isSearching}
-              className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--foreground)] transition hover:border-violet-500/40 hover:text-violet-700 disabled:opacity-50 dark:hover:text-violet-200"
+              className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 text-sm font-medium text-[var(--foreground)] transition hover:border-violet-500/40 hover:text-violet-700 disabled:opacity-50 dark:hover:text-violet-200"
             >
               {isSearching ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : <Search aria-hidden="true" className="size-4" />}
               {t("search")}
@@ -1011,17 +1011,21 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
           href="https://www.openstreetmap.org/copyright"
           target="_blank"
           rel="noreferrer"
-          className="mt-2 inline-flex text-xs text-[var(--muted)] underline decoration-current underline-offset-4 transition hover:text-[var(--foreground)]"
+          className="mt-2 inline-flex min-h-6 items-center text-xs text-[var(--muted)] underline decoration-current underline-offset-4 transition hover:text-[var(--foreground)]"
         >
           {t("osmAttribution")}
         </a>
 
-        <details className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3">
-          <summary className="cursor-pointer text-xs font-medium text-[var(--muted)]">
+        <details
+          data-testid="manual-coordinates"
+          className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-3"
+        >
+          <summary className="cursor-pointer py-1 text-xs font-medium text-[var(--muted)]">
             {t("manualSummary")}
           </summary>
           <div className="mt-4 space-y-3">
             <input
+              data-testid="manual-label"
               value={manualLabel}
               onChange={(event) => setManualLabel(event.target.value)}
               placeholder={t("locationLabel")}
@@ -1030,6 +1034,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
             />
             <div className="grid grid-cols-2 gap-2">
               <input
+                data-testid="manual-latitude"
                 value={manualLatitude}
                 onChange={(event) => setManualLatitude(event.target.value)}
                 inputMode="decimal"
@@ -1038,6 +1043,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
                 className={inputClass}
               />
               <input
+                data-testid="manual-longitude"
                 value={manualLongitude}
                 onChange={(event) => setManualLongitude(event.target.value)}
                 inputMode="decimal"
@@ -1047,13 +1053,19 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
               />
             </div>
             <input
+              data-testid="manual-timezone"
               value={manualTimeZone}
               onChange={(event) => setManualTimeZone(event.target.value)}
               placeholder={t("timezoneExample")}
               aria-label={t("manualTimezone")}
               className={inputClass}
             />
-            <button type="button" onClick={useManualCoordinates} className="inline-flex items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2 text-xs font-medium text-[var(--foreground)] hover:border-violet-500/40">
+            <button
+              type="button"
+              data-testid="use-coordinates"
+              onClick={useManualCoordinates}
+              className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2 text-xs font-medium text-[var(--foreground)] hover:border-violet-500/40"
+            >
               <LocateFixed aria-hidden="true" className="size-3.5" />{" "}
               {t("useCoordinates")}
             </button>
@@ -1175,6 +1187,7 @@ export default function BirthForm({ isGenerating = false, onGenerate }: BirthFor
         </p>
         <button
           type="submit"
+          data-testid="generate-chart"
           disabled={isGenerating}
           className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 px-4 text-sm font-semibold text-white shadow-lg shadow-violet-950/20 transition hover:brightness-110 disabled:cursor-wait disabled:opacity-60"
         >

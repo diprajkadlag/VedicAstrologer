@@ -2,6 +2,7 @@
 
 import {
   type KeyboardEvent,
+  useEffect,
   useId,
   useMemo,
   useRef,
@@ -907,7 +908,7 @@ function OverviewTab({
           <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
             {getGenericNakshatraReading(locale)}
           </p>
-          <dl className="mt-4 grid grid-cols-2 gap-3 text-xs">
+          <dl className="mt-4 grid grid-cols-1 gap-3 text-xs min-[400px]:grid-cols-2">
             <div>
               <dt className="text-[var(--muted)]">{copy.lord}</dt>
               <dd className="mt-1 text-[var(--foreground)]">
@@ -955,8 +956,8 @@ function PositionsTab({
         <p className="mt-1 text-sm text-[var(--muted)]">{copy.positionsIntro}</p>
       </div>
       <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[780px] text-left text-sm">
+        <div className="scroll-x-fade overflow-x-auto">
+          <table className="w-full min-w-[780px] text-left text-sm [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-[1] [&_td:first-child]:bg-[var(--surface)] [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-[1] [&_th:first-child]:bg-[var(--surface-soft)]">
             <thead className="bg-[var(--surface-soft)] text-xs uppercase tracking-wider text-[var(--muted)]">
               <tr>
                 <th className="px-4 py-3 font-medium">{copy.graha}</th>
@@ -1046,7 +1047,7 @@ function HouseCard({
       className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)]"
     >
       <header className="p-4">
-        <div className="flex items-start justify-between gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap sm:gap-4">
           <div className="flex min-w-0 gap-3">
             <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-violet-400/20 bg-violet-400/[0.08] text-sm font-semibold text-[var(--accent)]">
               {house.number}
@@ -1064,7 +1065,7 @@ function HouseCard({
               </p>
             </div>
           </div>
-          <div className="max-w-[42%] text-right text-xs text-[var(--muted)]">
+          <div className="max-w-full pl-12 text-xs text-[var(--muted)] sm:max-w-[42%] sm:pl-0 sm:text-right">
             {residents.length
               ? residents
                   .map((planet) => getLocalizedGrahaName(planet, locale))
@@ -1597,8 +1598,8 @@ function DashasTab({
           </h3>
         </div>
         <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[580px] text-left text-sm">
+          <div className="scroll-x-fade overflow-x-auto">
+            <table className="w-full min-w-[580px] text-left text-sm [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-[1] [&_td:first-child]:bg-[var(--surface)] [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-[1] [&_th:first-child]:bg-[var(--surface-soft)]">
               <thead className="bg-[var(--surface-soft)] text-xs uppercase tracking-wider text-[var(--muted)]">
                 <tr>
                   <th className="px-4 py-3 font-medium">{copy.lord}</th>
@@ -1778,6 +1779,21 @@ export default function InterpretationPanel(props: InterpretationPanelProps) {
   )!;
   const tabSetId = useId();
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const tabStripRef = useRef<HTMLElement | null>(null);
+
+  // On a phone only two or three of the eight tabs fit, so keep the active
+  // one centred in the strip. Only the strip scrolls; scrollIntoView is
+  // avoided because it could also move the page vertically.
+  useEffect(() => {
+    const strip = tabStripRef.current;
+    const index = TAB_DEFINITIONS.findIndex((tab) => tab.id === activeTab);
+    const button = tabRefs.current[index];
+    if (!strip || !button || strip.scrollWidth <= strip.clientWidth) return;
+    strip.scrollTo({
+      left: button.offsetLeft - (strip.clientWidth - button.offsetWidth) / 2,
+      behavior: "smooth",
+    });
+  }, [activeTab]);
 
   function handleTabKeyDown(
     event: KeyboardEvent<HTMLButtonElement>,
@@ -1833,8 +1849,9 @@ export default function InterpretationPanel(props: InterpretationPanelProps) {
       </header>
 
       <nav
+        ref={tabStripRef}
         aria-label={copy.sections}
-        className="overflow-x-auto border-b border-[var(--border)]"
+        className="scroll-x-fade overflow-x-auto border-b border-[var(--border)]"
       >
         <div
           role="tablist"
@@ -1858,7 +1875,7 @@ export default function InterpretationPanel(props: InterpretationPanelProps) {
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setActiveTab(tab.id)}
                 onKeyDown={(event) => handleTabKeyDown(event, index)}
-                className={`flex items-center gap-2 border-b-2 px-3 py-3 text-sm transition focus-visible:outline-2 focus-visible:outline-[var(--focus)] ${
+                className={`flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-3 py-3 text-sm transition focus-visible:outline-2 focus-visible:outline-[var(--focus)] ${
                   selected
                     ? "border-[var(--accent)] text-[var(--foreground)]"
                     : "border-transparent text-[var(--muted)] hover:text-[var(--foreground)]"

@@ -76,9 +76,31 @@ function publicFontRoot(): string {
   return new URL("fonts/", document.baseURI).href;
 }
 
+/**
+ * How long the Blob URL stays valid after the click. Mobile Safari hands the
+ * download to a share sheet asynchronously, and a URL revoked in the same
+ * task can produce an empty file there; a minute is generous but harmless.
+ */
+const BLOB_URL_LIFETIME_MS = 60_000;
+
 function triggerBrowserDownload(blob: Blob, filename: string): void {
   const objectUrl = URL.createObjectURL(blob);
+  let revoked = false;
+  const revoke = () => {
+    if (revoked) return;
+    revoked = true;
+    URL.revokeObjectURL(objectUrl);
+  };
+
   const anchor = document.createElement("a");
+  if (!("download" in anchor)) {
+    // Very old WebKit: no download attribute, so open the PDF in a new tab
+    // and let the viewer save it.
+    window.open(objectUrl, "_blank", "noopener");
+    window.setTimeout(revoke, BLOB_URL_LIFETIME_MS);
+    return;
+  }
+
   anchor.href = objectUrl;
   anchor.download = filename;
   anchor.rel = "noopener";
@@ -89,8 +111,8 @@ function triggerBrowserDownload(blob: Blob, filename: string): void {
     anchor.click();
   } finally {
     anchor.remove();
-    // Allow the navigation task to claim the Blob before releasing it.
-    window.setTimeout(() => URL.revokeObjectURL(objectUrl), 0);
+    window.setTimeout(revoke, BLOB_URL_LIFETIME_MS);
+    window.addEventListener("pagehide", revoke, { once: true });
   }
 }
 
@@ -182,9 +204,10 @@ export default function KundaliPdfDownload({
         </div>
         <button
           type="button"
+          data-testid="download-pdf"
           onClick={downloadPdf}
           disabled={status === "preparing"}
-          className="inline-flex min-h-9 items-center gap-1.5 bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-violet-400 focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-70"
+          className="inline-flex min-h-10 items-center gap-1.5 bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-violet-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-violet-200 disabled:cursor-wait disabled:opacity-70 sm:min-h-9"
         >
           {status === "preparing" ? (
             <LoaderCircle aria-hidden="true" className="size-3.5 animate-spin" />

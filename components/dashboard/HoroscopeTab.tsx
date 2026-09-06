@@ -673,7 +673,7 @@ function ScoreBreakdown({
           {theme.reasons.map((reason) => (
             <li
               key={reason.ruleId}
-              className="grid grid-cols-[1fr_auto] gap-x-4 gap-y-1 text-xs"
+              className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-4 gap-y-1 text-xs"
             >
               <span className="text-[var(--foreground)]">
                 {localizedReason(reason, locale, t)}
@@ -811,7 +811,15 @@ export default function HoroscopeTab({
   const { locale } = useAppPreferences();
   const t = useScopedTranslations(HOROSCOPE_MESSAGES);
   const referenceDateInput = inputDateFromReference(referenceDate);
-  const referenceInstant = new Date(referenceDate);
+  // Keyed on the epoch value so an equal date passed by a parent re-render
+  // does not produce a new Date object; that object is the dependency of the
+  // transit memo below, and a fresh one would recompute the ephemeris on
+  // every render.
+  const referenceTime = new Date(referenceDate).getTime();
+  const referenceInstant = useMemo(
+    () => new Date(referenceTime),
+    [referenceTime],
+  );
   const referenceKey = referenceInstant.toISOString();
   const [localSelection, setLocalSelection] = useState(() => ({
     referenceKey,

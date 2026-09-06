@@ -264,7 +264,7 @@ export default function TimeNavigator({
               type="button"
               onClick={() => changeWindow(entry.days)}
               aria-pressed={windowDays === entry.days}
-              className={`rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition ${
+              className={`min-h-9 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition ${
                 windowDays === entry.days
                   ? "bg-violet-400/20 text-violet-800 dark:text-violet-100"
                   : "text-slate-500 hover:text-slate-200"
@@ -285,7 +285,7 @@ export default function TimeNavigator({
               INTL_LOCALES[locale],
             ),
           })}
-          className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition hover:bg-white/10 hover:text-white"
+          className="grid size-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition hover:bg-white/10 hover:text-white sm:size-9"
         >
           <SkipBack aria-hidden="true" className="size-4" />
         </button>
@@ -294,7 +294,7 @@ export default function TimeNavigator({
           onClick={() => setIsPlaying((playing) => !playing)}
           aria-label={isPlaying ? t("pause") : t("play")}
           aria-pressed={isPlaying}
-          className="grid size-10 shrink-0 place-items-center rounded-xl bg-violet-500 text-white shadow-lg shadow-violet-950/40 transition hover:bg-violet-400"
+          className="grid size-11 shrink-0 place-items-center rounded-xl bg-violet-500 text-white shadow-lg shadow-violet-950/40 transition hover:bg-violet-400 sm:size-10"
         >
           {isPlaying ? (
             <Pause aria-hidden="true" className="size-4" />
@@ -303,17 +303,24 @@ export default function TimeNavigator({
           )}
         </button>
 
-        <input
-          type="range"
-          min={-maxOffsetMinutes}
-          max={maxOffsetMinutes}
-          step={windowConfig.stepMinutes}
-          value={clamp(offsetMinutes, -maxOffsetMinutes, maxOffsetMinutes)}
-          onChange={(event) => setOffset(Number(event.target.value))}
-          aria-label={t("slider")}
-          aria-valuetext={selectedOffsetLabel}
-          className="time-slider min-w-0 flex-1"
-        />
+        <div className="min-w-0 flex-1">
+          <input
+            type="range"
+            min={-maxOffsetMinutes}
+            max={maxOffsetMinutes}
+            step={windowConfig.stepMinutes}
+            value={clamp(offsetMinutes, -maxOffsetMinutes, maxOffsetMinutes)}
+            onChange={(event) => setOffset(Number(event.target.value))}
+            aria-label={t("slider")}
+            aria-valuetext={selectedOffsetLabel}
+            className="time-slider block w-full"
+          />
+          <div className="mt-1 hidden justify-between text-[11px] uppercase tracking-wider text-slate-600 min-[400px]:flex sm:text-[10px]">
+            <span>{t("past")}</span>
+            <span>{t("birth")}</span>
+            <span>{t("future")}</span>
+          </div>
+        </div>
 
         <button
           type="button"
@@ -323,29 +330,25 @@ export default function TimeNavigator({
               INTL_LOCALES[locale],
             ),
           })}
-          className="grid size-9 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition hover:bg-white/10 hover:text-white"
+          className="grid size-11 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[0.04] text-slate-300 transition hover:bg-white/10 hover:text-white sm:size-9"
         >
           <SkipForward aria-hidden="true" className="size-4" />
         </button>
         <button
           type="button"
+          data-testid="time-return-birth"
           onClick={() => {
             setIsPlaying(false);
             onChange(new Date(birthInstant));
           }}
           disabled={offsetMinutes === 0}
           aria-label={t("returnBirth")}
-          className="hidden items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-slate-300 transition hover:bg-white/10 hover:text-white disabled:cursor-default disabled:opacity-35 sm:inline-flex"
+          title={t("returnBirth")}
+          className="inline-flex size-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] text-xs text-slate-300 transition hover:bg-white/10 hover:text-white disabled:cursor-default disabled:opacity-35 sm:size-auto sm:px-3 sm:py-2"
         >
-          <RotateCcw aria-hidden="true" className="size-3.5" />
-          {t("birth")}
+          <RotateCcw aria-hidden="true" className="size-4 sm:size-3.5" />
+          <span className="hidden sm:inline">{t("birth")}</span>
         </button>
-      </div>
-
-      <div className="mt-2 flex justify-between pl-[5.25rem] text-[10px] uppercase tracking-wider text-slate-600 sm:pl-[6.25rem] sm:pr-20">
-        <span>{t("past")}</span>
-        <span>{t("birth")}</span>
-        <span>{t("future")}</span>
       </div>
     </section>
   );
