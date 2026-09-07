@@ -40,16 +40,59 @@ export function sections(page: Page): Record<string, Locator> {
   };
 }
 
-/** The document must never be wider than the viewport on a phone. */
+/**
+ * The document must never be wider than the viewport on a phone.
+ *
+ * Two checks, because either one alone can be fooled. The document's
+ * scrollWidth misses content an ancestor clips, which is how a birth form
+ * pinned at 418 px stayed invisible to this suite while it was cut off on a
+ * real phone. Walking the elements misses nothing but needs the exemptions
+ * below for deliberate horizontal scrollers and self-clipping decoration.
+ */
 export async function expectNoHorizontalOverflow(page: Page): Promise<void> {
-  const overflow = await page.evaluate(() => {
+  const result = await page.evaluate(() => {
     const root = document.scrollingElement ?? document.documentElement;
-    return { scrollWidth: root.scrollWidth, clientWidth: root.clientWidth };
+    const limit = document.documentElement.clientWidth;
+    const painted: string[] = [];
+
+    document.querySelectorAll<HTMLElement>("body *").forEach((element) => {
+      const box = element.getBoundingClientRect();
+      if (box.width === 0 || box.right <= limit + 1) return;
+
+      for (
+        let parent = element.parentElement;
+        parent;
+        parent = parent.parentElement
+      ) {
+        const overflowX = getComputedStyle(parent).overflowX;
+        if (overflowX !== "visible") return;
+      }
+
+      const id = element.id ? `#${element.id}` : "";
+      const testId = element.dataset.testid
+        ? `[data-testid=${element.dataset.testid}]`
+        : "";
+      painted.push(
+        `${element.tagName.toLowerCase()}${id}${testId} reaches ${Math.round(box.right)}px "${(element.textContent ?? "").trim().slice(0, 40)}"`,
+      );
+    });
+
+    return {
+      scrollWidth: root.scrollWidth,
+      clientWidth: root.clientWidth,
+      painted,
+    };
   });
+
   expect(
-    overflow.scrollWidth,
-    `page is ${overflow.scrollWidth}px wide in a ${overflow.clientWidth}px viewport`,
-  ).toBeLessThanOrEqual(overflow.clientWidth + 1);
+    result.scrollWidth,
+    `page scrolls to ${result.scrollWidth}px in a ${result.clientWidth}px viewport`,
+  ).toBeLessThanOrEqual(result.clientWidth + 1);
+
+  expect(
+    result.painted,
+    `elements painted past the right edge:\n${result.painted.join("\n")}`,
+  ).toEqual([]);
 }
 
 export interface TargetReport {

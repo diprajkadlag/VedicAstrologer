@@ -7,6 +7,11 @@ test.describe("phone layout", () => {
     await page.goto("/");
     await expect(page.locator("#birth-data")).toBeVisible();
     await expectNoHorizontalOverflow(page);
+
+    // Opening the manual block reveals more fields, including the ones that
+    // used to hold the form open at a fixed width.
+    await page.getByTestId("manual-coordinates").locator("summary").click();
+    await expectNoHorizontalOverflow(page);
   });
 
   test("inputs do not trigger zoom on touch devices", async ({ page }) => {

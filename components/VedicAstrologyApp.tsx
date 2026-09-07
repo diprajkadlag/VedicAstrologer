@@ -526,8 +526,11 @@ export default function VedicAstrologyApp() {
       selectedInstant.getTime() === request.birth.instant.getTime(),
   );
 
+  // No horizontal clip on <main>: the decorative layer below is fixed and
+  // clips itself, so anything else that overflows should stay reachable and
+  // show up in testing rather than being silently cut off.
   return (
-    <main className="relative min-h-dvh overflow-x-clip bg-[#060711] text-slate-100">
+    <main className="relative min-h-dvh bg-[#060711] text-slate-100">
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute left-[8%] top-[-12rem] size-[34rem] rounded-full bg-violet-600/15 blur-[120px]" />
         <div className="absolute right-[-8rem] top-[18rem] size-[30rem] rounded-full bg-amber-400/10 blur-[120px]" />
@@ -568,10 +571,16 @@ export default function VedicAstrologyApp() {
           </div>
         ) : null}
 
+        {/*
+          [&>*]:min-w-0 — a grid item defaults to min-width:auto, so it
+          refuses to shrink below the widest thing inside it. The place-search
+          field carries a browser-default intrinsic width, which used to hold
+          this whole card at 418 px and push it off a phone screen.
+        */}
         <section
           id="birth-data"
           aria-label={t("birthEntry")}
-          className={`${!showBirthForm && natalChart ? "hidden" : "grid"} items-start gap-6 xl:grid-cols-[minmax(360px,0.78fr)_minmax(560px,1.22fr)]`}
+          className={`${!showBirthForm && natalChart ? "hidden" : "grid"} items-start gap-6 [&>*]:min-w-0 xl:grid-cols-[minmax(360px,0.78fr)_minmax(560px,1.22fr)]`}
         >
           <div className="rounded-[28px] border border-white/10 bg-[#0d0f1d]/90 p-5 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-7">
             <BirthForm isGenerating={isPending} onGenerate={handleGenerate} />

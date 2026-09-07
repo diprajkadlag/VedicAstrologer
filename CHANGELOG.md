@@ -8,6 +8,14 @@ professional astrological certification.
 
 ### Mobile usability
 
+- The birth-entry card no longer overflows the screen. As a grid item it kept
+  the browser's intrinsic width for the place-search field as a floor, holding
+  the card at 418 px, so on any phone narrower than that the form, its labels,
+  and the Generate button were cut off at the right edge with no way to scroll
+  to them. Grid children may now shrink.
+- The page shell no longer clips horizontal overflow at all, so a layout fault
+  is visible and reachable instead of silently cropped.
+
 - The North and South Indian charts pick one of three densities from the
   measured panel width: labels and planet marks scale up below 360 px and
   again below 300 px, each mark gains an invisible tap margin, crowded houses
@@ -32,7 +40,9 @@ professional astrological certification.
   reference instant has not changed.
 - The web app manifest declares 192 px and 512 px icons with an explicit
   "any" purpose, which Chrome on Android requires before offering to install.
-- Playwright checks at 320 px, iPhone SE, and Pixel 7 widths run in CI: no
+- Playwright checks at 320 px, iPhone SE, and Pixel 7 widths run in CI. The
+  overflow check measures every painted element rather than the document's
+  scroll width, which cannot see content that an ancestor clips: no
   horizontal overflow, 16 px form fields, a 24 px control floor, 40 px primary
   controls, the cosmos touch round-trip, chart label legibility and label
   collisions, and per-section screenshots.
