@@ -22,6 +22,7 @@ import {
   getLocalizedRasiName,
 } from "@/lib/astro/localizedNames";
 import { defineMessages, INTL_LOCALES, type AppLocale } from "@/lib/i18n";
+import type { ChartDensity } from "@/components/chart/types";
 
 export type VedicChartStyle = "north" | "south";
 
@@ -154,10 +155,19 @@ const WORKSPACE_MESSAGES = defineMessages({
 });
 
 /**
- * Below this many CSS pixels the 400-unit chart is drawn so small that its
- * labels drop under ~6 px, so the renderers switch to compact mode.
+ * Panel widths at which the 400-unit chart is drawn small enough that its
+ * labels need enlarging: under 360 px an 8-unit label lands near 6 px, and
+ * under 300 px it drops below 5 px.
  */
 const COMPACT_CHART_WIDTH_PX = 360;
+const TIGHT_CHART_WIDTH_PX = 300;
+
+function chartDensity(width: number | null): ChartDensity {
+  if (width === null) return "comfortable";
+  if (width < TIGHT_CHART_WIDTH_PX) return "tight";
+  if (width < COMPACT_CHART_WIDTH_PX) return "compact";
+  return "comfortable";
+}
 
 /** Measured content width of an element; null until first measurement. */
 function useContainerWidth(ref: RefObject<HTMLElement | null>): number | null {
@@ -210,8 +220,7 @@ export default function ChartWorkspace({
   const [style, setStyle] = useState<VedicChartStyle>("north");
   const chartPanelRef = useRef<HTMLDivElement>(null);
   const chartPanelWidth = useContainerWidth(chartPanelRef);
-  const compact =
-    chartPanelWidth !== null && chartPanelWidth < COMPACT_CHART_WIDTH_PX;
+  const density = chartDensity(chartPanelWidth);
   const activeHouse = selectedHouse
     ? chart.houses.find((house) => house.number === selectedHouse) ?? null
     : null;
@@ -222,7 +231,9 @@ export default function ChartWorkspace({
   return (
     <section
       aria-labelledby="vedic-chart-title"
-      className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0b0e1b]/90 shadow-2xl shadow-black/20"
+      // Below 400 px the page gutters cost more than the rounded card is
+      // worth: going edge to edge returns ~32 px to the chart itself.
+      className="overflow-hidden rounded-[28px] border border-white/10 bg-[#0b0e1b]/90 shadow-2xl shadow-black/20 max-[399px]:-mx-4 max-[399px]:rounded-none max-[399px]:border-x-0"
     >
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.08] px-5 py-4 sm:px-6">
         <div>
@@ -279,7 +290,7 @@ export default function ChartWorkspace({
           {style === "north" ? (
             <NorthIndianChart
               chart={chart}
-              compact={compact}
+              density={density}
               locale={locale}
               selectedHouse={selectedHouse}
               selectedPlanetId={selectedPlanetId}
@@ -294,7 +305,7 @@ export default function ChartWorkspace({
           ) : (
             <SouthIndianChart
               chart={chart}
-              compact={compact}
+              density={density}
               locale={locale}
               selectedHouse={selectedHouse}
               selectedPlanetId={selectedPlanetId}

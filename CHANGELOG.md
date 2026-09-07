@@ -4,13 +4,16 @@ This changelog records portfolio milestones for the application. Version 0.1.0 i
 an initial, test-backed release candidate, not a claim of production or
 professional astrological certification.
 
-## [Unreleased] - 2026-09-06
+## [Unreleased] - 2026-09-07
 
 ### Mobile usability
 
-- The North and South Indian charts switch to a compact mode below 360 px of
-  panel width: labels and planet marks scale up and each mark gains an
-  invisible tap margin, while house geometry is unchanged.
+- The North and South Indian charts pick one of three densities from the
+  measured panel width: labels and planet marks scale up below 360 px and
+  again below 300 px, each mark gains an invisible tap margin, crowded houses
+  wrap into fewer columns, and the chart card goes edge to edge under 400 px
+  so the diagram keeps the page gutters. House geometry is unchanged. The
+  smallest label on a 320 px phone went from about 4.7 px to 8.4 px.
 - On touch devices the 3D cosmos starts locked behind a "Touch to explore"
   overlay so a swipe scrolls the page; a Lock control hands scrolling back.
   The panel is shorter than a phone screen, the selected-planet readout sits
@@ -27,9 +30,12 @@ professional astrological certification.
   add-to-home-screen.
 - The transit view no longer recomputes the ephemeris on every render when the
   reference instant has not changed.
+- The web app manifest declares 192 px and 512 px icons with an explicit
+  "any" purpose, which Chrome on Android requires before offering to install.
 - Playwright checks at 320 px, iPhone SE, and Pixel 7 widths run in CI: no
   horizontal overflow, 16 px form fields, a 24 px control floor, 40 px primary
-  controls, the cosmos touch round-trip, and per-section screenshots.
+  controls, the cosmos touch round-trip, chart label legibility and label
+  collisions, and per-section screenshots.
 
 ## [Unreleased] - 2026-08-18
 

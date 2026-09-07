@@ -13,7 +13,7 @@ import {
   getPlanetsForHouse,
   HOUSE_NUMBERS,
 } from "./chart-utils";
-import type { VedicChartRendererProps } from "./types";
+import type { ChartDensity, VedicChartRendererProps } from "./types";
 
 const NORTH_CHART_MESSAGES = defineMessages({
   en: {
@@ -54,8 +54,9 @@ interface PlanetLayout {
   centerX: number;
   columns: number;
   /**
-   * Column cap in compact (phone) mode. The narrow triangular houses cannot
-   * hold three enlarged marks in one row, so they wrap earlier.
+   * Column cap once marks are enlarged. A house only has room for as many
+   * wide marks as its narrowest occupied row allows, so the side triangles
+   * drop to one column and the wide diamonds to two.
    */
   compactColumns?: number;
   gapX: number;
@@ -64,8 +65,12 @@ interface PlanetLayout {
   startY: number;
 }
 
-/** Enlargement of labels, marks, and slot spacing in compact mode. */
-const COMPACT_SCALE = 1.35;
+/** Enlargement of labels, marks, and slot spacing per density. */
+const DENSITY_SCALE: Readonly<Record<ChartDensity, number>> = {
+  comfortable: 1,
+  compact: 1.35,
+  tight: 1.55,
+};
 
 interface NorthHouseShape {
   labelAnchor?: "start" | "middle" | "end";
@@ -88,6 +93,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 200,
       startY: 74,
       columns: 3,
+      compactColumns: 2,
       gapX: 34,
       gapY: 17,
     },
@@ -114,6 +120,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 36,
       startY: 71,
       columns: 2,
+      compactColumns: 1,
       gapX: 28,
       gapY: 14.5,
       markWidth: 26,
@@ -139,6 +146,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 36,
       startY: 270,
       columns: 2,
+      compactColumns: 1,
       gapX: 28,
       gapY: 14.5,
       markWidth: 26,
@@ -166,6 +174,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 200,
       startY: 294,
       columns: 3,
+      compactColumns: 2,
       gapX: 34,
       gapY: 17,
     },
@@ -193,6 +202,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 364,
       startY: 270,
       columns: 2,
+      compactColumns: 1,
       gapX: 28,
       gapY: 14.5,
       markWidth: 26,
@@ -219,6 +229,7 @@ export const NORTH_INDIAN_HOUSE_SHAPES: Record<
       centerX: 364,
       startY: 71,
       columns: 2,
+      compactColumns: 1,
       gapX: 28,
       gapY: 14.5,
       markWidth: 26,
@@ -280,12 +291,13 @@ export function NorthIndianChart({
   className = "",
   ariaLabel,
   locale = "en",
-  compact = false,
+  density = "comfortable",
 }: VedicChartRendererProps) {
   const messages = NORTH_CHART_MESSAGES[locale];
   const titleId = useId();
   const descriptionId = useId();
-  const scale = compact ? COMPACT_SCALE : 1;
+  const scale = DENSITY_SCALE[density];
+  const compact = density !== "comfortable";
 
   return (
     <figure className={`m-0 w-full ${className}`}>

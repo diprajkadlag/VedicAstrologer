@@ -19,7 +19,7 @@ import {
   PLANET_PRESENTATION,
   SOUTH_INDIAN_SIGN_CELLS,
 } from "./chart-utils";
-import type { VedicChartRendererProps } from "./types";
+import type { ChartDensity, VedicChartRendererProps } from "./types";
 
 const SOUTH_CHART_MESSAGES = defineMessages({
   en: {
@@ -98,10 +98,22 @@ function activateCell(
 }
 
 /**
- * Enlargement in compact (phone) mode. Smaller than the North chart's factor
- * because two marks must still fit side by side inside a 100-unit cell.
+ * Enlargement per density. Both denser steps stay below the North chart's
+ * factors because two marks must still sit side by side inside a 100-unit
+ * cell; the mark width shrinks to match (see MARK_WIDTH).
  */
-const COMPACT_SCALE = 1.25;
+const DENSITY_SCALE: Readonly<Record<ChartDensity, number>> = {
+  comfortable: 1,
+  compact: 1.3,
+  tight: 1.45,
+};
+
+/** Base width per density, so scale x width never exceeds ~46 units. */
+const MARK_WIDTH: Readonly<Record<ChartDensity, number>> = {
+  comfortable: 39,
+  compact: 35,
+  tight: 31.7,
+};
 
 function southPlanetSlots(
   x: number,
@@ -110,7 +122,7 @@ function southPlanetSlots(
   compact = false,
 ): { x: number; y: number }[] {
   const columns = 2;
-  // Compact marks are 46 units wide, so the pair spans 2 + 46 + 2 + 46 + 2.
+  // Enlarged marks are ~46 units wide, so the pair spans 2 + 46 + 2 + 46 + 2.
   const gapX = compact ? 48 : 43;
   const gapY = compact ? 15 : 12;
 
@@ -137,9 +149,10 @@ export function SouthIndianChart({
   className = "",
   ariaLabel,
   locale = "en",
-  compact = false,
+  density = "comfortable",
 }: VedicChartRendererProps) {
-  const scale = compact ? COMPACT_SCALE : 1;
+  const compact = density !== "comfortable";
+  const scale = DENSITY_SCALE[density];
   const messages = SOUTH_CHART_MESSAGES[locale];
   const t = (
     key: keyof typeof messages,
@@ -244,7 +257,7 @@ export function SouthIndianChart({
         <text
           aria-hidden="true"
           fill="#fde68a"
-          fontSize="8"
+          fontSize={8 * scale}
           fontWeight="750"
           letterSpacing="1.7"
           textAnchor="middle"
@@ -253,21 +266,29 @@ export function SouthIndianChart({
         >
           {t("rasi")}
         </text>
-        <text
-          aria-hidden="true"
-          fill="#c4b5fd"
-          fontSize="6.5"
-          letterSpacing="1.25"
-          textAnchor="middle"
-          x="200"
-          y="180"
-        >
-          {t("lahiri")}
-        </text>
+        {/*
+          Two decorative captions. Enlarging them to a legible size on a
+          phone would push them past the 200-unit centre panel, so on narrow
+          screens they are dropped instead; both facts remain in the SVG
+          description and the methodology tab.
+        */}
+        {compact ? null : (
+          <text
+            aria-hidden="true"
+            fill="#c4b5fd"
+            fontSize="6.5"
+            letterSpacing="1.25"
+            textAnchor="middle"
+            x="200"
+            y="180"
+          >
+            {t("lahiri")}
+          </text>
+        )}
         <text
           aria-hidden="true"
           fill="#f8fafc"
-          fontSize="12"
+          fontSize={12 * scale}
           fontWeight="650"
           textAnchor="middle"
           x="200"
@@ -307,16 +328,18 @@ export function SouthIndianChart({
                   ),
                 })}
         </text>
-        <text
-          aria-hidden="true"
-          fill="#64748b"
-          fontSize="7.5"
-          textAnchor="middle"
-          x="200"
-          y="255"
-        >
-          {t("signsFixed")}
-        </text>
+        {compact ? null : (
+          <text
+            aria-hidden="true"
+            fill="#64748b"
+            fontSize="7.5"
+            textAnchor="middle"
+            x="200"
+            y="255"
+          >
+            {t("signsFixed")}
+          </text>
+        )}
 
         {SOUTH_INDIAN_SIGN_CELLS.map((cell) => {
           const x = cell.column * 100;
@@ -344,13 +367,18 @@ export function SouthIndianChart({
                 )}{" "}
                 {cell.signIndex + 1}
               </text>
+              {/*
+                Enlarged sign names run the full width of a 100-unit cell,
+                so the house number moves to its own line rather than
+                colliding with them.
+              */}
               <text
                 fill={selectedHouse === house.number ? "#fde68a" : "#94a3b8"}
                 fontSize={8 * scale}
                 fontWeight="650"
                 textAnchor="end"
                 x={x + 93}
-                y={y + 15}
+                y={y + (compact ? 30 : 15)}
               >
                 {t("bhavaShort")}
                 {house.number}
@@ -393,7 +421,7 @@ export function SouthIndianChart({
               planet={planet}
               locale={locale}
               selected={selectedPlanetId === planet.id}
-              width={compact ? 36.8 : 39}
+              width={MARK_WIDTH[density]}
               x={slots[index].x}
               y={slots[index].y}
             />
