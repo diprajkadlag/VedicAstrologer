@@ -6,6 +6,21 @@ professional astrological certification.
 
 ## [Unreleased] - 2026-09-07
 
+### Reading experience
+
+- The house-by-house reading now closes the page instead of opening it. The
+  completion header, chart tools, timing and analysis come first, so the long
+  reading is something a visitor scrolls to rather than scrolls past.
+- The report ends the same way: calculated placements and the method notes
+  come first, then the twelve houses.
+- Each house card is now a short, scannable summary in plain language: what
+  the house covers, one constructive line, one caution line, and a line per
+  resident body naming what it stands for. The reading-sequence chips, the
+  three sub-panels, the long-form guidance and the per-house repetition of
+  the "not a prediction" note are gone; that caveat is now stated once above
+  the twelve cards. The downloadable report still carries the long-form
+  guidance.
+
 ### Mobile usability
 
 - The birth-entry card no longer overflows the screen. As a grid item it kept

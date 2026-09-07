@@ -70,7 +70,7 @@ describe("TwelveHouseSummary", () => {
     expect(markup).not.toMatch(/<details\b|<summary\b|aria-expanded=/i);
   });
 
-  it("keeps the constructive and caution labels and full English guidance visible", () => {
+  it("shows the short constructive and caution guidance, not the long form", () => {
     const text = visibleText(
       renderToStaticMarkup(
         <AppPreferencesProvider>
@@ -83,13 +83,15 @@ describe("TwelveHouseSummary", () => {
     expect(text).toContain("Watch for");
     for (const education of Object.values(BHAVA_EDUCATION)) {
       expect(text).toContain(education.constructive.en);
-      expect(text).toContain(education.constructiveDetail.en);
       expect(text).toContain(education.caution.en);
-      expect(text).toContain(education.cautionDetail.en);
+      // The card is deliberately scannable: the long-form guidance belongs
+      // to the downloadable report, not to twelve cards on one page.
+      expect(text).not.toContain(education.constructiveDetail.en);
+      expect(text).not.toContain(education.cautionDetail.en);
     }
   });
 
-  it("places the single summary before the navigator and 3D sphere", () => {
+  it("places the single summary last, after the tools and the analysis panel", () => {
     const components = jsxComponentOrder(
       resolve(process.cwd(), "components", "VedicAstrologyApp.tsx"),
     );
@@ -98,10 +100,12 @@ describe("TwelveHouseSummary", () => {
       .filter(({ name }) => name === "TwelveHouseSummary");
     const navigatorIndex = components.indexOf("TimeNavigator");
     const sphereIndex = components.indexOf("CelestialSphere");
+    const panelIndex = components.indexOf("InterpretationPanel");
 
     expect(summaries).toHaveLength(1);
-    expect(summaries[0].index).toBeLessThan(navigatorIndex);
     expect(navigatorIndex).toBeLessThan(sphereIndex);
+    expect(summaries[0].index).toBeGreaterThan(sphereIndex);
+    expect(summaries[0].index).toBeGreaterThan(panelIndex);
   });
 
   it("does not expose a second Houses tab in the analysis dashboard", () => {

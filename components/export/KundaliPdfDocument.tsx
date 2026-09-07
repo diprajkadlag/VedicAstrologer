@@ -677,28 +677,6 @@ export function KundaliPdfDocument({
         </View>
       </ReportPage>
 
-      {bhavaConclusionGroups.map((rows) => {
-        const first = rows[0].number;
-        const last = rows[rows.length - 1].number;
-        return (
-          <ReportPage
-            key={`bhava-conclusions-${first}`}
-            summary={summary}
-            sectionTitle={`${copy.bhavaConclusions} · ${first}–${last}`}
-          >
-            <Text style={styles.conclusionIntro}>
-              {copy.bhavaConclusionsIntro}
-            </Text>
-            {rows.map((row) => (
-              <BhavaConclusionBullet
-                key={`conclusion-${row.number}`}
-                row={row}
-                summary={summary}
-              />
-            ))}
-          </ReportPage>
-        );
-      })}
 
       <ReportPage summary={summary} sectionTitle={copy.grahaPositions}>
         <View style={styles.table}>
@@ -753,25 +731,6 @@ export function KundaliPdfDocument({
         </View>
       </ReportPage>
 
-      {bhavaDetailGroups.map((rows) => {
-        const first = rows[0].number;
-        const last = rows[rows.length - 1].number;
-        return (
-          <ReportPage
-            key={`bhava-details-${first}`}
-            summary={summary}
-            sectionTitle={`${copy.bhavaSummary} · ${first}–${last}`}
-          >
-            {rows.map((row) => (
-              <BhavaCard
-                key={row.number}
-                row={row}
-                summary={summary}
-              />
-            ))}
-          </ReportPage>
-        );
-      })}
 
       <ReportPage summary={summary} sectionTitle={copy.methodology}>
         <View style={styles.auditBox}>
@@ -800,6 +759,52 @@ export function KundaliPdfDocument({
           ))}
         </View>
       </ReportPage>
+      {/*
+        The house-by-house reading closes the report. The calculated
+        placements and the method notes come first, so a reader reaches
+        the interpretation already knowing what produced it.
+      */}
+      {bhavaConclusionGroups.map((rows) => {
+        const first = rows[0].number;
+        const last = rows[rows.length - 1].number;
+        return (
+          <ReportPage
+            key={`bhava-conclusions-${first}`}
+            summary={summary}
+            sectionTitle={`${copy.bhavaConclusions} · ${first}–${last}`}
+          >
+            <Text style={styles.conclusionIntro}>
+              {copy.bhavaConclusionsIntro}
+            </Text>
+            {rows.map((row) => (
+              <BhavaConclusionBullet
+                key={`conclusion-${row.number}`}
+                row={row}
+                summary={summary}
+              />
+            ))}
+          </ReportPage>
+        );
+      })}
+      {bhavaDetailGroups.map((rows) => {
+        const first = rows[0].number;
+        const last = rows[rows.length - 1].number;
+        return (
+          <ReportPage
+            key={`bhava-details-${first}`}
+            summary={summary}
+            sectionTitle={`${copy.bhavaSummary} · ${first}–${last}`}
+          >
+            {rows.map((row) => (
+              <BhavaCard
+                key={row.number}
+                row={row}
+                summary={summary}
+              />
+            ))}
+          </ReportPage>
+        );
+      })}
     </Document>
   );
 }

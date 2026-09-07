@@ -85,7 +85,6 @@ const messages = defineMessages({
     generated: "Natal chart generated",
     bornAt: "{place} · {date} at {time}",
     editBirth: "Edit birth data",
-    continueCosmos: "Continue to the 3D cosmos and interactive tools",
     displayedPositions: "Displayed positions · {moment}",
     natalMoment: "Natal moment",
     simulatedInstant: "Simulated instant",
@@ -142,7 +141,6 @@ const messages = defineMessages({
     generated: "जन्म कुण्डली तैयार",
     bornAt: "{place} · {date}, {time} बजे",
     editBirth: "जन्म विवरण बदलें",
-    continueCosmos: "3D ब्रह्माण्ड और संवादात्मक साधनों पर जाएँ",
     displayedPositions: "प्रदर्शित स्थितियाँ · {moment}",
     natalMoment: "जन्म क्षण",
     simulatedInstant: "अनुकृत क्षण",
@@ -199,7 +197,6 @@ const messages = defineMessages({
     generated: "जन्मकुंडली तयार",
     bornAt: "{place} · {date}, {time} वाजता",
     editBirth: "जन्ममाहिती बदला",
-    continueCosmos: "3D ब्रह्मांड आणि परस्परसंवादी साधनांकडे जा",
     displayedPositions: "दर्शवलेल्या स्थिती · {moment}",
     natalMoment: "जन्म क्षण",
     simulatedInstant: "अनुकृत क्षण",
@@ -253,7 +250,6 @@ const messages = defineMessages({
     generated: "Geburtshoroskop erstellt",
     bornAt: "{place} · {date} um {time}",
     editBirth: "Geburtsdaten ändern",
-    continueCosmos: "Weiter zum 3D-Kosmos und zu den interaktiven Werkzeugen",
     displayedPositions: "Angezeigte Positionen · {moment}",
     natalMoment: "Geburtsmoment",
     simulatedInstant: "Simulierter Zeitpunkt",
@@ -726,22 +722,6 @@ export default function VedicAstrologyApp() {
               ) : null}
             </section>
 
-            <section className="rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-5 shadow-xl shadow-black/10 sm:p-7">
-              <TwelveHouseSummary
-                chart={natalChart}
-                onSelectHouse={handleHouseSelection}
-              />
-              <div className="mt-6 flex justify-center border-t border-[var(--border)] pt-5">
-                <a
-                  href="#cosmos"
-                  className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/[0.07] px-4 py-2.5 text-sm font-medium text-[var(--accent)] transition hover:bg-violet-500/[0.12]"
-                >
-                  {t("continueCosmos")}
-                  <ArrowDown aria-hidden="true" className="size-4" />
-                </a>
-              </div>
-            </section>
-
             <TimeNavigator
               birthInstant={request.birth.instant}
               selectedInstant={selectedInstant}
@@ -799,6 +779,21 @@ export default function VedicAstrologyApp() {
                 request={request}
                 asOf={analysisAsOf}
                 onSelectPlanet={handlePlanetSelection}
+                onSelectHouse={handleHouseSelection}
+              />
+            </section>
+
+            {/*
+              The twelve-house reading closes the page: the chart, timing and
+              analysis tools come first, and the long-form reading is what a
+              visitor scrolls down to when they want it.
+            */}
+            <section
+              id="house-analysis"
+              className="scroll-mt-4 rounded-[28px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-xl shadow-black/10 sm:p-7"
+            >
+              <TwelveHouseSummary
+                chart={natalChart}
                 onSelectHouse={handleHouseSelection}
               />
             </section>

@@ -34,7 +34,6 @@ import {
   BHAVA_EDUCATION,
   GRAHA_EDUCATION,
   LOCALIZED_ANALYSIS_LIMITATIONS,
-  buildGrahaInBhavaReading,
   getGenericNakshatraReading,
   readLocalized,
 } from "@/lib/astro/education";
@@ -148,7 +147,6 @@ interface AnalysisCopy {
   housesIntro: string;
   houseSignificance: string;
   yourChart: string;
-  balancedTakeaway: string;
   readingSequence: string;
   houseTopic: string;
   signContext: string;
@@ -250,10 +248,9 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "A placement close to a zodiac-sign, lunar-mansion, or quarter boundary can change under another ayanamsa or a small input/model difference. Near-station motion is also sensitive.",
     houseByHouse: "House-by-house analysis",
     housesIntro:
-      "Every house is already shown in full: its traditional scope, this chart's calculated placements, a balanced reflection, and the complete educational breakdown. No isolated placement is a final judgment.",
+      "One card per house: what it covers, where it flows well, and what to watch. No single placement is a verdict.",
     houseSignificance: "What this house signifies",
     yourChart: "Your birth chart",
-    balancedTakeaway: "Balanced takeaway",
     readingSequence: "Reading sequence",
     houseTopic: "House topic",
     signContext: "Zodiac-sign context",
@@ -361,10 +358,9 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "राशि, नक्षत्र या पाद की सीमा के पास स्थिति दूसरी अयनांश-पद्धति या छोटे इनपुट/मॉडल अंतर से बदल सकती है। स्थिरता के पास गति भी संवेदनशील है।",
     houseByHouse: "भाव-दर-भाव विश्लेषण",
     housesIntro:
-      "हर भाव का पूरा विवरण पहले से खुला है: उसका पारंपरिक क्षेत्र, इस कुंडली की गणितीय स्थितियाँ, संतुलित चिंतन और संपूर्ण शैक्षिक विश्लेषण। अकेली स्थिति अंतिम निर्णय नहीं है।",
+      "हर भाव के लिए एक कार्ड: वह क्या दर्शाता है, कहाँ सहज खिलता है और किस बात का ध्यान रखें। कोई अकेली स्थिति अंतिम निर्णय नहीं है।",
     houseSignificance: "यह भाव क्या दर्शाता है",
     yourChart: "आपकी जन्म-कुंडली",
-    balancedTakeaway: "संतुलित संकेत",
     readingSequence: "पढ़ने का क्रम",
     houseTopic: "भाव-विषय",
     signContext: "राशि-सन्दर्भ",
@@ -472,10 +468,9 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "राशी, नक्षत्र किंवा पादाच्या सीमेजवळील स्थिती दुसऱ्या अयनांशामुळे किंवा छोट्या इनपुट/मॉडेल फरकामुळे बदलू शकते. स्थिरतेजवळील गतीही संवेदनशील असते.",
     houseByHouse: "भावनिहाय विश्लेषण",
     housesIntro:
-      "प्रत्येक भावाचा संपूर्ण तपशील आधीपासून उघडा आहे: त्याचे पारंपरिक क्षेत्र, या कुंडलीतील गणिती स्थिती, संतुलित चिंतन आणि पूर्ण शैक्षणिक विश्लेषण. एकच स्थिती अंतिम निर्णय नसते.",
+      "प्रत्येक भावासाठी एक कार्ड: तो काय दर्शवतो, कुठे सहज फुलतो आणि कशाकडे लक्ष द्यायचे. एकही स्थिती अंतिम निर्णय नसते.",
     houseSignificance: "हा भाव काय दर्शवतो",
     yourChart: "तुमची जन्मकुंडली",
-    balancedTakeaway: "संतुलित संकेत",
     readingSequence: "वाचनक्रम",
     houseTopic: "भावविषय",
     signContext: "राशीसंदर्भ",
@@ -583,10 +578,9 @@ const COPY: Readonly<Record<AppLocale, AnalysisCopy>> = {
       "Eine Position nahe einer Grenze von Tierkreiszeichen, Mondstation oder Viertel kann sich bei einem anderen Ayanamsa oder kleinen Unterschieden in Eingabe und Modell ändern. Auch eine nahezu stationäre Bewegung ist empfindlich.",
     houseByHouse: "Haus-für-Haus-Analyse",
     housesIntro:
-      "Jedes Haus ist bereits vollständig dargestellt: sein traditioneller Bereich, die berechneten Stellungen dieses Geburtshoroskops, eine ausgewogene Reflexion und die ausführliche didaktische Einordnung. Keine einzelne Stellung erlaubt ein abschließendes Urteil.",
+      "Eine Karte pro Haus: wofür es steht, wo es sich gut entfaltet und worauf zu achten ist. Keine einzelne Stellung ist ein Urteil.",
     houseSignificance: "Wofür dieses Haus steht",
     yourChart: "Dein Geburtshoroskop",
-    balancedTakeaway: "Ausgewogene Einordnung",
     readingSequence: "Lesereihenfolge",
     houseTopic: "Thema des Hauses",
     signContext: "Tierkreiszeichen-Kontext",
@@ -1044,197 +1038,88 @@ function HouseCard({
     <article
       data-house-number={house.number}
       aria-labelledby={`house-${house.number}-analysis-title`}
-      className="rounded-2xl border border-[var(--border)] bg-[var(--surface-soft)]"
+      className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)]"
     >
-      <header className="p-4">
-        <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap sm:gap-4">
-          <div className="flex min-w-0 gap-3">
-            <span className="grid size-9 shrink-0 place-items-center rounded-xl border border-violet-400/20 bg-violet-400/[0.08] text-sm font-semibold text-[var(--accent)]">
-              {house.number}
-            </span>
-            <div>
-              <h3
-                id={`house-${house.number}-analysis-title`}
-                className="font-medium text-[var(--foreground)]"
-              >
-                {readLocalized(education.name, locale)}
-              </h3>
-              <p className="mt-1 text-xs text-[var(--muted)]">
-                {getLocalizedRasiName(house.sign.name, locale)} · {copy.lord}:{" "}
-                {getLocalizedGrahaName(lordId, locale)}
-              </p>
-            </div>
-          </div>
-          <div className="max-w-full pl-12 text-xs text-[var(--muted)] sm:max-w-[42%] sm:pl-0 sm:text-right">
-            {residents.length
-              ? residents
-                  .map((planet) => getLocalizedGrahaName(planet, locale))
-                  .join(" · ")
-              : copy.noGrahas}
-          </div>
+      <header className="flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3">
+        <span className="grid size-9 shrink-0 place-items-center rounded-xl bg-violet-500/12 text-sm font-semibold text-[var(--accent)]">
+          {house.number}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h3
+            id={`house-${house.number}-analysis-title`}
+            className="text-sm font-semibold text-[var(--foreground)]"
+          >
+            {readLocalized(education.name, locale)}
+          </h3>
+          <p className="mt-0.5 text-xs text-[var(--muted)]">
+            {getLocalizedRasiName(house.sign.name, locale)} · {copy.lord}:{" "}
+            {getLocalizedGrahaName(lordId, locale)} → {copy.house} {lord.house}
+          </p>
         </div>
-
-        <div className="mt-4 grid gap-2.5 text-xs leading-5">
-          <p className="rounded-xl border border-violet-500/20 bg-violet-500/[0.055] px-3 py-2.5 text-[var(--muted)]">
-            <strong className="text-violet-700 dark:text-violet-300">
-              {copy.houseSignificance}:
-            </strong>{" "}
-            {bhavaSummary.significance}
-          </p>
-          <p className="rounded-xl border border-sky-500/20 bg-sky-500/[0.055] px-3 py-2.5 text-[var(--muted)]">
-            <strong className="text-sky-700 dark:text-sky-300">
-              {copy.yourChart}:
-            </strong>{" "}
-            {bhavaSummary.chartReading}
-          </p>
-          <p className="rounded-xl border border-emerald-500/20 bg-emerald-500/[0.05] px-3 py-2.5 text-[var(--muted)]">
-            <strong className="text-emerald-700 dark:text-emerald-300">
-              {copy.balancedTakeaway}:
-            </strong>{" "}
-            {bhavaSummary.reflection}
-          </p>
+        <div className="flex flex-wrap gap-1">
+          {residents.length ? (
+            residents.map((planetId) => (
+              <span
+                key={planetId}
+                className="rounded-full bg-violet-500/10 px-2.5 py-1 text-[11px] font-medium text-[var(--accent)]"
+              >
+                {getLocalizedGrahaName(planetId, locale)}
+              </span>
+            ))
+          ) : (
+            <span className="text-[11px] text-[var(--muted)]">
+              {copy.noGrahas}
+            </span>
+          )}
         </div>
       </header>
 
-      <div className="border-t border-[var(--border)] px-4 pb-5 pt-5">
-        <div className="mb-4 flex flex-wrap items-center gap-2 text-xs text-[var(--muted)]">
-          <span>{copy.readingSequence}:</span>
-          <AstroTerm term="bhava" variant="chip">
-            1. {copy.houseTopic}
-          </AstroTerm>
-          <AstroTerm term="rasi" variant="chip">
-            2. {copy.signContext}
-          </AstroTerm>
-          <AstroTerm term="house-lord" variant="chip">
-            3. {copy.houseLord}
-          </AstroTerm>
-          <AstroTerm term="graha" variant="chip">
-            4. {copy.residentGrahas}
-          </AstroTerm>
-        </div>
+      <div className="space-y-3 p-4">
+        <p className="text-sm leading-6 text-[var(--foreground)]">
+          {bhavaSummary.significance}
+        </p>
 
-        <div className="grid gap-3 xl:grid-cols-3">
-          <article className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--accent)]">
-              {copy.bhavaFoundation}
-            </p>
-            <h4 className="mt-2 text-sm font-medium text-[var(--foreground)]">
-              {copy.house} {house.number} ·{" "}
-              {readLocalized(education.name, locale)}
-            </h4>
-            <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
-              <strong>{copy.domain}:</strong>{" "}
-              {readLocalized(education.domain, locale)}
-            </p>
-            <p className="mt-3 text-xs leading-5 text-emerald-600 dark:text-emerald-200/75">
-              <strong>{copy.constructive}:</strong>{" "}
-              {readLocalized(education.constructive, locale)}
-              <span className="mt-1 block text-[var(--muted)]">
-                {readLocalized(education.constructiveDetail, locale)}
-              </span>
-            </p>
-            <p className="mt-2 text-xs leading-5 text-amber-700 dark:text-amber-200/70">
-              <strong>{copy.watchFor}:</strong>{" "}
-              {readLocalized(education.caution, locale)}
-              <span className="mt-1 block text-[var(--muted)]">
-                {readLocalized(education.cautionDetail, locale)}
-              </span>
-            </p>
-          </article>
-
-          <article className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-sky-600 dark:text-sky-300/80">
-              {copy.rasiContext}
-            </p>
-            <h4 className="mt-2 text-sm font-medium text-[var(--foreground)]">
-              {getLocalizedRasiName(house.sign.name, locale)}
-            </h4>
-            <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
-              {copy.rasiContextBody}
-            </p>
-          </article>
-
-          <article className="rounded-xl border border-amber-500/20 bg-amber-500/[0.045] p-4">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-amber-700 dark:text-amber-300/80">
-              {copy.lordPathway}
-            </p>
-            <h4 className="mt-2 text-sm font-medium text-[var(--foreground)]">
-              {getLocalizedGrahaName(lordId, locale)} → {copy.house} {lord.house}
-            </h4>
-            <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
-              {copy.lordPathwayBody}
-            </p>
-            <p className="mt-3 text-xs leading-5 text-[var(--muted)]">
-              {getLocalizedGrahaName(lordId, locale)}:{" "}
-              {readLocalized(GRAHA_EDUCATION[lordId].signifies, locale)}
-            </p>
-          </article>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <p className="rounded-xl bg-emerald-500/[0.07] px-3 py-2.5 text-xs leading-5 text-[var(--muted)]">
+            <strong className="block text-emerald-700 dark:text-emerald-300">
+              {copy.constructive}
+            </strong>
+            {readLocalized(education.constructive, locale)}
+          </p>
+          <p className="rounded-xl bg-amber-500/[0.07] px-3 py-2.5 text-xs leading-5 text-[var(--muted)]">
+            <strong className="block text-amber-700 dark:text-amber-300">
+              {copy.watchFor}
+            </strong>
+            {readLocalized(education.caution, locale)}
+          </p>
         </div>
 
         {residents.length ? (
-          <div className="mt-5 space-y-3">
-            <h4 className="text-sm font-medium text-[var(--foreground)]">
-              {copy.residentTitle}
-            </h4>
-            {residents.map((planetId) => {
-              const reading = buildGrahaInBhavaReading(
-                planetId,
-                house.number,
-                locale,
-              );
-              return (
-                <article
-                  key={planetId}
-                  className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4"
-                >
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <h5 className="text-sm font-medium text-[var(--foreground)]">
-                      {reading.title}
-                    </h5>
-                    <span className="rounded-full border border-[var(--border)] px-2 py-0.5 text-[10px] text-[var(--muted)]">
-                      {copy.symbolicReading}
-                    </span>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-                    {reading.summary}
-                  </p>
-                  <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    <p className="text-xs leading-5 text-emerald-600 dark:text-emerald-200/75">
-                      <strong>{copy.constructive}:</strong>{" "}
-                      {reading.constructive}
-                    </p>
-                    <p className="text-xs leading-5 text-rose-600 dark:text-rose-200/70">
-                      <strong>{copy.watchFor}:</strong> {reading.caution}
-                    </p>
-                  </div>
-                  <p className="mt-3 rounded-lg border border-violet-400/15 bg-violet-400/[0.045] p-3 text-xs leading-5 text-[var(--muted)]">
-                    <strong>{copy.reflection}:</strong> {reading.inquiry}
-                  </p>
-                  <p className="mt-3 text-[10px] leading-4 text-[var(--muted)]">
-                    {reading.methodNote}
-                  </p>
-                </article>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="mt-5 rounded-xl border border-sky-500/20 bg-sky-500/[0.045] p-4">
-            <p className="text-sm font-medium text-[var(--foreground)]">
-              {copy.emptyHouseTitle}
-            </p>
-            <p className="mt-2 text-xs leading-5 text-[var(--muted)]">
-              {copy.emptyHouseBody}
-            </p>
-          </div>
-        )}
+          <ul className="space-y-2">
+            {residents.map((planetId) => (
+              <li
+                key={planetId}
+                className="rounded-xl border border-[var(--border)] px-3 py-2.5 text-xs leading-5"
+              >
+                <strong className="text-[var(--foreground)]">
+                  {getLocalizedGrahaName(planetId, locale)}
+                </strong>
+                <span className="text-[var(--muted)]">
+                  {" · "}
+                  {readLocalized(GRAHA_EDUCATION[planetId].signifies, locale)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         {onSelect ? (
           <button
             type="button"
             onClick={() => onSelect(house.number)}
-            className="mt-4 rounded-lg border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2 text-xs text-[var(--foreground)] hover:bg-[var(--surface-muted)]"
+            className="min-h-9 w-full rounded-lg border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
           >
-            {copy.highlightHouse} · {copy.house} {house.number}
+            {copy.highlightHouse}
           </button>
         ) : null}
       </div>

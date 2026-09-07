@@ -1,5 +1,6 @@
 import { createServer, type Server } from "node:http";
 import { readFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { pdf } from "@react-pdf/renderer";
@@ -90,6 +91,28 @@ afterAll(async () => {
       if (error) rejectClose(error);
       else resolveClose();
     });
+  });
+});
+
+describe("KundaliPdfDocument page order", () => {
+  it("closes the report with the house-by-house reading", () => {
+    const source = readFileSync(
+      resolve(process.cwd(), "components", "export", "KundaliPdfDocument.tsx"),
+      "utf8",
+    );
+    const anchors = source.indexOf("sectionTitle={copy.coreAnchors}");
+    const positions = source.indexOf("sectionTitle={copy.grahaPositions}");
+    const methodology = source.indexOf("sectionTitle={copy.methodology}");
+    const conclusions = source.indexOf("bhavaConclusionGroups.map");
+    const details = source.indexOf("bhavaDetailGroups.map");
+
+    for (const index of [anchors, positions, methodology, conclusions, details]) {
+      expect(index).toBeGreaterThan(-1);
+    }
+    expect(anchors).toBeLessThan(positions);
+    expect(positions).toBeLessThan(methodology);
+    expect(methodology).toBeLessThan(conclusions);
+    expect(conclusions).toBeLessThan(details);
   });
 });
 
