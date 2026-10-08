@@ -445,7 +445,7 @@ const REPORT_LIMITATION_OVERRIDES: Readonly<
     "mean-node-model":
       "The north and south lunar nodes use mean-node positions. True-node positions may differ, especially near a boundary.",
     "feature-scope":
-      "Sixfold strength, divisional charts, combustion, classical aspects, conjunction strength, planetary combinations and event probabilities are not calculated. Any mention of them is educational only.",
+      "Sixfold strength, divisional charts other than the ninth-division chart, combustion, classical aspects, conjunction strength, planetary combinations and event probabilities are not calculated. Any mention of them is educational only. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and this PDF report do not use it.",
     "dasha-convention":
       "Major- and subperiod dates in the Vimshottari system use a disclosed 365.25-day year. Traditions or software using another year length or boundary rule can produce different dates.",
   },
@@ -459,7 +459,7 @@ const REPORT_LIMITATION_OVERRIDES: Readonly<
     "mean-node-model":
       "Nördlicher und südlicher Mondknoten verwenden mittlere Knotenpositionen. Wahre Knotenpositionen können insbesondere nahe einer Grenze abweichen.",
     "feature-scope":
-      "Sechsfache Stärkebewertung, Teilhoroskope, Verbrennung, klassische Aspekte, Konjunktionsstärke, Planetenkombinationen und Ereigniswahrscheinlichkeiten werden nicht berechnet. Erwähnungen dienen ausschließlich der Bildung.",
+      "Sechsfache Stärkebewertung, andere Teilhoroskope als das neunte, Verbrennung, klassische Aspekte, Konjunktionsstärke, Planetenkombinationen und Ereigniswahrscheinlichkeiten werden nicht berechnet. Erwähnungen dienen ausschließlich der Bildung. Das neunte Teilhoroskop wird nur zum Lernen im Horoskop gezeigt; Deutungen, Punktwerte, KI-Kontext und dieser PDF-Bericht verwenden es nicht.",
     "dasha-convention":
       "Haupt- und Unterperioden im Vimshottari-System beruhen auf der offengelegten Konvention eines Jahres mit 365,25 Tagen. Traditionen oder Programme mit anderer Jahreslänge oder Grenzregel können andere Daten ergeben.",
   },

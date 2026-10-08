@@ -596,10 +596,14 @@ archival document.
 
 ## 13. Known model and product limitations
 
-The implemented engine does not calculate Shadbala, divisional/Varga charts,
-classical Drishti, Yuti orbs, combustion, yogas, Ashtakavarga, rectification,
-or event probabilities. Glossary entries for such terms are educational, not
-chart results.
+The implemented engine does not calculate Shadbala, divisional/Varga charts
+other than the ninth-division chart (D9), classical Drishti, Yuti orbs,
+combustion, yogas, Ashtakavarga, rectification, or event probabilities.
+Glossary entries for such terms are educational, not chart results.
+
+D9 is calculated in `lib/astro/divisional.ts` and drawn in the chart card, with
+a positions-table column, for study only. The interpretations, scores, AI
+context and PDF report do not use it, and no D9 reading is written.
 
 Additional constraints exposed by the code are:
 

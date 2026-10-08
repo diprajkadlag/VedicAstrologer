@@ -71,7 +71,7 @@ export const ANALYSIS_LIMITATIONS: readonly AnalysisLimitation[] = [
   {
     id: "feature-scope",
     statement:
-      "The current engine does not calculate Shadbala, varga charts, combustion, classical Drishti, Yuti orbs, yogas, Ashtakavarga, or predictive event probabilities. Text mentioning these concepts is educational only.",
+      "The current engine does not calculate Shadbala, varga charts other than the ninth-division chart, combustion, classical Drishti, Yuti orbs, yogas, Ashtakavarga, or predictive event probabilities. Text mentioning these concepts is educational only. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it.",
   },
   {
     id: "ephemeris-tolerance",

@@ -187,9 +187,9 @@ const BASE_EDUCATION_TERMS: readonly EducationTerm[] = [
       "नक्षत्रातील चार 3°20′ चरणांपैकी एक.",
     ),
     detail: localized(
-      "A quarter refines a lunar-mansion placement and links it to a ninth-division section. This app calculates the quarter number but does not currently calculate or display a ninth-division chart.",
-      "पाद नक्षत्र-स्थिति को सूक्ष्म करता है और उसे नवांश से जोड़ता है। यह ऐप पाद संख्या निकालता है, पर अभी नवांश कुंडली नहीं निकालता या दिखाता।",
-      "पाद नक्षत्रस्थिती अधिक सूक्ष्म करतो व नवांशाशी जोडतो. हे अ‍ॅप पाद क्रमांक मोजते; मात्र सध्या नवांश कुंडली मोजत किंवा दाखवत नाही.",
+      "A quarter refines a lunar-mansion placement and links it to a ninth-division section. This app calculates the quarter number and, from the same position, the ninth-division chart, which is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it.",
+      "पाद नक्षत्र-स्थिति को सूक्ष्म करता है और उसे नवांश से जोड़ता है। यह ऐप पाद संख्या निकालता है और उसी स्थिति से नवांश कुंडली भी, जो केवल अध्ययन के लिए कुंडली-आरेख में दिखाई जाती है; व्याख्याओं, अंकों, AI संदर्भ और PDF रिपोर्ट में उसका उपयोग नहीं होता।",
+      "पाद नक्षत्रस्थिती अधिक सूक्ष्म करतो व नवांशाशी जोडतो. हे अ‍ॅप पाद क्रमांक आणि त्याच स्थितीवरून नवांश कुंडलीही मोजते; ती फक्त अभ्यासासाठी कुंडली-आकृतीत दाखवली जाते आणि विवेचन, गुण, AI संदर्भ व PDF अहवालात वापरली जात नाही.",
     ),
     readingSequence: localized(
       "Treat the quarter as refinement, not as a replacement for the whole chart.",
@@ -535,16 +535,16 @@ const BASE_EDUCATION_TERMS: readonly EducationTerm[] = [
       "प्रत्येक राशीचे अंश दुसऱ्या राशिचक्रात नकाशित करून तयार होणारी विभागीय कुंडली.",
     ),
     detail: localized(
-      "Divisional charts are used for focused traditional analysis; the ninth-division chart is one example. Exact boundary handling and birth-time precision matter. This app reports the lunar-mansion quarter but does not yet calculate or interpret divisional charts.",
-      "वर्ग विशिष्ट पारंपरिक विश्लेषण के लिए उपयोग होते हैं; नवांश एक उदाहरण है। सीमा-गणना और जन्म-समय की शुद्धता महत्वपूर्ण हैं। यह ऐप नक्षत्र-पाद बताता है, पर वर्ग-कुंडली नहीं निकालता या समझाता।",
-      "वर्ग विशिष्ट पारंपरिक विश्लेषणासाठी वापरले जातात; नवांश हे उदाहरण. सीमा हाताळणी व जन्मवेळेची अचूकता महत्त्वाची. हे अ‍ॅप नक्षत्रपाद दाखवते; वर्गकुंडली मोजत किंवा अर्थ लावत नाही.",
+      "Divisional charts are used for focused traditional analysis; the ninth-division chart is one example. Exact boundary handling and birth-time precision matter. This app reports the lunar-mansion quarter and calculates the ninth-division chart, which is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it. Other divisional charts are not yet calculated, and none is interpreted.",
+      "वर्ग विशिष्ट पारंपरिक विश्लेषण के लिए उपयोग होते हैं; नवांश एक उदाहरण है। सीमा-गणना और जन्म-समय की शुद्धता महत्वपूर्ण हैं। यह ऐप नक्षत्र-पाद बताता है और नवांश कुंडली निकालकर उसे केवल अध्ययन के लिए कुंडली-आरेख में दिखाता है; व्याख्याओं, अंकों, AI संदर्भ और PDF रिपोर्ट में उसका उपयोग नहीं होता। अन्य वर्ग-कुंडलियाँ अभी नहीं निकाली जातीं और किसी की व्याख्या नहीं की जाती।",
+      "वर्ग विशिष्ट पारंपरिक विश्लेषणासाठी वापरले जातात; नवांश हे उदाहरण. सीमा हाताळणी व जन्मवेळेची अचूकता महत्त्वाची. हे अ‍ॅप नक्षत्रपाद दाखवते आणि नवांश कुंडली मोजून ती फक्त अभ्यासासाठी कुंडली-आकृतीत दाखवते; विवेचन, गुण, AI संदर्भ व PDF अहवालात ती वापरली जात नाही. इतर वर्गकुंडल्या अजून मोजल्या जात नाहीत आणि कोणत्याही वर्गकुंडलीचा अर्थ लावला जात नाही.",
     ),
     readingSequence: localized(
       "Do not infer a complete ninth-division reading from the quarter alone.",
       "केवल पाद से पूरी नवांश व्याख्या न निकालें।",
       "फक्त पादावरून संपूर्ण नवांश अर्थ काढू नका.",
     ),
-    calculationStatus: "not-calculated",
+    calculationStatus: "partly-calculated",
   },
 ] as const;
 
@@ -616,7 +616,7 @@ const GERMAN_EDUCATION_TERMS: Readonly<
     summary:
       "Eines von vier gleich großen Vierteln zu je 3°20′ innerhalb einer Mondstation.",
     detail:
-      "Ein Viertel verfeinert eine Mondstationsposition und verbindet sie mit einer neunten Unterteilung. Diese App berechnet die Viertelnummer, erstellt oder interpretiert derzeit jedoch kein neuntes Teilhoroskop.",
+      "Ein Viertel verfeinert eine Mondstationsposition und verbindet sie mit einer neunten Unterteilung. Diese App berechnet die Viertelnummer und aus derselben Position auch das neunte Teilhoroskop, das nur zum Lernen im Horoskop gezeigt wird; Deutungen, Punktwerte, KI-Kontext und PDF-Bericht verwenden es nicht.",
     readingSequence:
       "Das Viertel als Verfeinerung lesen, nicht als Ersatz für das gesamte Geburtshoroskop.",
   },
@@ -776,7 +776,7 @@ const GERMAN_EDUCATION_TERMS: Readonly<
     summary:
       "Ein Teilhoroskop, das Abschnitte jedes Tierkreiszeichens einem weiteren Tierkreis zuordnet.",
     detail:
-      "Teilhoroskope werden für fokussierte traditionelle Analysen verwendet; das neunte Teilhoroskop ist ein Beispiel. Exakte Grenzbehandlung und präzise Geburtszeit sind wichtig. Diese App zeigt das Viertel der Mondstation, berechnet oder interpretiert derzeit jedoch keine Teilhoroskope.",
+      "Teilhoroskope werden für fokussierte traditionelle Analysen verwendet; das neunte Teilhoroskop ist ein Beispiel. Exakte Grenzbehandlung und präzise Geburtszeit sind wichtig. Diese App zeigt das Viertel der Mondstation und berechnet das neunte Teilhoroskop, das nur zum Lernen im Horoskop gezeigt wird; Deutungen, Punktwerte, KI-Kontext und PDF-Bericht verwenden es nicht. Weitere Teilhoroskope berechnet sie derzeit nicht, und keines wird gedeutet.",
     readingSequence:
       "Aus dem Viertel allein keine vollständige Deutung des neunten Teilhoroskops ableiten.",
   },
@@ -1720,10 +1720,10 @@ export const LOCALIZED_ANALYSIS_LIMITATIONS: Readonly<
     "Für Nord- und Südknoten werden mittlere Mondknotenpositionen verwendet. Positionen wahrer Knoten können insbesondere nahe einer Grenze abweichen.",
   ),
   "feature-scope": localized(
-    "Sixfold strength, divisional charts, combustion, classical aspects, conjunction strength, combinations and event probabilities are not calculated. Mention of them is educational only.",
-    "षड्बल, वर्ग-कुंडली, अस्तता, शास्त्रीय दृष्टि, युति-बल, योग और घटना-संभाव्यता की गणना नहीं होती। उनका उल्लेख केवल शैक्षिक है।",
-    "षड्बल, वर्गकुंडली, अस्तता, शास्त्रीय दृष्टी, युतीबळ, योग व घटनासंभाव्यता मोजली जात नाही. त्यांचा उल्लेख फक्त शैक्षणिक आहे.",
-    "Sechsfache Stärke, Teilhoroskope, Verbrennung, klassische Aspekte, Konjunktionsstärke, Kombinationen und Ereigniswahrscheinlichkeiten werden nicht berechnet. Erwähnungen dienen ausschließlich der Bildung.",
+    "Sixfold strength, divisional charts other than the ninth-division chart, combustion, classical aspects, conjunction strength, combinations and event probabilities are not calculated. Mention of them is educational only. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it.",
+    "षड्बल, नवांश के अलावा अन्य वर्ग-कुंडलियाँ, अस्तता, शास्त्रीय दृष्टि, युति-बल, योग और घटना-संभाव्यता की गणना नहीं होती। उनका उल्लेख केवल शैक्षिक है। नवांश कुंडली केवल अध्ययन के लिए कुंडली-आरेख में दिखाई जाती है; व्याख्याओं, अंकों, AI संदर्भ और PDF रिपोर्ट में उसका उपयोग नहीं होता।",
+    "षड्बल, नवांश वगळता इतर वर्गकुंडल्या, अस्तता, शास्त्रीय दृष्टी, युतीबळ, योग व घटनासंभाव्यता मोजली जात नाही. त्यांचा उल्लेख फक्त शैक्षणिक आहे. नवांश कुंडली फक्त अभ्यासासाठी कुंडली-आकृतीत दाखवली जाते; विवेचन, गुण, AI संदर्भ व PDF अहवालात ती वापरली जात नाही.",
+    "Sechsfache Stärke, andere Teilhoroskope als das neunte, Verbrennung, klassische Aspekte, Konjunktionsstärke, Kombinationen und Ereigniswahrscheinlichkeiten werden nicht berechnet. Erwähnungen dienen ausschließlich der Bildung. Das neunte Teilhoroskop wird nur zum Lernen im Horoskop gezeigt; Deutungen, Punktwerte, KI-Kontext und PDF-Bericht verwenden es nicht.",
   ),
   "ephemeris-tolerance": localized(
     "The approximately one-arcminute figure is an engineering target, not independent certification against Swiss Ephemeris or JPL for every date, place, body and boundary.",

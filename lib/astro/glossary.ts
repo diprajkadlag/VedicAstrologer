@@ -107,7 +107,7 @@ export const ASTRO_GLOSSARY: Readonly<Record<AstroTermId, AstroGlossaryEntry>> =
     title: "Pada",
     sanskrit: "Pāda",
     short: "One of four quarters within a Nakshatra, each spanning 3°20′.",
-    detailed: "A Pada refines how a Nakshatra theme is expressed and connects the lunar mansion to a Navamsha division. This app reports Pada 1-4 from exact sidereal longitude but does not yet render a separate Navamsha chart.",
+    detailed: "A Pada refines how a Nakshatra theme is expressed and connects the lunar mansion to a Navamsha division. This app reports Pada 1-4 from exact sidereal longitude and draws the Navamsha (ninth-division) chart from the same longitude. That chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it.",
     calculation: "The degree within a Nakshatra is divided by 3°20′ and numbered from 1 through 4.",
     readingTips: ["Use Pada after establishing the planet, sign, house, and Nakshatra.", "Treat boundary placements with the ephemeris accuracy note in mind."],
   },

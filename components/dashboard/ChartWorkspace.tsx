@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { Diamond, Grid2X2, MapPinned } from "lucide-react";
 
 import {
@@ -16,13 +16,14 @@ import type {
   HouseNumber,
   VedicChart,
 } from "@/lib/astro/ephemeris";
+import { calculateNavamsaChart, isVargottama } from "@/lib/astro/divisional";
 import {
   getLocalizedGrahaName,
   getLocalizedNakshatraName,
   getLocalizedRasiName,
 } from "@/lib/astro/localizedNames";
 import { defineMessages, INTL_LOCALES, type AppLocale } from "@/lib/i18n";
-import type { ChartDensity } from "@/components/chart/types";
+import type { ChartDensity, ChartDivision } from "@/components/chart/types";
 
 export type VedicChartStyle = "north" | "south";
 
@@ -154,6 +155,50 @@ const WORKSPACE_MESSAGES = defineMessages({
   },
 });
 
+const DIVISION_MESSAGES = defineMessages({
+  en: {
+    chartTypeAria: "Chart type",
+    d1: "Birth chart (D1)",
+    d9: "Ninth-division chart (D9)",
+    d9Sign: "Ninth-division sign",
+    vargottama: "Same sign in D1 and D9",
+    d9Help:
+      "Each sign is split into nine parts of 3°20′, and this chart places every body by the part it occupies. Shown for study; the readings and scores still use the birth chart.",
+    d9SelectedTime: "Drawn for the selected time, not the birth moment.",
+  },
+  hi: {
+    chartTypeAria: "कुंडली का प्रकार",
+    d1: "जन्म कुंडली (D1)",
+    d9: "नवांश कुंडली (D9)",
+    d9Sign: "नवांश राशि",
+    vargottama: "वर्गोत्तम (D1 और D9 में एक ही राशि)",
+    d9Help:
+      "हर राशि 3°20′ के नौ भागों में बँटी है; यह कुंडली हर ग्रह को उसके भाग के अनुसार रखती है। यह अध्ययन के लिए है; व्याख्याएँ और अंक जन्म कुंडली पर ही आधारित हैं।",
+    d9SelectedTime: "यह जन्म क्षण की नहीं, चयनित समय की कुंडली है।",
+  },
+  mr: {
+    chartTypeAria: "कुंडलीचा प्रकार",
+    d1: "जन्मकुंडली (D1)",
+    d9: "नवांश कुंडली (D9)",
+    d9Sign: "नवांश राशी",
+    vargottama: "वर्गोत्तम (D1 आणि D9 मध्ये एकच राशी)",
+    d9Help:
+      "प्रत्येक राशी 3°20′ च्या नऊ भागांत विभागली आहे; ही कुंडली प्रत्येक ग्रह ज्या भागात आहे त्यानुसार ठेवते. ही अभ्यासासाठी आहे; विवेचन आणि गुण जन्मकुंडलीवरच आधारित आहेत.",
+    d9SelectedTime: "ही जन्मक्षणाची नाही, तर निवडलेल्या वेळेची कुंडली आहे.",
+  },
+  de: {
+    chartTypeAria: "Horoskoptyp",
+    d1: "Geburtshoroskop (D1)",
+    d9: "Neuntes Teilhoroskop (D9)",
+    d9Sign: "Zeichen im neunten Teilhoroskop",
+    vargottama: "Gleiches Zeichen in D1 und D9",
+    d9Help:
+      "Jedes Zeichen ist in neun Teile zu 3°20′ geteilt; dieses Horoskop ordnet jeden Himmelskörper nach dem Teil ein, in dem er steht. Zum Lernen gezeigt; Deutungen und Punktwerte beruhen weiter auf dem Geburtshoroskop.",
+    d9SelectedTime:
+      "Gezeichnet für den ausgewählten Zeitpunkt, nicht für den Geburtsmoment.",
+  },
+});
+
 /**
  * Panel widths at which the 400-unit chart is drawn small enough that its
  * labels need enlarging: under 360 px an 8-unit label lands near 6 px, and
@@ -217,16 +262,48 @@ export default function ChartWorkspace({
 }: ChartWorkspaceProps) {
   const { locale } = useAppPreferences();
   const t = useScopedTranslations(WORKSPACE_MESSAGES);
+  const dt = useScopedTranslations(DIVISION_MESSAGES);
   const [style, setStyle] = useState<VedicChartStyle>("north");
+  const [division, setDivision] = useState<ChartDivision>(1);
+  // The app-wide house selection means birth-chart houses, so a house chosen
+  // on the D9 chart is kept here and never reported upwards.
+  const [d9House, setD9House] = useState<HouseNumber | null>(null);
+  const d9Chart = useMemo(() => calculateNavamsaChart(chart), [chart]);
   const chartPanelRef = useRef<HTMLDivElement>(null);
   const chartPanelWidth = useContainerWidth(chartPanelRef);
   const density = chartDensity(chartPanelWidth);
-  const activeHouse = selectedHouse
-    ? chart.houses.find((house) => house.number === selectedHouse) ?? null
-    : null;
+  const isD9 = division === 9;
+  const shownChart = isD9 ? d9Chart : chart;
   const activePlanet = selectedPlanetId
-    ? chart.planets.find((planet) => planet.id === selectedPlanetId) ?? null
+    ? shownChart.planets.find((planet) => planet.id === selectedPlanetId) ??
+      null
     : null;
+  // In D9 the highlighted house follows the chosen body, as in D1, where the
+  // app selects a body's house together with the body.
+  const shownHouse = isD9 ? activePlanet?.house ?? d9House : selectedHouse;
+  const activeHouse = shownHouse
+    ? shownChart.houses.find((house) => house.number === shownHouse) ?? null
+    : null;
+  const activePlanetIsVargottama =
+    isD9 && activePlanet !== null
+      ? isVargottama(activePlanet.siderealLongitudeDeg)
+      : false;
+
+  function selectDivision(next: ChartDivision) {
+    // Pressing the segment that is already active changes nothing, so it must
+    // not drop the chosen house either.
+    if (next === division) return;
+    setDivision(next);
+    setD9House(null);
+  }
+
+  function selectD9House(house: HouseNumber) {
+    setD9House(house);
+    // Same as the app-wide handler: choosing a house puts the planet aside.
+    onSelectPlanet(null);
+  }
+
+  const selectHouse = isD9 ? selectD9House : onSelectHouse;
 
   return (
     <section
@@ -244,80 +321,145 @@ export default function ChartWorkspace({
             </span>
           </div>
           <h2 id="vedic-chart-title" className="mt-1 text-lg font-semibold text-white">
-            {isNatalMoment ? t("natalMap") : t("simulatedMap")}
+            {isD9
+              ? dt("d9")
+              : isNatalMoment
+                ? t("natalMap")
+                : t("simulatedMap")}
           </h2>
+          {isD9 && !isNatalMoment ? (
+            // The D1 heading says "Simulated" for a time-navigator instant; the
+            // D9 heading is fixed text, so this line carries the same cue.
+            <p className="mt-1 text-xs leading-5 text-slate-400">
+              {dt("d9SelectedTime")}
+            </p>
+          ) : null}
         </div>
 
-        <div
-          role="group"
-          aria-label={t("styleAria")}
-          className="flex rounded-xl border border-white/10 bg-black/20 p-1"
-        >
-          <button
-            type="button"
-            onClick={() => setStyle("north")}
-            aria-pressed={style === "north"}
-            className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
-              style === "north"
-                ? "bg-violet-400/20 text-white"
-                : "text-slate-500 hover:text-slate-200"
-            }`}
+        {/* The North/South group must stay the first role="group" of the card. */}
+        <div className="flex max-w-full flex-wrap items-center gap-2">
+          <div
+            role="group"
+            aria-label={t("styleAria")}
+            className="flex rounded-xl border border-white/10 bg-black/20 p-1"
           >
-            <Diamond aria-hidden="true" className="size-3.5" />
-            {t("north")}
-          </button>
-          <button
-            type="button"
-            onClick={() => setStyle("south")}
-            aria-pressed={style === "south"}
-            className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
-              style === "south"
-                ? "bg-violet-400/20 text-white"
-                : "text-slate-500 hover:text-slate-200"
-            }`}
+            <button
+              type="button"
+              onClick={() => setStyle("north")}
+              aria-pressed={style === "north"}
+              className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
+                style === "north"
+                  ? "bg-violet-400/20 text-white"
+                  : "text-slate-500 hover:text-slate-200"
+              }`}
+            >
+              <Diamond aria-hidden="true" className="size-3.5" />
+              {t("north")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setStyle("south")}
+              aria-pressed={style === "south"}
+              className={`inline-flex min-h-10 items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition ${
+                style === "south"
+                  ? "bg-violet-400/20 text-white"
+                  : "text-slate-500 hover:text-slate-200"
+              }`}
+            >
+              <Grid2X2 aria-hidden="true" className="size-3.5" />
+              {t("south")}
+            </button>
+          </div>
+
+          {/*
+            The labels are long ("Ninth-division chart (D9)"). Two equal grid
+            columns make the group as wide as twice the longer label, so on a
+            roomy screen neither wraps; on a 320 px phone the group may take a
+            line of its own and the labels wrap inside their buttons.
+          */}
+          <div
+            role="group"
+            aria-label={dt("chartTypeAria")}
+            className="grid max-w-full grid-cols-2 rounded-xl border border-white/10 bg-black/20 p-1"
           >
-            <Grid2X2 aria-hidden="true" className="size-3.5" />
-            {t("south")}
-          </button>
+            <button
+              type="button"
+              onClick={() => selectDivision(1)}
+              aria-pressed={division === 1}
+              className={`inline-flex min-h-10 min-w-0 items-center justify-center break-words rounded-lg px-3 py-2 text-center text-xs font-medium leading-4 transition ${
+                division === 1
+                  ? "bg-violet-400/20 text-white"
+                  : "text-slate-500 hover:text-slate-200"
+              }`}
+            >
+              {dt("d1")}
+            </button>
+            <button
+              type="button"
+              data-testid="chart-division-d9"
+              onClick={() => selectDivision(9)}
+              aria-pressed={division === 9}
+              className={`inline-flex min-h-10 min-w-0 items-center justify-center break-words rounded-lg px-3 py-2 text-center text-xs font-medium leading-4 transition ${
+                division === 9
+                  ? "bg-violet-400/20 text-white"
+                  : "text-slate-500 hover:text-slate-200"
+              }`}
+            >
+              {dt("d9")}
+            </button>
+          </div>
         </div>
       </div>
 
       <div className="grid gap-4 p-2.5 sm:gap-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_13rem]">
-        <div
-          ref={chartPanelRef}
-          className="mx-auto w-full max-w-[650px] rounded-2xl border border-white/[0.07] bg-[#080a15]/70 p-1.5 sm:p-5"
-        >
-          {style === "north" ? (
-            <NorthIndianChart
-              chart={chart}
-              density={density}
-              locale={locale}
-              selectedHouse={selectedHouse}
-              selectedPlanetId={selectedPlanetId}
-              onSelectHouse={onSelectHouse}
-              onSelectPlanet={onSelectPlanet}
-              ariaLabel={
-                isNatalMoment
-                  ? t("northNatalAria")
-                  : t("northSimulatedAria")
-              }
-            />
-          ) : (
-            <SouthIndianChart
-              chart={chart}
-              density={density}
-              locale={locale}
-              selectedHouse={selectedHouse}
-              selectedPlanetId={selectedPlanetId}
-              onSelectHouse={onSelectHouse}
-              onSelectPlanet={onSelectPlanet}
-              ariaLabel={
-                isNatalMoment
-                  ? t("southNatalAria")
-                  : t("southSimulatedAria")
-              }
-            />
-          )}
+        <div className="min-w-0">
+          <div
+            ref={chartPanelRef}
+            className="mx-auto w-full max-w-[650px] rounded-2xl border border-white/[0.07] bg-[#080a15]/70 p-1.5 sm:p-5"
+          >
+            {style === "north" ? (
+              <NorthIndianChart
+                chart={shownChart}
+                density={density}
+                division={division}
+                locale={locale}
+                selectedHouse={shownHouse}
+                selectedPlanetId={selectedPlanetId}
+                onSelectHouse={selectHouse}
+                onSelectPlanet={onSelectPlanet}
+                ariaLabel={
+                  isD9
+                    ? dt("d9")
+                    : isNatalMoment
+                      ? t("northNatalAria")
+                      : t("northSimulatedAria")
+                }
+              />
+            ) : (
+              <SouthIndianChart
+                chart={shownChart}
+                density={density}
+                division={division}
+                locale={locale}
+                selectedHouse={shownHouse}
+                selectedPlanetId={selectedPlanetId}
+                onSelectHouse={selectHouse}
+                onSelectPlanet={onSelectPlanet}
+                ariaLabel={
+                  isD9
+                    ? dt("d9")
+                    : isNatalMoment
+                      ? t("southNatalAria")
+                      : t("southSimulatedAria")
+                }
+              />
+            )}
+          </div>
+          {isD9 ? (
+            <p className="mx-auto mt-3 max-w-[650px] px-1 text-xs leading-5 text-slate-400">
+              {dt("d9Help")}
+            </p>
+          ) : null}
         </div>
 
         <aside className="rounded-2xl border border-white/[0.07] bg-white/[0.025] p-4">
@@ -338,7 +480,9 @@ export default function ChartWorkspace({
               </div>
               <dl className="mt-4 space-y-3 text-xs">
                 <div>
-                  <dt className="text-slate-600">{t("rasiPosition")}</dt>
+                  <dt className="text-slate-600">
+                    {isD9 ? dt("d9Sign") : t("rasiPosition")}
+                  </dt>
                   <dd className="mt-1 text-slate-200">
                     {getLocalizedRasiName(activePlanet.sign.name, locale)} ·{" "}
                     {formatChartNumber(
@@ -347,10 +491,18 @@ export default function ChartWorkspace({
                       2,
                     )}
                     °
+                    {activePlanetIsVargottama ? (
+                      <span className="mt-1.5 block w-fit max-w-full rounded-full border border-emerald-300/20 bg-emerald-300/[0.08] px-2 py-1 text-[11px] leading-4 text-emerald-800 dark:text-emerald-200">
+                        {dt("vargottama")}
+                      </span>
+                    ) : null}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-slate-600">{t("nakshatra")}</dt>
+                  <dt className="text-slate-600">
+                    {/* The lunar mansion is the birth-chart one in D9 too. */}
+                    {isD9 ? `${t("nakshatra")} (D1)` : t("nakshatra")}
+                  </dt>
                   <dd className="mt-1 text-slate-200">
                     {getLocalizedNakshatraName(
                       activePlanet.nakshatra.name,
@@ -388,7 +540,12 @@ export default function ChartWorkspace({
               </dl>
               <button
                 type="button"
-                onClick={() => onSelectPlanet(null)}
+                onClick={() => {
+                  // In D1 the app keeps the body's house selected; D9 keeps
+                  // its own, so hand it the body's D9 house first.
+                  if (isD9) setD9House(activePlanet.house);
+                  onSelectPlanet(null);
+                }}
                 className="mt-5 min-h-11 w-full rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-slate-400 transition hover:bg-white/[0.07] hover:text-white"
               >
                 {t("showBhavaDetails")}
@@ -403,18 +560,27 @@ export default function ChartWorkspace({
                 {t("bhavaHeading", { house: activeHouse.number })}
               </p>
               <p className="mt-1 text-sm text-slate-400">
-                {getLocalizedRasiName(activeHouse.sign.name, locale)} ·{" "}
-                {formatChartNumber(
-                  activeHouse.siderealStartLongitudeDeg,
-                  locale,
-                  0,
+                {getLocalizedRasiName(activeHouse.sign.name, locale)}
+                {/* A D9 sign has no start longitude worth quoting. */}
+                {isD9 ? null : (
+                  <>
+                    {" "}
+                    ·{" "}
+                    {formatChartNumber(
+                      activeHouse.siderealStartLongitudeDeg,
+                      locale,
+                      0,
+                    )}
+                    °
+                  </>
                 )}
-                °
               </p>
               <div className="mt-4 space-y-2">
                 {activeHouse.planets.length > 0 ? (
                   activeHouse.planets.map((planetId) => {
-                    const planet = chart.planets.find((item) => item.id === planetId);
+                    const planet = shownChart.planets.find(
+                      (item) => item.id === planetId,
+                    );
                     if (!planet) return null;
                     return (
                       <button
@@ -442,6 +608,7 @@ export default function ChartWorkspace({
                             planet.nakshatra.name,
                             locale,
                           )}
+                          {isD9 ? " (D1)" : ""}
                         </span>
                       </button>
                     );

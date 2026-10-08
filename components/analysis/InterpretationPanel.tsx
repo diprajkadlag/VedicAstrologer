@@ -46,6 +46,7 @@ import {
   type VedicChart,
   type ZodiacPlacement,
 } from "@/lib/astro/ephemeris";
+import { calculateNavamsaChart, isVargottama } from "@/lib/astro/divisional";
 import { RASI_PROFILES } from "@/lib/astro/glossary";
 import {
   VIMSHOTTARI_YEAR_MS,
@@ -61,7 +62,7 @@ import {
   buildLocalizedBhavaRows,
   type KundaliBhavaRow,
 } from "@/lib/export/kundaliSummary";
-import { INTL_LOCALES, type AppLocale } from "@/lib/i18n";
+import { defineMessages, INTL_LOCALES, type AppLocale } from "@/lib/i18n";
 import { calculateTransitAnalysis } from "@/lib/transits";
 
 export interface InterpretationRequestMetadata {
@@ -927,6 +928,29 @@ function OverviewTab({
   );
 }
 
+const POSITIONS_D9_MESSAGES = defineMessages({
+  en: {
+    d9Column: "D9",
+    vargottama: "Same sign in D1 and D9",
+  },
+  hi: {
+    d9Column: "नवांश",
+    vargottama: "वर्गोत्तम (D1 और D9 में एक ही राशि)",
+  },
+  mr: {
+    d9Column: "नवांश",
+    vargottama: "वर्गोत्तम (D1 आणि D9 मध्ये एकच राशी)",
+  },
+  de: {
+    d9Column: "D9",
+    vargottama: "Gleiches Zeichen in D1 und D9",
+  },
+});
+
+/** The small "=" pill that marks a vargottama body, in the table and its legend. */
+const VARGOTTAMA_MARK_CLASS =
+  "inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-1.5 text-[10px] font-semibold leading-4 text-emerald-700 dark:text-emerald-300";
+
 function PositionsTab({
   chart,
   locale,
@@ -938,6 +962,12 @@ function PositionsTab({
   copy: AnalysisCopy;
   onSelectPlanet?: (planet: GrahaId) => void;
 }) {
+  const d9Copy = POSITIONS_D9_MESSAGES[locale];
+  const navamsa = useMemo(() => calculateNavamsaChart(chart), [chart]);
+  const hasVargottama = chart.planets.some((planet) =>
+    isVargottama(planet.siderealLongitudeDeg),
+  );
+
   return (
     <section aria-labelledby="positions-title" className="space-y-4">
       <div>
@@ -951,12 +981,13 @@ function PositionsTab({
       </div>
       <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
         <div className="scroll-x-fade overflow-x-auto">
-          <table className="w-full min-w-[780px] text-left text-sm [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-[1] [&_td:first-child]:bg-[var(--surface)] [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-[1] [&_th:first-child]:bg-[var(--surface-soft)]">
+          <table className="w-full min-w-[860px] text-left text-sm [&_td:first-child]:sticky [&_td:first-child]:left-0 [&_td:first-child]:z-[1] [&_td:first-child]:bg-[var(--surface)] [&_th:first-child]:sticky [&_th:first-child]:left-0 [&_th:first-child]:z-[1] [&_th:first-child]:bg-[var(--surface-soft)]">
             <thead className="bg-[var(--surface-soft)] text-xs uppercase tracking-wider text-[var(--muted)]">
               <tr>
                 <th className="px-4 py-3 font-medium">{copy.graha}</th>
                 <th className="px-4 py-3 font-medium">{copy.rasi}</th>
                 <th className="px-4 py-3 font-medium">{copy.degree}</th>
+                <th className="px-4 py-3 font-medium">{d9Copy.d9Column}</th>
                 <th className="px-4 py-3 font-medium">{copy.nakshatra}</th>
                 <th className="px-4 py-3 font-medium">{copy.lord}</th>
                 <th className="px-4 py-3 font-medium">{copy.house}</th>
@@ -964,7 +995,7 @@ function PositionsTab({
               </tr>
             </thead>
             <tbody className="divide-y divide-[var(--border)] bg-[var(--surface)]">
-              {chart.planets.map((planet) => (
+              {chart.planets.map((planet, index) => (
                 <tr
                   key={planet.id}
                   className="text-[var(--muted)] transition hover:bg-[var(--surface-soft)]"
@@ -990,6 +1021,22 @@ function PositionsTab({
                   <td className="px-4 py-3 tabular-nums">
                     {numberLabel(planet.sign.degreeDeg, locale)}°
                   </td>
+                  <td className="whitespace-nowrap px-4 py-3">
+                    {getLocalizedRasiName(
+                      navamsa.planets[index].sign.name,
+                      locale,
+                    )}
+                    {isVargottama(planet.siderealLongitudeDeg) ? (
+                      <span
+                        role="img"
+                        aria-label={d9Copy.vargottama}
+                        title={d9Copy.vargottama}
+                        className={`ml-1.5 align-middle ${VARGOTTAMA_MARK_CLASS}`}
+                      >
+                        =
+                      </span>
+                    ) : null}
+                  </td>
                   <td className="px-4 py-3">
                     {getLocalizedNakshatraName(planet.nakshatra.name, locale)} ·{" "}
                     {copy.padaShort}
@@ -1008,6 +1055,15 @@ function PositionsTab({
           </table>
         </div>
       </div>
+      {hasVargottama ? (
+        // A tooltip never shows on a phone, so the mark is also explained here.
+        <p className="flex items-center gap-2 text-xs leading-5 text-[var(--muted)]">
+          <span aria-hidden="true" className={VARGOTTAMA_MARK_CLASS}>
+            =
+          </span>
+          {d9Copy.vargottama}
+        </p>
+      ) : null}
       <p className="text-xs leading-5 text-[var(--muted)]">{copy.boundaryNote}</p>
     </section>
   );
