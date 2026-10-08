@@ -28,6 +28,7 @@ const SOUTH_CHART_MESSAGES = defineMessages({
       "Twelve fixed zodiac signs around a four by four South Indian grid. The Ascendant marks house one. Select a sign-house cell or planetary body for details.",
     rasi: "ZODIAC",
     lahiri: "D1 · LĀHIRI",
+    lahiriD9: "D9 · LĀHIRI",
     chartTitle: "South Indian chart",
     selectedGraha: "{glyph} {planet} · {rasi}",
     selectedBhava: "House {house} · {rasi}",
@@ -44,6 +45,7 @@ const SOUTH_CHART_MESSAGES = defineMessages({
       "चार गुणा चार दक्षिण भारतीय ग्रिड के चारों ओर बारह स्थिर राशियाँ। लग्न पहले भाव को दर्शाता है। विवरण के लिए राशि-भाव कक्ष या ग्रह चुनें।",
     rasi: "राशि",
     lahiri: "D1 · लाहिरी",
+    lahiriD9: "D9 · लाहिरी",
     chartTitle: "दक्षिण भारतीय कुंडली",
     selectedGraha: "{glyph} {planet} · {rasi}",
     selectedBhava: "भाव {house} · {rasi}",
@@ -60,6 +62,7 @@ const SOUTH_CHART_MESSAGES = defineMessages({
       "चार गुणिले चार दक्षिण भारतीय जाळीभोवती बारा स्थिर राशी. लग्न पहिला भाव दर्शवते. तपशीलासाठी राशी-भाव कक्ष किंवा ग्रह निवडा.",
     rasi: "राशी",
     lahiri: "D1 · लाहिरी",
+    lahiriD9: "D9 · लाहिरी",
     chartTitle: "दक्षिण भारतीय कुंडली",
     selectedGraha: "{glyph} {planet} · {rasi}",
     selectedBhava: "भाव {house} · {rasi}",
@@ -76,6 +79,7 @@ const SOUTH_CHART_MESSAGES = defineMessages({
       "Zwölf feste Tierkreiszeichen um ein südindisches Vier-mal-vier-Raster. Der Aszendent kennzeichnet Haus eins. Wähle eine Zeichen-Haus-Zelle oder einen Himmelskörper aus, um Details anzuzeigen.",
     rasi: "TIERKREIS",
     lahiri: "D1 · LĀHIRI",
+    lahiriD9: "D9 · LĀHIRI",
     chartTitle: "Südindisches Geburtshoroskop",
     selectedGraha: "{glyph} {planet} · {rasi}",
     selectedBhava: "Haus {house} · {rasi}",
@@ -150,6 +154,7 @@ export function SouthIndianChart({
   ariaLabel,
   locale = "en",
   density = "comfortable",
+  division = 1,
 }: VedicChartRendererProps) {
   const compact = density !== "comfortable";
   const scale = DENSITY_SCALE[density];
@@ -282,7 +287,7 @@ export function SouthIndianChart({
             x="200"
             y="180"
           >
-            {t("lahiri")}
+            {division === 9 ? t("lahiriD9") : t("lahiri")}
           </text>
         )}
         <text

@@ -23,7 +23,15 @@ export interface VedicChartRendererProps {
    * into fewer columns; house geometry never changes.
    */
   density?: ChartDensity;
+  /**
+   * Which chart `chart` holds: 1 for the birth chart (D1), 9 for the
+   * ninth-division chart (D9). The renderers only use it for captions; the
+   * caller passes the matching chart.
+   */
+  division?: ChartDivision;
 }
 
 /** `compact` below ~360 px of panel width, `tight` below ~300 px. */
 export type ChartDensity = "comfortable" | "compact" | "tight";
+
+export type ChartDivision = 1 | 9;

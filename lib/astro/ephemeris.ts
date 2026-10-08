@@ -529,11 +529,14 @@ export function calculateAscendant(input: ChartInput): ChartAngle {
   return { tropicalLongitudeDeg, ...placement };
 }
 
-function houseForSign(signIndex: number, ascendantSignIndex: number): HouseNumber {
+export function houseForSign(
+  signIndex: number,
+  ascendantSignIndex: number,
+): HouseNumber {
   return (((signIndex - ascendantSignIndex + 12) % 12) + 1) as HouseNumber;
 }
 
-function buildHouses(
+export function buildHouses(
   ascendantSignIndex: number,
   planets: GrahaPosition[],
 ): HousePosition[] {
