@@ -108,13 +108,29 @@ describe("honesty texts about the ninth-division chart", () => {
     expectStudyOnly(ASTRO_GLOSSARY.pada.detailed, "en", "glossary pada");
   });
 
-  it.each(APP_LOCALES)("the Methodology tab says it in %s", (locale) => {
+  describe("the Methodology tab", () => {
+    // Its copy is not exported, so take each language's "not calculated"
+    // paragraph out of the source and check that paragraph alone: a marker in
+    // one language must not be able to satisfy another.
     const source = readFileSync(
       resolve(process.cwd(), "components", "analysis", "MethodologyTab.tsx"),
       "utf8",
     );
-    expect(source).toMatch(STUDY_ONLY[locale]);
-    expect(source).toMatch(OTHER_DIVISIONS_LISTED_AS_MISSING[locale]);
-    for (const marker of KEPT_OUT_OF[locale]) expect(source).toMatch(marker);
+    const omitted = Array.from(
+      source.matchAll(/\bomitted:\s*"((?:[^"\\]|\\.)*)"/g),
+      (match) => match[1],
+    );
+
+    it("keeps one paragraph per language, in the order of the languages", () => {
+      expect(omitted).toHaveLength(APP_LOCALES.length);
+      expect(omitted[0]).toMatch(/^Sixfold strength/);
+      expect(omitted[3]).toMatch(/^Sechsfache Stärkebewertung/);
+    });
+
+    it.each(APP_LOCALES)("says it in %s", (locale) => {
+      const text = omitted[APP_LOCALES.indexOf(locale)];
+      expectStudyOnly(text, locale, "Methodology");
+      expect(text).toMatch(OTHER_DIVISIONS_LISTED_AS_MISSING[locale]);
+    });
   });
 });

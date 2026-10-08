@@ -116,6 +116,16 @@ describe("positions table D9 column", () => {
     }
   });
 
+  it("explains the mark in a visible line, since a tooltip never shows on a phone", () => {
+    const paragraphs = Array.from(
+      markup.matchAll(/<p[^>]*>[\s\S]*?<\/p>/g),
+      (match) => text(match[0]),
+    );
+    expect(paragraphs).toContain("=Same sign in D1 and D9");
+    // The legend's own glyph is decoration; only the table marks are named.
+    expect(markup.match(/<span[^>]*role="img"[^>]*>/g)).toHaveLength(2);
+  });
+
   it("leaves the existing columns in place", () => {
     expect(headers).toEqual([
       "Body",

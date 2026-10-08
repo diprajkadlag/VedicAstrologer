@@ -947,6 +947,10 @@ const POSITIONS_D9_MESSAGES = defineMessages({
   },
 });
 
+/** The small "=" pill that marks a vargottama body, in the table and its legend. */
+const VARGOTTAMA_MARK_CLASS =
+  "inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-1.5 text-[10px] font-semibold leading-4 text-emerald-700 dark:text-emerald-300";
+
 function PositionsTab({
   chart,
   locale,
@@ -960,6 +964,9 @@ function PositionsTab({
 }) {
   const d9Copy = POSITIONS_D9_MESSAGES[locale];
   const navamsa = useMemo(() => calculateNavamsaChart(chart), [chart]);
+  const hasVargottama = chart.planets.some((planet) =>
+    isVargottama(planet.siderealLongitudeDeg),
+  );
 
   return (
     <section aria-labelledby="positions-title" className="space-y-4">
@@ -1024,7 +1031,7 @@ function PositionsTab({
                         role="img"
                         aria-label={d9Copy.vargottama}
                         title={d9Copy.vargottama}
-                        className="ml-1.5 inline-block rounded-full border border-emerald-500/30 bg-emerald-500/10 px-1.5 align-middle text-[10px] font-semibold leading-4 text-emerald-700 dark:text-emerald-300"
+                        className={`ml-1.5 align-middle ${VARGOTTAMA_MARK_CLASS}`}
                       >
                         =
                       </span>
@@ -1048,6 +1055,15 @@ function PositionsTab({
           </table>
         </div>
       </div>
+      {hasVargottama ? (
+        // A tooltip never shows on a phone, so the mark is also explained here.
+        <p className="flex items-center gap-2 text-xs leading-5 text-[var(--muted)]">
+          <span aria-hidden="true" className={VARGOTTAMA_MARK_CLASS}>
+            =
+          </span>
+          {d9Copy.vargottama}
+        </p>
+      ) : null}
       <p className="text-xs leading-5 text-[var(--muted)]">{copy.boundaryNote}</p>
     </section>
   );

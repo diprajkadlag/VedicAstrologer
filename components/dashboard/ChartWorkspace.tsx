@@ -164,6 +164,7 @@ const DIVISION_MESSAGES = defineMessages({
     vargottama: "Same sign in D1 and D9",
     d9Help:
       "Each sign is split into nine parts of 3°20′, and this chart places every body by the part it occupies. Shown for study; the readings and scores still use the birth chart.",
+    d9SelectedTime: "Drawn for the selected time, not the birth moment.",
   },
   hi: {
     chartTypeAria: "कुंडली का प्रकार",
@@ -173,6 +174,7 @@ const DIVISION_MESSAGES = defineMessages({
     vargottama: "वर्गोत्तम (D1 और D9 में एक ही राशि)",
     d9Help:
       "हर राशि 3°20′ के नौ भागों में बँटी है; यह कुंडली हर ग्रह को उसके भाग के अनुसार रखती है। यह अध्ययन के लिए है; व्याख्याएँ और अंक जन्म कुंडली पर ही आधारित हैं।",
+    d9SelectedTime: "यह जन्म क्षण की नहीं, चयनित समय की कुंडली है।",
   },
   mr: {
     chartTypeAria: "कुंडलीचा प्रकार",
@@ -182,6 +184,7 @@ const DIVISION_MESSAGES = defineMessages({
     vargottama: "वर्गोत्तम (D1 आणि D9 मध्ये एकच राशी)",
     d9Help:
       "प्रत्येक राशी 3°20′ च्या नऊ भागांत विभागली आहे; ही कुंडली प्रत्येक ग्रह ज्या भागात आहे त्यानुसार ठेवते. ही अभ्यासासाठी आहे; विवेचन आणि गुण जन्मकुंडलीवरच आधारित आहेत.",
+    d9SelectedTime: "ही जन्मक्षणाची नाही, तर निवडलेल्या वेळेची कुंडली आहे.",
   },
   de: {
     chartTypeAria: "Horoskoptyp",
@@ -191,6 +194,8 @@ const DIVISION_MESSAGES = defineMessages({
     vargottama: "Gleiches Zeichen in D1 und D9",
     d9Help:
       "Jedes Zeichen ist in neun Teile zu 3°20′ geteilt; dieses Horoskop ordnet jeden Himmelskörper nach dem Teil ein, in dem er steht. Zum Lernen gezeigt; Deutungen und Punktwerte beruhen weiter auf dem Geburtshoroskop.",
+    d9SelectedTime:
+      "Gezeichnet für den ausgewählten Zeitpunkt, nicht für den Geburtsmoment.",
   },
 });
 
@@ -269,13 +274,15 @@ export default function ChartWorkspace({
   const density = chartDensity(chartPanelWidth);
   const isD9 = division === 9;
   const shownChart = isD9 ? d9Chart : chart;
-  const shownHouse = isD9 ? d9House : selectedHouse;
-  const activeHouse = shownHouse
-    ? shownChart.houses.find((house) => house.number === shownHouse) ?? null
-    : null;
   const activePlanet = selectedPlanetId
     ? shownChart.planets.find((planet) => planet.id === selectedPlanetId) ??
       null
+    : null;
+  // In D9 the highlighted house follows the chosen body, as in D1, where the
+  // app selects a body's house together with the body.
+  const shownHouse = isD9 ? activePlanet?.house ?? d9House : selectedHouse;
+  const activeHouse = shownHouse
+    ? shownChart.houses.find((house) => house.number === shownHouse) ?? null
     : null;
   const activePlanetIsVargottama =
     isD9 && activePlanet !== null
@@ -283,6 +290,9 @@ export default function ChartWorkspace({
       : false;
 
   function selectDivision(next: ChartDivision) {
+    // Pressing the segment that is already active changes nothing, so it must
+    // not drop the chosen house either.
+    if (next === division) return;
     setDivision(next);
     setD9House(null);
   }
@@ -317,6 +327,13 @@ export default function ChartWorkspace({
                 ? t("natalMap")
                 : t("simulatedMap")}
           </h2>
+          {isD9 && !isNatalMoment ? (
+            // The D1 heading says "Simulated" for a time-navigator instant; the
+            // D9 heading is fixed text, so this line carries the same cue.
+            <p className="mt-1 text-xs leading-5 text-slate-400">
+              {dt("d9SelectedTime")}
+            </p>
+          ) : null}
         </div>
 
         {/* The North/South group must stay the first role="group" of the card. */}
@@ -482,7 +499,10 @@ export default function ChartWorkspace({
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-slate-600">{t("nakshatra")}</dt>
+                  <dt className="text-slate-600">
+                    {/* The lunar mansion is the birth-chart one in D9 too. */}
+                    {isD9 ? `${t("nakshatra")} (D1)` : t("nakshatra")}
+                  </dt>
                   <dd className="mt-1 text-slate-200">
                     {getLocalizedNakshatraName(
                       activePlanet.nakshatra.name,
@@ -520,7 +540,12 @@ export default function ChartWorkspace({
               </dl>
               <button
                 type="button"
-                onClick={() => onSelectPlanet(null)}
+                onClick={() => {
+                  // In D1 the app keeps the body's house selected; D9 keeps
+                  // its own, so hand it the body's D9 house first.
+                  if (isD9) setD9House(activePlanet.house);
+                  onSelectPlanet(null);
+                }}
                 className="mt-5 min-h-11 w-full rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs text-slate-400 transition hover:bg-white/[0.07] hover:text-white"
               >
                 {t("showBhavaDetails")}
@@ -583,6 +608,7 @@ export default function ChartWorkspace({
                             planet.nakshatra.name,
                             locale,
                           )}
+                          {isD9 ? " (D1)" : ""}
                         </span>
                       </button>
                     );
