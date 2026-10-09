@@ -11,8 +11,17 @@ test("cosmos asks for a tap before capturing touch", async ({ page }) => {
   const cosmos = page.locator("#cosmos");
   await cosmos.scrollIntoViewIfNeeded();
 
+  // The WebGL probe runs after mount and can be slow on a busy machine; wait
+  // for its result before deciding that this browser has no WebGL.
   const canvas = cosmos.locator("canvas");
-  if ((await canvas.count()) === 0) {
+  const hasCanvas = await canvas
+    .first()
+    .waitFor({ state: "attached", timeout: 15_000 })
+    .then(
+      () => true,
+      () => false,
+    );
+  if (!hasCanvas) {
     test.skip(true, "WebGL is unavailable in this browser; overlay not rendered");
   }
 
