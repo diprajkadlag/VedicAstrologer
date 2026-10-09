@@ -34,6 +34,7 @@ export function sections(page: Page): Record<string, Locator> {
     "time-navigator": page.locator(
       'section[aria-labelledby="time-navigator-title"]',
     ),
+    timeline: page.locator("#life-timeline"),
     cosmos: page.locator("#cosmos"),
     chart: page.locator('section[aria-labelledby="vedic-chart-title"]'),
     analysis: page.getByTestId("interpretation-panel"),

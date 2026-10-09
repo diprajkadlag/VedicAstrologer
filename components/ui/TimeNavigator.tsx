@@ -26,6 +26,7 @@ const messages = defineMessages({
     month: "Month",
     year: "Year",
     decade: "Decade",
+    century: "Century",
     birthMoment: "Birth moment",
     before: "before",
     after: "after",
@@ -48,6 +49,7 @@ const messages = defineMessages({
     month: "माह",
     year: "वर्ष",
     decade: "दशक",
+    century: "शताब्दी",
     birthMoment: "जन्म क्षण",
     before: "जन्म से पहले",
     after: "जन्म के बाद",
@@ -70,6 +72,7 @@ const messages = defineMessages({
     month: "महिना",
     year: "वर्ष",
     decade: "दशक",
+    century: "शतक",
     birthMoment: "जन्म क्षण",
     before: "जन्माआधी",
     after: "जन्मानंतर",
@@ -92,6 +95,7 @@ const messages = defineMessages({
     month: "Monat",
     year: "Jahr",
     decade: "Jahrzehnt",
+    century: "Jahrhundert",
     birthMoment: "Geburtszeitpunkt",
     before: "vor der Geburt",
     after: "nach der Geburt",
@@ -123,6 +127,7 @@ const WINDOWS = [
   { days: 30, labelKey: "month", stepMinutes: 60 },
   { days: 365, labelKey: "year", stepMinutes: 360 },
   { days: 3650, labelKey: "decade", stepMinutes: 1440 },
+  { days: 36525, labelKey: "century", stepMinutes: 10080 },
 ] as const;
 
 const MINUTE_MS = 60_000;
@@ -170,11 +175,19 @@ export default function TimeNavigator({
   const t = useScopedTranslations(messages);
   const [windowDays, setWindowDays] = useState<number>(30);
   const [isPlaying, setIsPlaying] = useState(false);
-  const windowConfig = WINDOWS.find((entry) => entry.days === windowDays) ?? WINDOWS[1];
-  const maxOffsetMinutes = windowDays * 24 * 60;
   const offsetMinutes = Math.round(
     (selectedInstant.getTime() - birthInstant.getTime()) / MINUTE_MS,
   );
+  // The life timeline can move the instant beyond the chosen window. The
+  // slider then widens to the smallest window that holds the instant, instead
+  // of pinning at its end and snapping back on the next step.
+  const chosenWindow = WINDOWS.find((entry) => entry.days === windowDays) ?? WINDOWS[1];
+  const requiredWindow =
+    WINDOWS.find((entry) => Math.abs(offsetMinutes) <= entry.days * 24 * 60) ??
+    WINDOWS[WINDOWS.length - 1];
+  const windowConfig =
+    requiredWindow.days > chosenWindow.days ? requiredWindow : chosenWindow;
+  const maxOffsetMinutes = windowConfig.days * 24 * 60;
 
   const formatter = useMemo(
     () =>
@@ -263,9 +276,9 @@ export default function TimeNavigator({
               key={entry.days}
               type="button"
               onClick={() => changeWindow(entry.days)}
-              aria-pressed={windowDays === entry.days}
+              aria-pressed={windowConfig.days === entry.days}
               className={`min-h-9 rounded-lg px-2.5 py-1.5 text-[11px] font-medium transition ${
-                windowDays === entry.days
+                windowConfig.days === entry.days
                   ? "bg-violet-400/20 text-violet-800 dark:text-violet-100"
                   : "text-slate-500 hover:text-slate-200"
               }`}

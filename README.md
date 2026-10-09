@@ -59,9 +59,9 @@ study in:
 
 | Area | Implementation |
 | --- | --- |
-| Domain engine | Apparent geocentric positions from Astronomy Engine, a documented Lahiri-style sidereal conversion, Ascendant, whole-sign houses, lunar mansions and quarters, nodes, and Vimshottari periods |
-| Visualization | Responsive React Three Fiber celestial sphere plus North and South Indian SVG birth charts |
-| Explainability | Inspectable transit-score arithmetic, structural chart audits, calculation-status badges, methodology and limitation disclosures |
+| Domain engine | Apparent geocentric positions from Astronomy Engine, a documented Lahiri-style sidereal conversion, Ascendant, whole-sign houses, lunar mansions and quarters, nodes, four-level Vimshottari periods, Ashtakavarga, and 100 years of stations and sign ingresses |
+| Visualization | Responsive React Three Fiber celestial sphere, North and South Indian SVG birth charts, and an interactive SVG life timeline calculated in a Web Worker |
+| Explainability | Inspectable transit-score and theme-curve arithmetic, structural chart audits, calculation-status badges, methodology and limitation disclosures |
 | AI engineering | Validated structured context, localized system policies, prompt-injection resistance, anti-fabrication constraints, and a local prompt preview/copy workflow |
 | Product quality | Four languages, light-by-default plus dark theme, a single-page birth form, responsive layouts, keyboard-oriented controls, WebGL failure recovery, and civil-time/DST handling |
 | Export | Client-side birth-chart PDF in an independently selected report language, including an audited twelve-house summary with locale-native labels |
@@ -110,6 +110,34 @@ birth form so visitors can understand the workflow before submitting data.
 - place search with automatic coordinates and timezone plus a manual fallback
 - clear privacy and civil-time guidance before chart generation
 
+### Life timeline
+
+- one time axis from birth to 100 years later, opening at today; zoom by
+  years, months, or days with pinch, ctrl+wheel or a trackpad pinch,
+  buttons, or keyboard, and drag sideways to move; vertical swipes still
+  scroll the page on a phone
+- Vimshottari period rows on up to four levels (two in the years view, three
+  in the months view, four in the days view), with a visible haze at every
+  boundary showing how far a few minutes of birth-time error move it
+- every body's sidereal longitude against time in twelve house bands (from
+  the Ascendant or the birth Moon), dashed while retrograde, with exact
+  stations; the years view shows Saturn, Jupiter, and the nodes, the months
+  view adds the Sun, Mars, Venus, and Mercury, and the days view the Moon
+- friction and expansion bands for classical transit patterns such as the
+  three Sade Sati phases, Saturn in the 8th, 4th, or 10th from the birth
+  Moon, node friction, retrograde periods, and Jupiter in favourable houses
+- an Ashtakavarga strength strip for a highlighted body, and four symbolic
+  theme curves (emotional resilience, career momentum, relationship harmony,
+  physical vitality) built from classical transit, obstruction (Vedha),
+  Ashtakavarga, and period-ruler rules; every point of every value is listed
+- a playhead shared with the time navigator, the 3D cosmos, and the charts;
+  an "on this date" card with the period stack, body positions, curve values,
+  active patterns, and a short summary; a tap on any period, band, line,
+  station, or curve change opens an explanation
+- personal milestones and plans as markers, searchable, kept in memory or,
+  only when the reader opts in, in this browser's storage; a table view lists
+  the same changes as text
+
 ### 3D geocentric cosmos
 
 - Earth-centered celestial sphere with orbit, pan, and zoom controls
@@ -126,12 +154,16 @@ birth form so visitors can understand the workflow before submitting data.
 ### Jyotish chart and analysis workspace
 
 - North Indian diamond and South Indian fixed-sign chart renderers
+- a ninth-division chart (D9) switch on the chart card and a D9 column in the
+  positions table, for study only; the readings, scores, AI context, and PDF
+  report do not use it
 - synchronized planet and house selection across 3D, SVG, and analysis views
 - core Ascendant/Sun/Moon placements and a detailed planetary position table
-- after generation, all 12 house cards appear before the 3D and chart tools;
-  each is already fully open, with three color-coded personalized sentences,
-  practical constructive guidance, balanced cautions, and resident-body
-  synthesis—no twelve-card accordion to work through
+- after generation, the 12 house cards close the page, after the time
+  navigator, the life timeline, the 3D and chart tools, and the analysis
+  tabs; each card is already open and short: what the house covers, one
+  constructive line, one caution line, and a line per resident body, with
+  no twelve-card accordion to work through
 - all 27 lunar mansions and Vimshottari major/subperiod timelines
 - interactive 22-term guide, nine planetary profiles, and all 108
   planet-in-house educational combinations
@@ -188,6 +220,10 @@ flowchart LR
     C --> J[Rule-based Jyotish analysis]
     C --> T[Transit engine]
     C --> D[Vimshottari engine]
+    C --> LT[Life timeline]
+    WK[Web Worker: 100 years of stations and ingresses] --> LT
+    D --> LT
+    LT -->|shared instant| W
     C --> Q[Structural audit]
     C --> PDF[Localized birth-chart PDF]
     PL[Independent PDF language] --> PDF
@@ -304,8 +340,12 @@ npm run e2e
 
 It emulates a 320 px viewport, an iPhone SE, and a Pixel 7, and asserts no
 horizontal overflow, 16 px form fields, a 24 px control floor, 40 px primary
-controls, and the cosmos touch opt-in. Screenshots of every section land in
-`e2e-artifacts/screens/` and are uploaded by CI.
+controls, and the cosmos touch opt-in. For the life timeline it also checks
+that the Web Worker delivers every body, that zoom, pinch, scrubbing, and taps
+work, that a vertical swipe on the plot still scrolls the page, that the
+playhead and the time navigator stay in step, that life events are forgotten
+unless kept, and that Hindi fits at phone width. Screenshots of every section
+land in `e2e-artifacts/screens/` and are uploaded by CI.
 
 Current milestone result:
 
@@ -332,6 +372,11 @@ snapshots:
 - chart geometry and responsive camera framing
 - WebGL capability classification and graceful fallback
 - structural chart consistency audits
+- life timeline: stations and ingresses against published Lahiri dates and a
+  brute-force scan, four Vimshottari levels against the Dashas tab, a
+  published Ashtakavarga example, real Sade Sati dates, Vedha, and the
+  theme-curve arithmetic, plus an independent evaluator of the curves on
+  1,200 random skies
 
 ## Place-search configuration
 
@@ -371,7 +416,11 @@ The engine uses:
 - a custom Lahiri-style correction using a documented J2000 anchor,
   IAU-1976 precession, and truncated nutation;
 - mean Rahu and Ketu, whole-sign houses, and a 365.25-day-year Vimshottari
-  convention.
+  convention;
+- for the life timeline, Ashtakavarga tables checked against BPHS, C. S.
+  Patel, and B. V. Raman, and Gochara and Vedha tables from Phaladeepika
+  chapter 26. Sixfold strength (Shadbala) and divisional charts other than
+  the ninth-division chart are not calculated.
 
 The approximately one-arcminute target belongs to the upstream Astronomy
 Engine. This app's custom sidereal conversion has **not** been independently
@@ -379,10 +428,13 @@ certified against Swiss Ephemeris. Placements near a zodiac-sign,
 lunar-mansion, or quarter boundary require extra caution.
 
 The structural audit verifies internal software consistency. It does not
-establish the scientific predictive validity of astrology. Interpretations and
-Transit scores are traditional symbolic reflection material—not probabilities,
-diagnoses, guaranteed events, or a basis for medical, legal, financial, safety,
-or mental-health decisions.
+establish the scientific predictive validity of astrology. Interpretations,
+transit scores, and the life timeline's theme curves are traditional symbolic
+reflection material—not probabilities, diagnoses, guaranteed events, or a
+basis for medical, legal, financial, safety, or mental-health decisions. The
+curves' weights are this app's own. Finer period boundaries move by days to
+weeks for every few minutes of birth-time error, so they are shown for
+exploration, not as exact dates.
 
 ## Repository map
 
@@ -394,9 +446,11 @@ components/analysis/          Jyotish dashboard, guide, methodology, audit UI
 components/dashboard/         Birth-chart, transit, and AI prompt workspaces
 components/export/            Client-only localized birth-chart PDF generation
 components/marketing/         Interactive illustrated feature showcase
+components/timeline/          Life timeline: plot, gestures, card, inspector, events
 components/providers/         Locale and theme preferences
 components/ui/                Single-page birth form, term dialog, time navigator
 lib/astro/                    Ephemeris, civil time, periods, education, audits
+lib/timeline/                 Worker-safe timeline engine: motion, periods, bands, curves
 lib/transits.ts               Explainable transit rules
 lib/aiPromptBuilder.ts        Validated structured context and prompt policies
 public/features/              Promotional WebP and supporting feature-tour art

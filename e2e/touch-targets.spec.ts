@@ -17,6 +17,8 @@ const CRITICAL_SELECTORS = [
   'section[aria-labelledby="vedic-chart-title"] [role="group"] button',
   '#cosmos [role="toolbar"] button',
   '[data-testid=interpretation-panel] [role="tab"]',
+  // Life timeline: zoom, step, today, birth, layers and table controls.
+  "[data-testid=timeline-toolbar] button",
 ];
 
 interface Measured {
@@ -61,6 +63,8 @@ test.describe("touch targets", () => {
     if (hasCanvas) {
       await cosmos.locator('[role="toolbar"] button').first().waitFor();
     }
+    // The life timeline is loaded on demand after the chart; wait for it.
+    await page.locator("[data-testid=timeline-toolbar] button").first().waitFor();
     const selectors = CRITICAL_SELECTORS.filter(
       (selector) => hasCanvas || !selector.startsWith("#cosmos"),
     );

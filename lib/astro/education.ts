@@ -1743,4 +1743,16 @@ export const LOCALIZED_ANALYSIS_LIMITATIONS: Readonly<
     "दैनिक व मासिक गोचर गुण हे अ‍ॅपच्या स्वतःच्या भारित नियमांचे सार आहेत—सार्वत्रिक ज्योतिषमापन, संभाव्यता, वैज्ञानिक अंदाज किंवा परिणामगुणांकन नाही.",
     "Tägliche und monatliche Transitwerte sind app-spezifische, gewichtete Regelzusammenfassungen — kein universelles Maß der vedischen Astrologie, keine Wahrscheinlichkeit, wissenschaftliche Prognose oder Ergebnisbewertung.",
   ),
+  "life-curve-method": localized(
+    "The life timeline's four theme curves are app-specific weighted summaries of classical rules on transits, obstructions, the eight-part point assessment and period rulers. They do not measure mood, health or outcomes, and they are not forecasts.",
+    "जीवन समयरेखा की चार विषय-रेखाएँ शास्त्रीय गोचर, वेध, अष्टकवर्ग और दशा-स्वामी नियमों का इस ऐप का भारित सार हैं। ये मनोदशा, स्वास्थ्य या परिणाम नहीं मापतीं और भविष्यवाणी नहीं हैं।",
+    "जीवन कालरेषेतील चार विषय-रेषा शास्त्रीय गोचर, वेध, अष्टकवर्ग व दशा-स्वामी नियमांचे या अ‍ॅपचे भारित सार आहेत. त्या मनःस्थिती, आरोग्य किंवा परिणाम मोजत नाहीत आणि भाकीत नाहीत.",
+    "Die vier Themenkurven der Lebenszeitleiste sind app-spezifische, gewichtete Zusammenfassungen klassischer Regeln zu Transiten, Blockaden, der achtteiligen Punktbewertung und den Periodenherrschern. Sie messen weder Stimmung noch Gesundheit oder Ergebnisse und sind keine Prognosen.",
+  ),
+  "dasha-fine-precision": localized(
+    "Sub-sub-period and subtle-period boundaries move by days to weeks for every few minutes of birth-time error. The finer Vimshottari levels are shown for exploration, not as exact dates.",
+    "प्रत्यन्तर्दशा और सूक्ष्म दशा की सीमाएँ जन्म-समय की कुछ मिनट की त्रुटि से दिनों से सप्ताहों तक खिसक जाती हैं। सूक्ष्मतर विंशोत्तरी स्तर खोज के लिए दिखाए गए हैं, सटीक तिथियों के रूप में नहीं।",
+    "प्रत्यंतर्दशा व सूक्ष्म दशेच्या सीमा जन्मवेळेतील काही मिनिटांच्या चुकीने दिवसांपासून आठवड्यांपर्यंत सरकतात. अधिक सूक्ष्म विंशोत्तरी स्तर शोधासाठी दाखवले आहेत, अचूक तारखा म्हणून नव्हे.",
+    "Grenzen von Unter-Unterperioden und Feinperioden verschieben sich bei wenigen Minuten Geburtszeitfehler um Tage bis Wochen. Die feineren Vimshottari-Ebenen dienen dem Erkunden, nicht als genaue Daten.",
+  ),
 };

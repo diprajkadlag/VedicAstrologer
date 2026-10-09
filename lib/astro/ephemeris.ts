@@ -411,6 +411,37 @@ function meanNodeSiderealLongitude(instant: FlexibleDateTime): number {
   return normalizeDegrees(meanTropicalLongitude - ayanamsa.meanDegrees);
 }
 
+const PHYSICAL_BODIES: Readonly<Partial<Record<GrahaId, Body>>> =
+  Object.fromEntries(PHYSICAL_GRAHAS.map((graha) => [graha.id, graha.body]));
+
+function siderealLongitudeOf(id: GrahaId, instant: FlexibleDateTime): number {
+  if (id === "rahu") return meanNodeSiderealLongitude(instant);
+  if (id === "ketu") return normalizeDegrees(meanNodeSiderealLongitude(instant) + 180);
+  const body = PHYSICAL_BODIES[id];
+  if (body === undefined) throw new RangeError(`Unknown graha id: ${String(id)}.`);
+  return apparentGeocentricPosition(body, instant).siderealLongitudeDeg;
+}
+
+/**
+ * Sidereal longitude of one graha at an instant, on exactly the model that
+ * calculateVedicChart uses, so a timeline and a chart cannot disagree. The
+ * observer location does not enter: positions are geocentric.
+ */
+export function calculateSiderealLongitude(id: GrahaId, instant: Date): number {
+  assertValidInstant(instant);
+  return siderealLongitudeOf(id, instant);
+}
+
+/**
+ * Longitude speed in degrees per day over the chart's centred one-day window.
+ * Its sign is the chart's retrograde flag, so a timeline that finds stations
+ * with this function agrees with the "R" marks in the charts.
+ */
+export function calculateLongitudeSpeed(id: GrahaId, instant: Date): number {
+  assertValidInstant(instant);
+  return longitudeSpeed((sampleTime) => siderealLongitudeOf(id, sampleTime), instant);
+}
+
 function calculatePhysicalGraha(
   graha: (typeof PHYSICAL_GRAHAS)[number],
   instant: Date,

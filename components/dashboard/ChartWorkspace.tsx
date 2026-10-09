@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Diamond, Grid2X2, MapPinned } from "lucide-react";
 
 import {
@@ -24,6 +24,7 @@ import {
 } from "@/lib/astro/localizedNames";
 import { defineMessages, INTL_LOCALES, type AppLocale } from "@/lib/i18n";
 import type { ChartDensity, ChartDivision } from "@/components/chart/types";
+import { useContainerWidth } from "@/components/ui/useContainerWidth";
 
 export type VedicChartStyle = "north" | "south";
 
@@ -212,24 +213,6 @@ function chartDensity(width: number | null): ChartDensity {
   if (width < TIGHT_CHART_WIDTH_PX) return "tight";
   if (width < COMPACT_CHART_WIDTH_PX) return "compact";
   return "comfortable";
-}
-
-/** Measured content width of an element; null until first measurement. */
-function useContainerWidth(ref: RefObject<HTMLElement | null>): number | null {
-  const [width, setWidth] = useState<number | null>(null);
-
-  useEffect(() => {
-    const element = ref.current;
-    if (!element) return;
-    const measure = () => setWidth(element.clientWidth);
-    measure();
-    if (typeof ResizeObserver === "undefined") return;
-    const observer = new ResizeObserver(measure);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [ref]);
-
-  return width;
 }
 
 function formatChartNumber(

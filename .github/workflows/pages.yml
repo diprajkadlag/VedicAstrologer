@@ -42,6 +42,12 @@ jobs:
           BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
+      - name: Check the life-timeline worker was emitted
+        # The timeline calculates in a Web Worker. Turbopack must emit it as
+        # its own chunk under the base path; without it the page would fall
+        # back to calculating on the main thread.
+        run: grep -rlq "vedic-life-timeline-worker-v1" out/_next/static/chunks
+
       - name: Disable Jekyll
         # Without this, Pages drops every path beginning with an underscore —
         # which is all of Next's _next/ output.
