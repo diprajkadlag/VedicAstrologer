@@ -2,6 +2,13 @@
 
 **Model:** Opus 5.5 · **Estimate:** $8–12 · **Start after 02 is merged.** Read `CLAUDE.md` first.
 
+> **Note (9 Oct 2026).** The life-timeline pull request changed the time navigator after
+> this task was written. The navigator now has a ± century window, and it widens itself
+> when the shared instant leaves the window. The timeline's **Today** button moves the
+> shared instant to now. So section 1's reason ("anyone older than about 10 can't reach
+> today") is no longer true. The **Now** button is still useful. Build section 1 on the
+> current navigator, and keep the shared-instant contract in `CLAUDE.md`.
+
 ## What the user gets
 
 - One tap on **Now** shows today's planets placed in the birth houses, next to the birth
