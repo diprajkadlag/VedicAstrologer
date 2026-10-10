@@ -9,6 +9,9 @@ Vedic Celestial Visualizer is a single Next.js App Router application that combi
 - an interactive React Three Fiber celestial scene;
 - North and South Indian SVG birth charts;
 - deterministic natal, Vimshottari-period, and transit analysis;
+- an interactive life timeline: four-level Vimshottari periods, 100 years of
+  transits calculated in a Web Worker, Ashtakavarga, classical transit bands,
+  and symbolic theme curves, all on one zoomable time axis;
 - an interactive multilingual Jyotish guide;
 - a localized client-side birth-chart PDF summary;
 - an illustrated, keyboard-operable feature showcase;
@@ -33,6 +36,8 @@ flowchart LR
         APP[VedicAstrologyApp<br/>orchestration and shared selection]
         EPH[ephemeris.ts<br/>canonical VedicChart]
         TIME[TimeNavigator]
+        LT[LifeTimeline<br/>periods, bands, curves, events]
+        WKR[timeline.worker.ts<br/>100-year motion tables]
         WEBGL[CelestialSphere<br/>React Three Fiber]
         SVG[ChartWorkspace<br/>North and South SVG charts]
         PANEL[InterpretationPanel]
@@ -52,6 +57,10 @@ flowchart LR
         CIVIL -->|absolute instant and coordinates| APP
         APP --> EPH
         TIME -->|selected instant| APP
+        LT -->|scrubbed instant| APP
+        APP -->|selected instant| LT
+        EPH -->|natalChart| LT
+        WKR -->|stations and ingresses| LT
         EPH -->|natalChart| PANEL
         EPH -->|displayChart| WEBGL
         EPH -->|displayChart| SVG
@@ -109,6 +118,7 @@ calculation is deliberately local:
 
 - civil-time validation and DST disambiguation;
 - natal and simulated ephemeris calculation;
+- long-range planetary motion for the life timeline, in a Web Worker;
 - Vimshottari-period and interpretation assembly;
 - transit comparison and scoring;
 - structural chart audits;
@@ -164,6 +174,8 @@ is offline” would not be: place search is still a network operation.
 | 3D presentation | `components/3d/*` | WebGL capability probe, responsive camera, Earth/celestial sphere, planets, lunar-mansion sectors, trails, controls, and fullscreen |
 | 2D presentation | `components/chart/*`, `components/dashboard/ChartWorkspace.tsx` | Interactive North and South Indian SVG chart layouts |
 | Analysis UI | `components/analysis/*`, `components/dashboard/HoroscopeTab.tsx` | Overview, positions, houses, lunar mansions, Vimshottari periods, transits, guide, methodology, and prompt tabs |
+| Timeline engine | `lib/timeline/*`, `lib/astro/ashtakavarga.ts` | Worker-safe motion tables, stations, ingresses, four Vimshottari levels, transit bands, theme curves, geometry, life-event storage |
+| Timeline UI | `components/timeline/*` | Life-timeline section, SVG plot and gestures, "on this date" card, inspector, layers, table view, life events, worker hook |
 | Localization | `lib/i18n.ts`, `lib/astro/localizedNames.ts`, `lib/astro/localizedGlossary.ts`, component dictionaries | English, Hindi, Marathi, and German text, locale-native astronomical labels, glossary content, and locale-aware number/date display |
 | Geocoding | `app/api/geocode/route.node.ts`, `lib/geocoding/*` | Deployment-selected proxy/browser Nominatim transport, response normalization, timezone lookup, throttling, and HTTP errors |
 
@@ -256,11 +268,11 @@ entry defaults to minute precision and can be expanded to seconds.
 This prevents a time-scrubber interaction from silently changing the natal
 foundation.
 
-After generation, the result order is deliberate: completion header, fixed
-natal twelve-house reading, time navigator, 3D cosmos, SVG chart workspace,
-then the remaining analysis tabs. The house cards are semantic articles rather
-than disclosures, so all twelve readings are immediately available and the
-analysis tab set does not duplicate them.
+After generation, the result order is deliberate: completion header, time
+navigator, life timeline, 3D cosmos, SVG chart workspace, the analysis tabs,
+and the fixed natal twelve-house reading last. The house cards are semantic
+articles rather than disclosures, so all twelve readings are immediately
+available and the analysis tab set does not duplicate them.
 
 ```mermaid
 stateDiagram-v2
@@ -309,6 +321,130 @@ locale.
 `analysisAsOf` is initialized to the current time and refreshed once per minute
 while a natal chart exists. All lower-level calculation functions accept
 explicit instants; they do not read the machine clock themselves.
+
+## 6a. Life timeline
+
+The life timeline places the natal Vimshottari periods and 100 years of
+transits on one zoomable time axis, from birth onwards.
+
+### Data flow
+
+1. `useTimelineData` starts `lib/timeline/timeline.worker.ts` with
+   `new Worker(new URL(..., import.meta.url), { type: "module" })` inside an
+   effect. Turbopack emits the worker as its own chunk under the same base
+   path as every other chunk, so the static GitHub Pages export works too. It
+   also copies the worker's TypeScript source into `static/media`; the page
+   never requests that copy, and `tsconfig.json` excludes `out/` so a local
+   type check ignores it. If a worker cannot be created or fails, the same
+   pure functions run on the main thread, one body per task.
+2. The worker calls `computePlanetTimeline` for Saturn, Jupiter, the nodes,
+   then the Sun, Mars, Venus and Mercury, and posts each body as it is ready,
+   with its longitude table as a transferable buffer. The Moon is calculated
+   on the main thread at day zoom only, for the view plus two windows on each
+   side (see "The Moon at day zoom" below).
+3. `planetTimeline.ts` samples the unwrapped sidereal longitude at a step per
+   body (Sun 10 days, Mercury 2, Venus and Mars 3, Jupiter 6, Saturn 8, nodes
+   10), finds stations by bisecting the sign of the chart's own one-day speed,
+   and finds every 30-degree crossing inside each monotonic stretch between
+   stations with regula falsi. Longitudes come from
+   `calculateSiderealLongitude` and motion from `calculateLongitudeSpeed`, the
+   chart's own functions, so the timeline and the "R" marks in the charts
+   agree. A prototype took about 0.8 seconds in Node.js on the owner's PC for
+   100 years of six bodies; in Playwright's phone emulation the worker
+   finished in 1.3 to 2 seconds.
+4. Motion segments (constant sign and direction) feed `gocharaBands.ts`
+   (Sade Sati phases, Saturn in the 8th, 4th or 10th from the birth Moon,
+   node friction, retrograde periods, Jupiter in favourable houses) and
+   `lifeCurves.ts` (four theme curves).
+5. `dashaLevels.ts` takes levels 1 and 2 straight from
+   `calculateVimshottariTimeline` and subdivides levels 3 and 4 with the same
+   `subdivideVimshottariPeriod` function, so every view shows identical dates.
+
+### Zoom levels
+
+A window of 18 months or more is the years view, 60 days or more the months
+view, and anything shorter the days view (minimum 5 days). Each level adds
+bodies and period levels: Saturn, Jupiter and the nodes with two period
+levels; then the Sun, Mars, Venus and Mercury with a third; then the Moon
+with the fourth. The theme curves use the same sets, so a coarse view is not
+filled with fast oscillation, and the Vedha (obstruction) check considers
+only the bodies of the current level.
+
+### Theme curves
+
+Each curve starts at 50, adds named rule contributions and is clamped to
+0..100, like the transit scores. The conditions are classical (Phaladeepika
+chapter 26 for transits from the birth Moon and Vedha, BPHS for period-ruler
+placement, the Ashtakavarga thresholds of Raman and Patel); the weights are
+this app's own. Period-ruler rules weigh 1, 0.6, 0.4 and 0.2 for the four
+levels. Retrograde rules have no classical transit source and are marked
+"modern". Every contribution is returned and shown under "Why"; a tap on a
+step change shows which rules started or ended there.
+
+### Three instants
+
+`natalChart` stays fixed. `selectedInstant` drives the 3D view and the
+charts. `analysisAsOf` is "now" for the analysis tabs and the PDF. The
+timeline keeps its own cursor, which opens at today. Scrubbing pushes the
+cursor into `selectedInstant` at most ten times a second and once on
+release. Every commit of `selectedInstant` carries its source ("timeline" or
+"other") and the number of the change request that set it; every request
+gets a larger number than the one before. So the cursor follows any change
+made by another control, even back to an equal value, and never its own
+echo. It also ignores a change that was requested before the timeline's own
+latest request, because that request replaces it. This holds whatever order
+the throttled updates and the transitions commit in. A drag that ends or is
+cancelled always ends the timeline's drag state, and a further finger during
+a scrub is ignored. This sync
+is a state adjustment during render, not an effect, because the React
+Compiler lint rules forbid synchronous state updates in effects and reading
+refs during render. The time navigator gained a 100-year window and widens
+itself when the shared instant leaves its current window.
+
+### Rendering and gestures
+
+The plot is one SVG at the measured CSS width (no viewBox scaling), with
+layouts for under 360 px, under 1024 px and wider. Geometry covers one window
+to each side and is clipped, so a drag reveals drawn content. During a drag
+or pinch, a transform moves the drawn content and the real geometry is
+rebuilt at most every 120 ms and on release. The whole plot has
+`touch-action: pan-y`, so a vertical swipe scrolls the page wherever it
+starts. The axis strip, the overview strip and a 32 px playhead handle
+scrub instead of panning, but only after a horizontal movement of more than
+6 px; a tap there moves the cursor. This is decided in script, because
+`touch-action` on elements inside an SVG is not applied reliably across
+browsers. Two fingers that lift without moving fall back to a pan. Ctrl+wheel
+(trackpad pinch) zooms; sideways wheel pans. The range input below the
+toolbar is the keyboard scrubber, and a table view lists the same changes as text,
+including the curve changes that the plot marks, with an Inspect button per
+row. The plot component is memoized and its derived inputs keep their
+identity while unchanged, so a scrub re-renders only the playhead, the
+overview strip and the card.
+
+### Inspector
+
+Below 1024 px the inspector is a modal bottom sheet (`<dialog>` with
+`showModal`); the page behind it does not scroll. From 1024 px it is a docked
+section above the "on this date" card: it covers no control, keeps the page's
+Tab order, takes focus on its heading and returns focus to the opener. It
+closes on Escape from the page, but not when that Escape closes a dialog or
+a date picker, or clears a field.
+
+### The Moon at day zoom
+
+The Moon is calculated for the view plus two windows on each side and is
+recalculated when the drawn range (the view plus one window on each side)
+leaves that coverage. The curves are drawn only where the Moon window
+reaches, and an instant outside it (the cursor or an inspected date) gets
+its own small Moon window, so no value silently lacks the Moon's rules.
+
+### Privacy
+
+Life events stay in memory. Only after the reader turns on "Keep on this
+device" are they written to `localStorage`, under a key derived from the
+birth data with FNV-1a (a separation key, not a privacy measure). Turning the
+option off deletes the saved copy. Nothing about the timeline is sent to a
+server, added to the AI context or printed in the PDF.
 
 ## 7. 3D rendering and WebGL resilience
 
@@ -523,11 +659,15 @@ The tests emphasize pure boundaries and invariants:
 | Localization and education | four-language key parity, familiar English labels, German labels such as Löwe/Sonne/Mond, native Devanagari, clickable glossary coverage, nine planetary profiles, twelve houses, and all 108 educational combinations |
 | Geocoding | query and URL safety, upstream field whitelisting, timezone lookup, coalescing, request spacing, cache/error semantics |
 | Charts and 3D helpers | traditional SVG layout maps, localized accessibility text, responsive camera math, and WebGL disabled/lost/fallback classification |
+| Life timeline | chart-identical longitudes and speeds, stations and ingresses against published Lahiri dates and a two-hour brute-force scan, four Vimshottari levels against the Dashas tab, birth-time shift, Raman's Standard Horoscope Ashtakavarga, real Sade Sati dates, Vedha and its exemptions, curve arithmetic, layout and ticks, life-event storage, four-language message and placeholder parity |
 
-The repository does not currently include browser end-to-end tests, automated
-visual regression, GPU-matrix testing, or live Nominatim contract tests. WebGL
-and layout tests cover pure decision logic; final rendering behavior still
-depends on the browser, graphics stack, fonts, and viewport.
+Playwright runs browser tests in CI at a 320 px viewport and in iPhone SE and
+Pixel 7 emulation: page overflow, form-field size, touch targets, chart label
+legibility, the cosmos touch opt-in, and the life timeline (worker result,
+zoom, pinch, scrubbing, taps, vertical page scrolling, life events, Hindi
+layout). The repository does not include automated visual regression,
+GPU-matrix testing, or live Nominatim contract tests. Final rendering behavior
+still depends on the browser, graphics stack, fonts, and viewport.
 
 ## 12. Key decisions and tradeoffs
 
@@ -549,8 +689,9 @@ Local calculation avoids a chart-computation API and keeps birth data out of an
 application server path. It also provides immediate interaction after loading.
 The cost is main-thread work for recalculation and trajectory sampling. Current
 mitigations are animation-frame coalescing, React transitions, deferred
-trajectory input, code-split WebGL, and adaptive device-pixel ratio; there is no
-Web Worker implementation.
+trajectory input, code-split WebGL, and adaptive device-pixel ratio. The life
+timeline's 100-year motion tables are the one calculation large enough for a
+Web Worker; it has a main-thread fallback.
 
 ### Explicit Jyotish convention
 
@@ -598,8 +739,9 @@ archival document.
 
 The implemented engine does not calculate Shadbala, divisional/Varga charts
 other than the ninth-division chart (D9), classical Drishti, Yuti orbs,
-combustion, yogas, Ashtakavarga, rectification, or event probabilities.
-Glossary entries for such terms are educational, not chart results.
+combustion, yogas, rectification, or event probabilities. Glossary entries for
+such terms are educational, not chart results. Ashtakavarga is calculated, but
+only for the life timeline's strength strip and theme curves.
 
 D9 is calculated in `lib/astro/divisional.ts` and drawn in the chart card, with
 a positions-table column, for study only. The interpretations, scores, AI
@@ -619,6 +761,10 @@ Additional constraints exposed by the code are:
 - mean-node positions can differ from true-node results near boundaries;
 - Vimshottari-period dates depend on the disclosed 365.25-day-year convention;
 - transit scores are app-specific symbolic summaries, not probabilities;
+- the life timeline's theme curves are app-specific weighted summaries of
+  classical rules; they do not measure mood, health or outcomes;
+- sub-sub-period and subtle-period boundaries move by days to weeks for
+  every few minutes of birth-time error and are shown for exploration only;
 - the downloadable PDF is a presentation of the same application model, not
   an independent ephemeris cross-check or professional certification;
 - all interpretive content is traditional and symbolic rather than

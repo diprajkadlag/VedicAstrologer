@@ -681,28 +681,60 @@ function containsInstant(startMs: number, endMs: number, instantMs: number): boo
   return instantMs >= startMs && instantMs < endMs;
 }
 
-function buildAntardashas(majorLord: DashaLord, majorStartMs: number, majorEndMs: number, asOfMs: number): AntardashaPeriod[] {
-  const majorYears = VIMSHOTTARI_SEQUENCE.find((period) => period.lord === majorLord)!.years;
-  const sequence = sequenceFrom(majorLord);
-  let cursor = majorStartMs;
+export interface VimshottariSubPeriod {
+  lord: DashaLord;
+  startMs: number;
+  endMs: number;
+  /** Nominal length in Vimshottari years, before millisecond rounding. */
+  durationYears: number;
+}
+
+/**
+ * Splits one Vimshottari period into its nine sub-periods. The sequence starts
+ * with the parent's own lord, and each share is parent years multiplied by the
+ * sub-lord's years divided by 120. Boundaries are rounded to whole
+ * milliseconds and the last share ends exactly at the parent end, so rounding
+ * never accumulates. Every level below the Mahadasha uses this one function.
+ */
+export function subdivideVimshottariPeriod(
+  parentLord: DashaLord,
+  parentStartMs: number,
+  parentEndMs: number,
+  parentYears: number,
+): VimshottariSubPeriod[] {
+  const sequence = sequenceFrom(parentLord);
+  let cursor = parentStartMs;
 
   return sequence.map((period, index) => {
-    const durationYears = (majorYears * period.years) / VIMSHOTTARI_TOTAL_YEARS;
+    const durationYears = (parentYears * period.years) / VIMSHOTTARI_TOTAL_YEARS;
     const end = index === sequence.length - 1
-      ? majorEndMs
+      ? parentEndMs
       : Math.round(cursor + durationYears * VIMSHOTTARI_YEAR_MS);
-    const antardasha: AntardashaPeriod = {
-      level: "antardasha",
+    const subPeriod: VimshottariSubPeriod = {
       lord: period.lord,
-      majorLord,
-      start: iso(cursor),
-      end: iso(end),
+      startMs: cursor,
+      endMs: end,
       durationYears,
-      isCurrent: containsInstant(cursor, end, asOfMs),
     };
     cursor = end;
-    return antardasha;
+    return subPeriod;
   });
+}
+
+function buildAntardashas(majorLord: DashaLord, majorStartMs: number, majorEndMs: number, asOfMs: number): AntardashaPeriod[] {
+  const majorYears = VIMSHOTTARI_SEQUENCE.find((period) => period.lord === majorLord)!.years;
+
+  return subdivideVimshottariPeriod(majorLord, majorStartMs, majorEndMs, majorYears).map(
+    (subPeriod): AntardashaPeriod => ({
+      level: "antardasha",
+      lord: subPeriod.lord,
+      majorLord,
+      start: iso(subPeriod.startMs),
+      end: iso(subPeriod.endMs),
+      durationYears: subPeriod.durationYears,
+      isCurrent: containsInstant(subPeriod.startMs, subPeriod.endMs, asOfMs),
+    }),
+  );
 }
 
 /**

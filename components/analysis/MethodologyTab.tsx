@@ -74,7 +74,7 @@ const COPY: Readonly<Record<AppLocale, MethodologyCopy>> = {
     ],
     omittedTitle: "Currently not calculated",
     omitted:
-      "Sixfold strength assessment, divisional charts other than the ninth-division chart, classical aspects, conjunction orbs, combustion, traditional combinations, eight-part point assessment, rectification and event probabilities. Educational descriptions of these terms must not be mistaken for chart results. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it.",
+      "Sixfold strength assessment, divisional charts other than the ninth-division chart, classical aspects, conjunction orbs, combustion, traditional combinations, rectification and event probabilities. Educational descriptions of these terms must not be mistaken for chart results. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it. The eight-part point assessment is calculated only for the life timeline's strength strip and theme curves.",
     criticalTitle: "Critical-reading commitments",
     critical: [
       "No guaranteed events, diagnoses, lifespan, fertility, compatibility, wealth or career claims.",
@@ -119,7 +119,7 @@ const COPY: Readonly<Record<AppLocale, MethodologyCopy>> = {
     ],
     omittedTitle: "अभी जिनकी गणना नहीं होती",
     omitted:
-      "षड्बल, नवांश के अलावा अन्य वर्ग, शास्त्रीय दृष्टि, युति-अंश, अस्तता, योग, अष्टकवर्ग, जन्म-समय संशोधन और घटना-प्रायिकता। इन शब्दों की शैक्षिक व्याख्या को आपकी कुण्डली का परिणाम न समझें। नवांश कुण्डली केवल अध्ययन के लिए कुण्डली-आरेख में दिखाई जाती है; व्याख्याओं, अंकों, AI सन्दर्भ और PDF रिपोर्ट में इसका उपयोग नहीं होता।",
+      "षड्बल, नवांश के अलावा अन्य वर्ग, शास्त्रीय दृष्टि, युति-अंश, अस्तता, योग, जन्म-समय संशोधन और घटना-प्रायिकता। इन शब्दों की शैक्षिक व्याख्या को आपकी कुण्डली का परिणाम न समझें। नवांश कुण्डली केवल अध्ययन के लिए कुण्डली-आरेख में दिखाई जाती है; व्याख्याओं, अंकों, AI सन्दर्भ और PDF रिपोर्ट में इसका उपयोग नहीं होता। अष्टकवर्ग की गणना केवल जीवन समयरेखा की अष्टकवर्ग पट्टी और विषय-रेखाओं के लिए होती है।",
     criticalTitle: "आलोचनात्मक पठन के नियम",
     critical: [
       "घटना, रोग-निदान, आयु, प्रजनन, अनुकूलता, धन या करियर की निश्चित घोषणा नहीं।",
@@ -164,7 +164,7 @@ const COPY: Readonly<Record<AppLocale, MethodologyCopy>> = {
     ],
     omittedTitle: "सध्या न मोजलेले घटक",
     omitted:
-      "षड्बल, नवांश वगळता इतर वर्ग, शास्त्रीय दृष्टी, युतीचे अंश, अस्तंगतता, योग, अष्टकवर्ग, जन्मवेळ शुद्धीकरण आणि घटना-संभाव्यता. या संज्ञांची शैक्षणिक माहिती तुमच्या कुंडलीचा निकाल समजू नये. नवांश कुंडली फक्त अभ्यासासाठी कुंडली-आकृतीत दाखवली जाते; विवेचन, गुण, AI संदर्भ आणि PDF अहवालात ती वापरली जात नाही.",
+      "षड्बल, नवांश वगळता इतर वर्ग, शास्त्रीय दृष्टी, युतीचे अंश, अस्तंगतता, योग, जन्मवेळ शुद्धीकरण आणि घटना-संभाव्यता. या संज्ञांची शैक्षणिक माहिती तुमच्या कुंडलीचा निकाल समजू नये. नवांश कुंडली फक्त अभ्यासासाठी कुंडली-आकृतीत दाखवली जाते; विवेचन, गुण, AI संदर्भ आणि PDF अहवालात ती वापरली जात नाही. अष्टकवर्ग फक्त जीवन कालरेषेतील अष्टकवर्ग पट्टी व विषय-रेषांसाठी मोजला जातो.",
     criticalTitle: "चिकित्सक वाचनाचे नियम",
     critical: [
       "घटना, निदान, आयुष्य, प्रजनन, जुळवणी, संपत्ती किंवा करिअरची निश्चित घोषणा नाही.",
@@ -209,7 +209,7 @@ const COPY: Readonly<Record<AppLocale, MethodologyCopy>> = {
     ],
     omittedTitle: "Derzeit nicht berechnet",
     omitted:
-      "Sechsfache Stärkebewertung, andere Teilhoroskope als das neunte, klassische Aspekte, Konjunktionsorben, Verbrennung, traditionelle Kombinationen, achtteilige Punktbewertung, Geburtszeitkorrektur und Ereigniswahrscheinlichkeiten. Lehrtexte zu diesen Begriffen dürfen nicht mit Ergebnissen Ihres Geburtshoroskops verwechselt werden. Das neunte Teilhoroskop wird nur zum Lernen im Horoskop gezeigt; Deutungen, Punktwerte, KI-Kontext und PDF-Bericht verwenden es nicht.",
+      "Sechsfache Stärkebewertung, andere Teilhoroskope als das neunte, klassische Aspekte, Konjunktionsorben, Verbrennung, traditionelle Kombinationen, Geburtszeitkorrektur und Ereigniswahrscheinlichkeiten. Lehrtexte zu diesen Begriffen dürfen nicht mit Ergebnissen Ihres Geburtshoroskops verwechselt werden. Das neunte Teilhoroskop wird nur zum Lernen im Horoskop gezeigt; Deutungen, Punktwerte, KI-Kontext und PDF-Bericht verwenden es nicht. Die achtteilige Punktbewertung wird nur für den Stärkestreifen und die Themenkurven der Lebenszeitleiste berechnet.",
     criticalTitle: "Grundsätze für kritisches Lesen",
     critical: [
       "Keine garantierten Aussagen zu Ereignissen, Diagnosen, Lebensdauer, Fruchtbarkeit, Partnerschaft, Vermögen oder Karriere.",

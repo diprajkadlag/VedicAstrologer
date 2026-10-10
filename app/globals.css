@@ -12,6 +12,30 @@
   --muted: #526174;
   --accent: #6d28d9;
   --focus: rgb(109 40 217 / 0.72);
+
+  /*
+   * Life timeline series colours, checked for 3:1 contrast on the light and
+   * dark surfaces and for colour-vision-deficiency separation. The years view
+   * (Saturn, Jupiter, Rahu, Ketu) separates for every pair; the denser views
+   * rely on the direct labels at each line end. The Moon is a neutral on
+   * purpose: its steep sawtooth shape identifies it.
+   */
+  --graha-sun: #eb6834;
+  --graha-moon: #6b7a99;
+  --graha-mars: #e34948;
+  --graha-mercury: #008300;
+  --graha-jupiter: #c98500;
+  --graha-venus: #d55181;
+  --graha-saturn: #2a78d6;
+  --graha-rahu: #4a3aa7;
+  --graha-ketu: #199e70;
+  --band-friction: #be123c;
+  --band-expansion: #0d9488;
+  /* Text variants of the two tones, at least 4.5:1 on the surface. */
+  --band-friction-text: #9f1239;
+  --band-expansion-text: #0f766e;
+  --timeline-grid: #d9d7cf;
+  --dasha-segment-opacity: 0.24;
 }
 
 :root[data-theme="dark"] {
@@ -25,6 +49,22 @@
   --muted: #94a3b8;
   --accent: #a78bfa;
   --focus: rgb(196 181 253 / 0.9);
+
+  --graha-sun: #d95926;
+  --graha-moon: #a3b1c6;
+  --graha-mars: #e66767;
+  --graha-mercury: #008300;
+  --graha-jupiter: #c98500;
+  --graha-venus: #d55181;
+  --graha-saturn: #3987e5;
+  --graha-rahu: #c45ab8;
+  --graha-ketu: #199e70;
+  --band-friction: #e11d48;
+  --band-expansion: #0d9488;
+  --band-friction-text: #fda4af;
+  --band-expansion-text: #5eead4;
+  --timeline-grid: #262a3d;
+  --dasha-segment-opacity: 0.3;
 }
 
 * {
@@ -89,6 +129,32 @@ button:not(:disabled) {
   .time-slider::-moz-range-thumb {
     width: 1.25rem;
     height: 1.25rem;
+  }
+}
+
+/*
+ * Life timeline gestures. The plot keeps vertical swipes for the browser, so
+ * the page still scrolls on a phone, and receives horizontal drags and
+ * two-finger pinches as pointer events. The playhead handle, the time axis
+ * and the overview strip scrub after a horizontal movement; their behaviour
+ * is decided in script because touch-action inside an SVG is not reliable
+ * across browsers.
+ */
+.timeline-plot {
+  touch-action: pan-y;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Labels would stretch while a pinch scales the plot; they return on release. */
+.timeline-plot[data-gesture="pinch"] .tl-label {
+  opacity: 0;
+}
+
+@media (forced-colors: active) {
+  .timeline-plot [data-series] {
+    stroke: CanvasText !important;
   }
 }
 

@@ -99,11 +99,15 @@ describe("TwelveHouseSummary", () => {
       .map((name, index) => ({ name, index }))
       .filter(({ name }) => name === "TwelveHouseSummary");
     const navigatorIndex = components.indexOf("TimeNavigator");
+    const timelineIndex = components.indexOf("LifeTimeline");
     const sphereIndex = components.indexOf("CelestialSphere");
     const panelIndex = components.indexOf("InterpretationPanel");
 
     expect(summaries).toHaveLength(1);
     expect(navigatorIndex).toBeLessThan(sphereIndex);
+    // The life timeline sits between the time slider and the 3D view it drives.
+    expect(timelineIndex).toBeGreaterThan(navigatorIndex);
+    expect(timelineIndex).toBeLessThan(sphereIndex);
     expect(summaries[0].index).toBeGreaterThan(sphereIndex);
     expect(summaries[0].index).toBeGreaterThan(panelIndex);
   });

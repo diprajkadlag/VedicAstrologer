@@ -4,6 +4,88 @@ This changelog records portfolio milestones for the application. Version 0.1.0 i
 an initial, test-backed release candidate, not a claim of production or
 professional astrological certification.
 
+## [Unreleased] - 2026-10-09
+
+### Life timeline
+
+- A new section after the time navigator puts the natal Vimshottari periods
+  and 100 years of transits on one time axis, from birth onwards. It opens at
+  today and zooms by years, months, or days with pinch, ctrl+wheel, buttons,
+  or keyboard; a sideways drag moves it and a vertical swipe still scrolls the
+  page.
+- Period rows show up to four Vimshottari levels: two in the years view,
+  three in the months view and four in the days view. The two finer levels
+  use the same
+  subdivision function as the Dashas tab, so all dates agree. A haze at every
+  boundary shows how far a few minutes of birth-time error move it (about
+  7 days per 5 minutes for the e2e test chart); a note gives the figure for
+  each chart and warns when the birth time is close to a change of the first
+  major period.
+- Every body's sidereal longitude is drawn against time in twelve house
+  bands, counted from the Ascendant or the birth Moon, dashed while
+  retrograde, with exact stations. The years view shows Saturn, Jupiter and
+  the nodes, the months view adds the Sun, Mars, Venus and Mercury, and the
+  days view adds the Moon.
+- Friction and expansion bands mark the three Sade Sati phases, Saturn in the
+  8th, 4th or 10th from the birth Moon, node friction, retrograde periods,
+  and Jupiter in favourable houses. Each band states whether its rule is
+  classical, modern, or this app's choice.
+- Ashtakavarga is now calculated (tables checked against BPHS, C. S. Patel and
+  B. V. Raman; a test reproduces Raman's Standard Horoscope). A strength strip
+  shows the points of the sign a highlighted body transits. Sixfold strength
+  (Shadbala) and divisional charts other than the ninth-division chart are
+  still not calculated.
+- Four symbolic theme curves (emotional resilience, career momentum,
+  relationship harmony, physical vitality) start at 50 and add named
+  contributions from classical transit, obstruction (Vedha), Ashtakavarga and
+  period-ruler rules. Every point is listed under "Why", a tap on a step
+  shows what changed, and fixed notes say they do not measure health, mood
+  or outcomes.
+- The timeline's playhead and the time navigator share one instant, so
+  scrubbing moves the 3D cosmos and the charts. The time navigator gained a
+  100-year window and widens itself for distant dates.
+- An "on this date" card shows the period stack, body positions with houses
+  from the Ascendant and the birth Moon, curve values, active patterns and a
+  short summary in the interface language. An inspector explains any tapped
+  period, band, line, station, curve value or change. It opens as a bottom
+  sheet on phones and tablets and docks above the card from 1024 px, where it
+  covers no control.
+- Personal milestones and plans can be added, searched and jumped to. They
+  stay in memory unless the reader turns on "Keep on this device"; turning it
+  off deletes the saved copy.
+- A table view lists the window's changes as text, including the curve
+  changes the plot marks. The plot has a summary for screen readers, and
+  every new string exists in English, Hindi, Marathi and German.
+
+### Engineering
+
+- 100 years of stations and sign ingresses are calculated in a Web Worker
+  (main-thread fallback) with the chart's own longitude and speed functions;
+  tests compare them with published Lahiri dates and a brute-force scan.
+- CI and the Pages workflow fail if the worker chunk is missing from the
+  build. `tsconfig.json` excludes `out/`, where Turbopack also copies the
+  worker's source file.
+- Playwright covers the timeline on all three phone profiles; the existing
+  suites check its touch targets and overflow too.
+- Methodology disclosures gained two limitations: the theme-curve method and
+  the precision of the finer periods. The scope note no longer lists
+  Ashtakavarga as uncalculated.
+- Fable 5.1 reviewed the concept, the rules, the engine, the interface and
+  the translations. Its findings were fixed before release. A station in the
+  first half sample step of the range was missed (about 6 % of random births
+  in the review's probe). Curve steps now also change where a transit ends.
+  The sky and the timeline tag each change of the shared instant with its
+  source and the number of its request, so neither a fast scrub nor the
+  navigator's play loop can pull the cursor away from the instant that the
+  sky shows. The scrub zones wait for a horizontal movement, so a vertical
+  swipe scrolls the page from anywhere on the plot, and a second finger
+  during a scrub is ignored. Escape that closes a dialog no longer also
+  closes the docked inspector. A life event can be placed on the first and
+  the last calendar date of the range. A time change made just before
+  "Generate" can no longer bring back the previous chart.
+- An independent evaluator, written from the rule specification only, checks
+  the theme curves of the app on 1,200 random skies.
+
 ## [Unreleased] - 2026-09-07
 
 ### Reading experience

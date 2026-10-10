@@ -56,6 +56,7 @@ import {
 const messages = defineMessages({
   en: {
     loadingWebgl: "Initializing WebGL observatory",
+    loadingTimeline: "Loading your life timeline",
     featureSphereTitle: "3D celestial sphere",
     featureSphereBody: "Orbit the geocentric sky and select every planetary body.",
     featureChartsTitle: "Dual Vedic charts",
@@ -113,6 +114,7 @@ const messages = defineMessages({
   },
   hi: {
     loadingWebgl: "WebGL वेधशाला आरंभ हो रही है",
+    loadingTimeline: "आपकी जीवन समयरेखा लोड हो रही है",
     featureSphereTitle: "3D खगोलीय गोला",
     featureSphereBody: "भूकेन्द्रीय आकाश को घुमाएँ और प्रत्येक ग्रह चुनें।",
     featureChartsTitle: "दो वैदिक कुण्डली शैलियाँ",
@@ -169,6 +171,7 @@ const messages = defineMessages({
   },
   mr: {
     loadingWebgl: "WebGL वेधशाळा सुरू होत आहे",
+    loadingTimeline: "तुमची जीवन कालरेषा लोड होत आहे",
     featureSphereTitle: "3D खगोलीय गोल",
     featureSphereBody: "भूकेंद्री आकाश फिरवा आणि प्रत्येक ग्रह निवडा.",
     featureChartsTitle: "दोन वैदिक कुंडली शैली",
@@ -225,6 +228,7 @@ const messages = defineMessages({
   },
   de: {
     loadingWebgl: "WebGL-Observatorium wird initialisiert",
+    loadingTimeline: "Deine Lebenszeitleiste wird geladen",
     featureSphereTitle: "3D-Himmelssphäre",
     featureSphereBody: "Bewege dich durch den geozentrischen Himmel und wähle jeden Himmelskörper.",
     featureChartsTitle: "Zwei vedische Darstellungen",
@@ -301,6 +305,24 @@ const CelestialSphere = dynamic(
     loading: () => <CelestialLoading />,
   },
 );
+
+function TimelineLoading() {
+  const t = useScopedTranslations(messages);
+  return (
+    <div className="grid min-h-40 place-items-center rounded-[28px] border border-[var(--border)] bg-[var(--surface)] text-sm text-[var(--muted)]">
+      {t("loadingTimeline")}
+    </div>
+  );
+}
+
+/** "timeline" when the life timeline set the shared instant, else "other". */
+type InstantSource = "timeline" | "other";
+
+// Loaded after a chart exists, so the landing page does not carry it.
+const LifeTimeline = dynamic(() => import("@/components/timeline/LifeTimeline"), {
+  ssr: false,
+  loading: () => <TimelineLoading />,
+});
 
 function formatDegrees(value: number, locale: AppLocale): string {
   const degrees = Math.floor(value);
@@ -410,6 +432,15 @@ export default function VedicAstrologyApp() {
   const [natalChart, setNatalChart] = useState<VedicChart | null>(null);
   const [displayChart, setDisplayChart] = useState<VedicChart | null>(null);
   const [selectedInstant, setSelectedInstant] = useState<Date | null>(null);
+  // Who set the shared instant last, and the number of the change request
+  // that set it. Every request gets a larger number than the one before. The
+  // life timeline uses both to tell its own echoes from changes made by
+  // another control (even to an equal value), and to ignore an older change
+  // that one of its own newer requests will replace.
+  const [selection, setSelection] = useState<{ source: InstantSource; revision: number }>({
+    source: "other",
+    revision: 0,
+  });
   const [analysisAsOf, setAnalysisAsOf] = useState<Date | null>(null);
   const [selectedPlanetId, setSelectedPlanetId] = useState<GrahaId | null>(null);
   const [selectedHouse, setSelectedHouse] = useState<HouseNumber | null>(null);
@@ -418,6 +449,9 @@ export default function VedicAstrologyApp() {
   const [isPending, startTransition] = useTransition();
   const simulationFrame = useRef<number | null>(null);
   const pendingSimulationInstant = useRef<Date | null>(null);
+  const pendingSimulationSource = useRef<InstantSource>("other");
+  const pendingSimulationRevision = useRef(0);
+  const lastInstantRevision = useRef(0);
 
   useEffect(() => {
     if (!natalChart) return;
@@ -436,6 +470,15 @@ export default function VedicAstrologyApp() {
 
   const handleGenerate = useCallback((nextRequest: HoroscopeRequest) => {
     setError(null);
+    // A time change still waiting for its frame belongs to the old chart;
+    // drop it, so it cannot commit the old chart after the new one.
+    if (simulationFrame.current !== null) {
+      window.cancelAnimationFrame(simulationFrame.current);
+      simulationFrame.current = null;
+    }
+    pendingSimulationInstant.current = null;
+    lastInstantRevision.current += 1;
+    const revision = lastInstantRevision.current;
     startTransition(() => {
       try {
         const nextChart = calculateVedicChart(nextRequest.chartInput);
@@ -443,6 +486,7 @@ export default function VedicAstrologyApp() {
         setNatalChart(nextChart);
         setDisplayChart(nextChart);
         setSelectedInstant(new Date(nextRequest.birth.instant));
+        setSelection({ source: "other", revision });
         setAnalysisAsOf(new Date());
         setSelectedPlanetId(null);
         setSelectedHouse(1);
@@ -460,15 +504,21 @@ export default function VedicAstrologyApp() {
     });
   }, [t]);
 
+  /** Returns the number of this change request (see `selection`). */
   const handleTimeChange = useCallback(
-    (instant: Date) => {
-      if (!request) return;
+    (instant: Date, source: InstantSource = "other"): number => {
+      if (!request) return lastInstantRevision.current;
+      lastInstantRevision.current += 1;
       pendingSimulationInstant.current = instant;
-      if (simulationFrame.current !== null) return;
+      pendingSimulationSource.current = source;
+      pendingSimulationRevision.current = lastInstantRevision.current;
+      if (simulationFrame.current !== null) return lastInstantRevision.current;
 
       simulationFrame.current = window.requestAnimationFrame(() => {
         simulationFrame.current = null;
         const nextInstant = pendingSimulationInstant.current;
+        const nextSource = pendingSimulationSource.current;
+        const nextRevision = pendingSimulationRevision.current;
         pendingSimulationInstant.current = null;
         if (!nextInstant) return;
 
@@ -480,6 +530,7 @@ export default function VedicAstrologyApp() {
           startTransition(() => {
             setError(null);
             setSelectedInstant(nextInstant);
+            setSelection({ source: nextSource, revision: nextRevision });
             setDisplayChart(nextChart);
           });
         } catch (reason) {
@@ -487,6 +538,7 @@ export default function VedicAstrologyApp() {
           setError(t("instantError"));
         }
       });
+      return lastInstantRevision.current;
     },
     [request, startTransition, t],
   );
@@ -727,6 +779,23 @@ export default function VedicAstrologyApp() {
               selectedInstant={selectedInstant}
               timeZone={request.birth.timeZone}
               onChange={handleTimeChange}
+            />
+
+            {/*
+              The life timeline shares the slider's instant: scrubbing it
+              moves the 3D view and the charts below, and the slider moves its
+              cursor. A new chart remounts it, which resets its view.
+            */}
+            <LifeTimeline
+              key={`${natalChart.instant}|${natalChart.location.latitude}|${natalChart.location.longitude}`}
+              natalChart={natalChart}
+              birthInstant={request.birth.instant}
+              timeZone={request.birth.timeZone}
+              todayInstant={analysisAsOf}
+              selectedInstant={selectedInstant}
+              selectionSource={selection.source}
+              selectionRevision={selection.revision}
+              onSelectInstant={handleTimeChange}
             />
 
             <section id="cosmos" aria-labelledby="cosmos-title" className="space-y-3">

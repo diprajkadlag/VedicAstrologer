@@ -19,7 +19,7 @@ cloud sessions where every token is paid from a limited credit.
 | `npm ci` | install | ~15 s |
 | `npm run typecheck` | `tsc --noEmit` | ~10 s |
 | `npm run lint` | ESLint | ~10 s |
-| `npm test` | Vitest: 186 tests in 21 files | ~15 s |
+| `npm test` | Vitest: 338 tests in 36 files (9 Oct 2026) | ~15 s |
 | `npm run build` | production build | ~20 s |
 | `npm run e2e` | Playwright phone checks (builds and serves on port 3737) | a few minutes |
 
@@ -32,9 +32,19 @@ cloud sessions where every token is paid from a limited credit.
 
 - `components/VedicAstrologyApp.tsx`: the page. Owns the state: `natalChart`,
   `displayChart` (chart for the time-navigator instant), `selectedInstant`,
-  `selectedPlanetId`, `selectedHouse`.
-- `components/ui/TimeNavigator.tsx`: time slider (± day/month/year/decade around birth), play/pause.
-- `components/dashboard/ChartWorkspace.tsx`: the chart card. North/South switch plus a side
+  `selectedPlanetId`, `selectedHouse`, and `selection` (see "Shared instant" below).
+- `components/ui/TimeNavigator.tsx`: time slider (± day/month/year/decade/century around
+  birth), play/pause. It widens its window by itself when the shared instant leaves it.
+- `components/timeline/` and `lib/timeline/`: the life timeline, 100 years of Vimshottari
+  periods and transits on one time axis. A Web Worker (`lib/timeline/timeline.worker.ts`)
+  calculates the motion tables. CI fails when the build does not contain the worker chunk.
+- Shared instant: `handleTimeChange(instant, source)` in `VedicAstrologyApp.tsx` returns the
+  number of the change request. `selection` (`{ source, revision }`) tells the life timeline
+  who set `selectedInstant` and with which request. When you change the time navigator or
+  the page state, keep this contract. If you break it, the timeline cursor stops following
+  the other controls. `docs/ARCHITECTURE.md` section 6a explains why.
+- `components/dashboard/ChartWorkspace.tsx`: the chart card. North/South switch, a Birth
+  chart (D1) | Ninth-division chart (D9) switch (the second `role="group"`), plus a side
   panel for the selected house or planet.
 - `components/chart/`: `NorthIndianChart.tsx` and `SouthIndianChart.tsx`. Both take
   `VedicChartRendererProps` from `types.ts` and draw into a 400 × 400 SVG viewBox.

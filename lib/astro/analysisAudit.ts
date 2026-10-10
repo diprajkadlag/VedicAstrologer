@@ -26,7 +26,9 @@ export type AnalysisLimitationId =
   | "feature-scope"
   | "ephemeris-tolerance"
   | "dasha-convention"
-  | "transit-score-method";
+  | "transit-score-method"
+  | "life-curve-method"
+  | "dasha-fine-precision";
 
 export interface AnalysisLimitation {
   id: AnalysisLimitationId;
@@ -71,7 +73,7 @@ export const ANALYSIS_LIMITATIONS: readonly AnalysisLimitation[] = [
   {
     id: "feature-scope",
     statement:
-      "The current engine does not calculate Shadbala, varga charts other than the ninth-division chart, combustion, classical Drishti, Yuti orbs, yogas, Ashtakavarga, or predictive event probabilities. Text mentioning these concepts is educational only. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it.",
+      "The current engine does not calculate Shadbala, varga charts other than the ninth-division chart, combustion, classical Drishti, Yuti orbs, yogas, or predictive event probabilities. Text mentioning these concepts is educational only. The ninth-division chart is shown on the chart for study only; the readings, scores, AI context and PDF report do not use it. Ashtakavarga is calculated only for the life timeline's strength strip and theme curves.",
   },
   {
     id: "ephemeris-tolerance",
@@ -87,6 +89,16 @@ export const ANALYSIS_LIMITATIONS: readonly AnalysisLimitation[] = [
     id: "transit-score-method",
     statement:
       "Daily and monthly Gochara scores are app-specific weighted rule summaries. They are not a universally canonical Jyotish measure, probability, scientific forecast, or outcome rating.",
+  },
+  {
+    id: "life-curve-method",
+    statement:
+      "The life timeline's four theme curves are app-specific weighted summaries of classical Gochara, Vedha, Ashtakavarga and Dasha-lord rules. They do not measure mood, health or outcomes, and they are not forecasts.",
+  },
+  {
+    id: "dasha-fine-precision",
+    statement:
+      "Pratyantardasha and Sookshma boundaries move by days to weeks for every few minutes of birth-time error, so the finer Vimshottari levels are shown for exploration, not as exact dates.",
   },
 ] as const;
 
