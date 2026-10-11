@@ -101,13 +101,16 @@ describe("TwelveHouseSummary", () => {
     const navigatorIndex = components.indexOf("TimeNavigator");
     const timelineIndex = components.indexOf("LifeTimeline");
     const sphereIndex = components.indexOf("CelestialSphere");
+    const workspaceIndex = components.indexOf("ChartWorkspace");
     const panelIndex = components.indexOf("InterpretationPanel");
 
     expect(summaries).toHaveLength(1);
+    // The time slider sits directly above the 3D view that its Play button
+    // drives; the life timeline follows the chart card.
     expect(navigatorIndex).toBeLessThan(sphereIndex);
-    // The life timeline sits between the time slider and the 3D view it drives.
-    expect(timelineIndex).toBeGreaterThan(navigatorIndex);
-    expect(timelineIndex).toBeLessThan(sphereIndex);
+    expect(sphereIndex).toBeLessThan(workspaceIndex);
+    expect(timelineIndex).toBeGreaterThan(workspaceIndex);
+    expect(timelineIndex).toBeLessThan(panelIndex);
     expect(summaries[0].index).toBeGreaterThan(sphereIndex);
     expect(summaries[0].index).toBeGreaterThan(panelIndex);
   });

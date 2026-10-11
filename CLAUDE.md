@@ -19,7 +19,7 @@ cloud sessions where every token is paid from a limited credit.
 | `npm ci` | install | ~15 s |
 | `npm run typecheck` | `tsc --noEmit` | ~10 s |
 | `npm run lint` | ESLint | ~10 s |
-| `npm test` | Vitest: 338 tests in 36 files (9 Oct 2026) | ~15 s |
+| `npm test` | Vitest: 326 tests in 34 files (10 Oct 2026) | ~15 s |
 | `npm run build` | production build | ~20 s |
 | `npm run e2e` | Playwright phone checks (builds and serves on port 3737) | a few minutes |
 

@@ -61,14 +61,6 @@ import {
   type LifeCurveId,
 } from "@/lib/timeline/lifeCurves";
 import {
-  forgetSavedLifeEvents,
-  lifeEventStorageKey,
-  loadSavedLifeEvents,
-  saveLifeEvents,
-  sortLifeEvents,
-  type LifeEvent,
-} from "@/lib/timeline/lifeEvents";
-import {
   DAY_MS,
   computeMoonWindow,
   motionSegments,
@@ -76,7 +68,6 @@ import {
   type PlanetTimeline,
 } from "@/lib/timeline/planetTimeline";
 
-import LifeEventsPanel from "./LifeEventsPanel";
 import OnThisDateCard from "./OnThisDateCard";
 import TimelineInspector from "./TimelineInspector";
 import TimelinePlotView from "./TimelinePlot";
@@ -124,7 +115,6 @@ interface LayerState {
   readonly ribbon: boolean;
   readonly bands: boolean;
   readonly curves: readonly LifeCurveId[];
-  readonly events: boolean;
   readonly natal: boolean;
   readonly sarva: boolean;
   readonly houseReference: "lagna" | "moon";
@@ -136,7 +126,6 @@ const DEFAULT_LAYERS: LayerState = {
   ribbon: true,
   bands: true,
   curves: LIFE_CURVE_IDS,
-  events: true,
   natal: true,
   sarva: false,
   houseReference: "lagna",
@@ -310,7 +299,6 @@ function LayersDialog({
         <fieldset className="space-y-1">
           {checkbox(t("layerRibbon"), layers.ribbon, (value) => toggle("ribbon", value), "ribbon")}
           {checkbox(t("layerBands"), layers.bands, (value) => toggle("bands", value), "bands")}
-          {checkbox(t("layerEvents"), layers.events, (value) => toggle("events", value), "events")}
           {checkbox(t("layerNatal"), layers.natal, (value) => toggle("natal", value), "natal")}
           {checkbox(t("layerSarva"), layers.sarva, (value) => toggle("sarva", value), "sarva")}
         </fieldset>
@@ -562,33 +550,6 @@ export default function LifeTimeline({
     () => minutesToMansionEdge(clock, natalMoon.speedDegPerDay),
     [clock, natalMoon.speedDegPerDay],
   );
-
-  /* ------------------------------------------------------------ life events */
-  const storageKey = lifeEventStorageKey(
-    birthMs,
-    natalChart.location.latitude,
-    natalChart.location.longitude,
-  );
-  const [eventsState, setEventsState] = useState(() => {
-    const saved = loadSavedLifeEvents(storageKey);
-    return { events: saved ?? ([] as LifeEvent[]), keep: saved !== null, failed: false };
-  });
-
-  const updateEvents = (events: LifeEvent[]) => {
-    const sorted = sortLifeEvents(events);
-    const failed = eventsState.keep ? !saveLifeEvents(storageKey, sorted) : false;
-    setEventsState({ events: sorted, keep: eventsState.keep && !failed, failed });
-  };
-
-  const setKeep = (keep: boolean) => {
-    if (keep) {
-      const saved = saveLifeEvents(storageKey, eventsState.events);
-      setEventsState({ ...eventsState, keep: saved, failed: !saved });
-    } else {
-      forgetSavedLifeEvents(storageKey);
-      setEventsState({ ...eventsState, keep: false, failed: false });
-    }
-  };
 
   /* -------------------------------------------------------------- table view */
   const rows = useMemo<ChangeRow[]>(() => {
@@ -842,8 +803,6 @@ export default function LifeTimeline({
               showBands={layers.bands}
               curveSteps={curveSteps}
               visibleCurves={layers.curves}
-              events={eventsState.events}
-              showEvents={layers.events}
               strength={strength}
               sarva={layers.sarva ? ashtakavarga.sarva : null}
               onViewChange={setView}
@@ -1010,24 +969,6 @@ export default function LifeTimeline({
           </div>
         ) : null}
 
-      </div>
-
-      <div className="mt-6 border-t border-[var(--border)] pt-5">
-        <LifeEventsPanel
-          events={eventsState.events}
-          keepOnDevice={eventsState.keep}
-          storageFailed={eventsState.failed}
-          rangeStartMs={range.startMs}
-          rangeEndMs={range.endMs}
-          defaultMs={cursorMs}
-          timeZone={timeZone}
-          locale={locale}
-          t={t}
-          onAdd={(event) => updateEvents([...eventsState.events, event])}
-          onRemove={(id) => updateEvents(eventsState.events.filter((event) => event.id !== id))}
-          onJump={(event) => goTo(event.ms)}
-          onKeepChange={setKeep}
-        />
       </div>
 
       <p className="mt-5 text-[11px] leading-5 text-[var(--muted)]">{t("footer")}</p>

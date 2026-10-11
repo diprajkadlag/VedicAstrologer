@@ -318,6 +318,9 @@ function TimelineLoading() {
 /** "timeline" when the life timeline set the shared instant, else "other". */
 type InstantSource = "timeline" | "other";
 
+/** Storage keys of the removed life-events block (see the clean-up effect). */
+const REMOVED_LIFE_EVENTS_PREFIX = "jyotish-life-events:";
+
 // Loaded after a chart exists, so the landing page does not carry it.
 const LifeTimeline = dynamic(() => import("@/components/timeline/LifeTimeline"), {
   ssr: false,
@@ -467,6 +470,20 @@ export default function VedicAstrologyApp() {
     },
     [],
   );
+
+  // The life timeline's events block was removed on 2026-10-10. Delete the
+  // copies that its "Keep on this device" option saved in this browser.
+  useEffect(() => {
+    try {
+      const storage = window.localStorage;
+      for (let index = storage.length - 1; index >= 0; index -= 1) {
+        const key = storage.key(index);
+        if (key?.startsWith(REMOVED_LIFE_EVENTS_PREFIX)) storage.removeItem(key);
+      }
+    } catch {
+      // Storage can be blocked; then nothing was saved either.
+    }
+  }, []);
 
   const handleGenerate = useCallback((nextRequest: HoroscopeRequest) => {
     setError(null);
@@ -781,23 +798,6 @@ export default function VedicAstrologyApp() {
               onChange={handleTimeChange}
             />
 
-            {/*
-              The life timeline shares the slider's instant: scrubbing it
-              moves the 3D view and the charts below, and the slider moves its
-              cursor. A new chart remounts it, which resets its view.
-            */}
-            <LifeTimeline
-              key={`${natalChart.instant}|${natalChart.location.latitude}|${natalChart.location.longitude}`}
-              natalChart={natalChart}
-              birthInstant={request.birth.instant}
-              timeZone={request.birth.timeZone}
-              todayInstant={analysisAsOf}
-              selectedInstant={selectedInstant}
-              selectionSource={selection.source}
-              selectionRevision={selection.revision}
-              onSelectInstant={handleTimeChange}
-            />
-
             <section id="cosmos" aria-labelledby="cosmos-title" className="space-y-3">
               <div className="flex flex-wrap items-end justify-between gap-3 px-1">
                 <div>
@@ -836,6 +836,25 @@ export default function VedicAstrologyApp() {
               selectedPlanetId={selectedPlanetId}
               onSelectHouse={handleHouseSelection}
               onSelectPlanet={handlePlanetSelection}
+            />
+
+            {/*
+              The life timeline shares the slider's instant: scrubbing it
+              moves the 3D view and the charts above, and the slider moves its
+              cursor. It comes after the chart card, so the time navigator
+              stays directly above the 3D view that its Play button drives. A
+              new chart remounts it, which resets its view.
+            */}
+            <LifeTimeline
+              key={`${natalChart.instant}|${natalChart.location.latitude}|${natalChart.location.longitude}`}
+              natalChart={natalChart}
+              birthInstant={request.birth.instant}
+              timeZone={request.birth.timeZone}
+              todayInstant={analysisAsOf}
+              selectedInstant={selectedInstant}
+              selectionSource={selection.source}
+              selectionRevision={selection.revision}
+              onSelectInstant={handleTimeChange}
             />
 
             <section

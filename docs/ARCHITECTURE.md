@@ -36,7 +36,7 @@ flowchart LR
         APP[VedicAstrologyApp<br/>orchestration and shared selection]
         EPH[ephemeris.ts<br/>canonical VedicChart]
         TIME[TimeNavigator]
-        LT[LifeTimeline<br/>periods, bands, curves, events]
+        LT[LifeTimeline<br/>periods, bands, curves]
         WKR[timeline.worker.ts<br/>100-year motion tables]
         WEBGL[CelestialSphere<br/>React Three Fiber]
         SVG[ChartWorkspace<br/>North and South SVG charts]
@@ -174,8 +174,8 @@ is offline” would not be: place search is still a network operation.
 | 3D presentation | `components/3d/*` | WebGL capability probe, responsive camera, Earth/celestial sphere, planets, lunar-mansion sectors, trails, controls, and fullscreen |
 | 2D presentation | `components/chart/*`, `components/dashboard/ChartWorkspace.tsx` | Interactive North and South Indian SVG chart layouts |
 | Analysis UI | `components/analysis/*`, `components/dashboard/HoroscopeTab.tsx` | Overview, positions, houses, lunar mansions, Vimshottari periods, transits, guide, methodology, and prompt tabs |
-| Timeline engine | `lib/timeline/*`, `lib/astro/ashtakavarga.ts` | Worker-safe motion tables, stations, ingresses, four Vimshottari levels, transit bands, theme curves, geometry, life-event storage |
-| Timeline UI | `components/timeline/*` | Life-timeline section, SVG plot and gestures, "on this date" card, inspector, layers, table view, life events, worker hook |
+| Timeline engine | `lib/timeline/*`, `lib/astro/ashtakavarga.ts` | Worker-safe motion tables, stations, ingresses, four Vimshottari levels, transit bands, theme curves, geometry |
+| Timeline UI | `components/timeline/*` | Life-timeline section, SVG plot and gestures, "on this date" card, inspector, layers, table view, worker hook |
 | Localization | `lib/i18n.ts`, `lib/astro/localizedNames.ts`, `lib/astro/localizedGlossary.ts`, component dictionaries | English, Hindi, Marathi, and German text, locale-native astronomical labels, glossary content, and locale-aware number/date display |
 | Geocoding | `app/api/geocode/route.node.ts`, `lib/geocoding/*` | Deployment-selected proxy/browser Nominatim transport, response normalization, timezone lookup, throttling, and HTTP errors |
 
@@ -269,8 +269,9 @@ This prevents a time-scrubber interaction from silently changing the natal
 foundation.
 
 After generation, the result order is deliberate: completion header, time
-navigator, life timeline, 3D cosmos, SVG chart workspace, the analysis tabs,
-and the fixed natal twelve-house reading last. The house cards are semantic
+navigator, 3D cosmos, SVG chart workspace, life timeline, the analysis tabs,
+and the fixed natal twelve-house reading last. The time navigator stays
+directly above the 3D cosmos that its Play button drives. The house cards are semantic
 articles rather than disclosures, so all twelve readings are immediately
 available and the analysis tab set does not duplicate them.
 
@@ -399,7 +400,9 @@ a scrub is ignored. This sync
 is a state adjustment during render, not an effect, because the React
 Compiler lint rules forbid synchronous state updates in effects and reading
 refs during render. The time navigator gained a 100-year window and widens
-itself when the shared instant leaves its current window.
+itself when the shared instant leaves its current window. A step click
+builds on the last requested step while the page has not committed it yet,
+so quick clicks all count.
 
 ### Rendering and gestures
 
@@ -440,11 +443,11 @@ its own small Moon window, so no value silently lacks the Moon's rules.
 
 ### Privacy
 
-Life events stay in memory. Only after the reader turns on "Keep on this
-device" are they written to `localStorage`, under a key derived from the
-birth data with FNV-1a (a separation key, not a privacy measure). Turning the
-option off deletes the saved copy. Nothing about the timeline is sent to a
-server, added to the AI context or printed in the PDF.
+The timeline stores nothing in the browser. Nothing about it is sent to a
+server, added to the AI context or printed in the PDF. An events block that
+was online for a few hours on 10 Oct 2026 could save personal events in
+`localStorage` under keys that start with `jyotish-life-events:`. The page
+deletes such keys when it loads.
 
 ## 7. 3D rendering and WebGL resilience
 
@@ -659,13 +662,14 @@ The tests emphasize pure boundaries and invariants:
 | Localization and education | four-language key parity, familiar English labels, German labels such as Löwe/Sonne/Mond, native Devanagari, clickable glossary coverage, nine planetary profiles, twelve houses, and all 108 educational combinations |
 | Geocoding | query and URL safety, upstream field whitelisting, timezone lookup, coalescing, request spacing, cache/error semantics |
 | Charts and 3D helpers | traditional SVG layout maps, localized accessibility text, responsive camera math, and WebGL disabled/lost/fallback classification |
-| Life timeline | chart-identical longitudes and speeds, stations and ingresses against published Lahiri dates and a two-hour brute-force scan, four Vimshottari levels against the Dashas tab, birth-time shift, Raman's Standard Horoscope Ashtakavarga, real Sade Sati dates, Vedha and its exemptions, curve arithmetic, layout and ticks, life-event storage, four-language message and placeholder parity |
+| Life timeline | chart-identical longitudes and speeds, stations and ingresses against published Lahiri dates and a two-hour brute-force scan, four Vimshottari levels against the Dashas tab, birth-time shift, Raman's Standard Horoscope Ashtakavarga, real Sade Sati dates, Vedha and its exemptions, curve arithmetic, layout and ticks, four-language message and placeholder parity |
 
 Playwright runs browser tests in CI at a 320 px viewport and in iPhone SE and
 Pixel 7 emulation: page overflow, form-field size, touch targets, chart label
 legibility, the cosmos touch opt-in, and the life timeline (worker result,
-zoom, pinch, scrubbing, taps, vertical page scrolling, life events, Hindi
-layout). The repository does not include automated visual regression,
+zoom, pinch, scrubbing, taps, vertical page scrolling, the docked inspector at
+desktop width, Hindi layout, and the clean-up of saved events from the removed
+events block). The repository does not include automated visual regression,
 GPU-matrix testing, or live Nominatim contract tests. Final rendering behavior
 still depends on the browser, graphics stack, fonts, and viewport.
 

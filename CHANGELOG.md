@@ -8,7 +8,7 @@ professional astrological certification.
 
 ### Life timeline
 
-- A new section after the time navigator puts the natal Vimshottari periods
+- A new section after the chart card puts the natal Vimshottari periods
   and 100 years of transits on one time axis, from birth onwards. It opens at
   today and zooms by years, months, or days with pinch, ctrl+wheel, buttons,
   or keyboard; a sideways drag moves it and a vertical swipe still scrolls the
@@ -43,16 +43,19 @@ professional astrological certification.
   or outcomes.
 - The timeline's playhead and the time navigator share one instant, so
   scrubbing moves the 3D cosmos and the charts. The time navigator gained a
-  100-year window and widens itself for distant dates.
+  100-year window and widens itself for distant dates. Quick clicks on its
+  step buttons now all count, also before the page has re-rendered.
 - An "on this date" card shows the period stack, body positions with houses
   from the Ascendant and the birth Moon, curve values, active patterns and a
   short summary in the interface language. An inspector explains any tapped
   period, band, line, station, curve value or change. It opens as a bottom
   sheet on phones and tablets and docks above the card from 1024 px, where it
   covers no control.
-- Personal milestones and plans can be added, searched and jumped to. They
-  stay in memory unless the reader turns on "Keep on this device"; turning it
-  off deletes the saved copy.
+- The section sits after the chart card, so the time navigator stays
+  directly above the 3D cosmos that its Play button drives.
+- An events block for personal milestones was online for a few hours on
+  10 Oct 2026 and was removed again. The page deletes any events that this
+  block saved in a browser.
 - A table view lists the window's changes as text, including the curve
   changes the plot marks. The plot has a summary for screen readers, and
   every new string exists in English, Hindi, Marathi and German.
@@ -80,8 +83,7 @@ professional astrological certification.
   sky shows. The scrub zones wait for a horizontal movement, so a vertical
   swipe scrolls the page from anywhere on the plot, and a second finger
   during a scrub is ignored. Escape that closes a dialog no longer also
-  closes the docked inspector. A life event can be placed on the first and
-  the last calendar date of the range. A time change made just before
+  closes the docked inspector. A time change made just before
   "Generate" can no longer bring back the previous chart.
 - An independent evaluator, written from the rule specification only, checks
   the theme curves of the app on 1,200 random skies.
