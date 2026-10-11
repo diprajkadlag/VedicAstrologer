@@ -21,9 +21,11 @@ import {
   type LocalizedMessages,
   type TranslationValues,
 } from "@/lib/i18n";
+import { isTimeZoneMode, type TimeZoneMode } from "@/lib/timeZones";
 
 const LOCALE_STORAGE_KEY = "jyotish-observatory-locale";
 const THEME_STORAGE_KEY = "jyotish-observatory-theme";
+const TIME_ZONE_STORAGE_KEY = "jyotish-observatory-time-zone";
 
 const documentCopy: Readonly<
   Record<AppLocale, Readonly<{ title: string; description: string }>>
@@ -53,8 +55,11 @@ const documentCopy: Readonly<
 interface AppPreferencesValue {
   locale: AppLocale;
   theme: AppTheme;
+  /** Where computed dates are shown: birth place or this device. */
+  timeZoneMode: TimeZoneMode;
   setLocale(locale: AppLocale): void;
   setTheme(theme: AppTheme): void;
+  setTimeZoneMode(mode: TimeZoneMode): void;
   toggleTheme(): void;
 }
 
@@ -113,6 +118,18 @@ function getThemeSnapshot(): AppTheme {
   return "light";
 }
 
+function getTimeZoneModeSnapshot(): TimeZoneMode {
+  const stored = readPreference(TIME_ZONE_STORAGE_KEY);
+  if (isTimeZoneMode(stored)) return stored;
+  // Without storage, the choice lives on the document for this visit.
+  const documentMode = document.documentElement.dataset.timeZoneMode;
+  return isTimeZoneMode(documentMode) ? documentMode : "birth";
+}
+
+function getServerTimeZoneModeSnapshot(): TimeZoneMode {
+  return "birth";
+}
+
 function getServerLocaleSnapshot(): AppLocale {
   return DEFAULT_APP_LOCALE;
 }
@@ -135,6 +152,11 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
     subscribeToPreferences,
     getThemeSnapshot,
     getServerThemeSnapshot,
+  );
+  const timeZoneMode = useSyncExternalStore(
+    subscribeToPreferences,
+    getTimeZoneModeSnapshot,
+    getServerTimeZoneModeSnapshot,
   );
 
   useEffect(() => {
@@ -178,13 +200,19 @@ export function AppPreferencesProvider({ children }: { children: ReactNode }) {
     emitPreferenceChange();
   }, []);
 
+  const setTimeZoneMode = useCallback((nextMode: TimeZoneMode) => {
+    writePreference(TIME_ZONE_STORAGE_KEY, nextMode);
+    document.documentElement.dataset.timeZoneMode = nextMode;
+    emitPreferenceChange();
+  }, []);
+
   const toggleTheme = useCallback(() => {
     setTheme(theme === "dark" ? "light" : "dark");
   }, [setTheme, theme]);
 
   const value = useMemo<AppPreferencesValue>(
-    () => ({ locale, theme, setLocale, setTheme, toggleTheme }),
-    [locale, setLocale, setTheme, theme, toggleTheme],
+    () => ({ locale, theme, timeZoneMode, setLocale, setTheme, setTimeZoneMode, toggleTheme }),
+    [locale, setLocale, setTheme, setTimeZoneMode, theme, timeZoneMode, toggleTheme],
   );
 
   return (

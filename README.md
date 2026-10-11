@@ -165,6 +165,9 @@ birth form so visitors can understand the workflow before submitting data.
 - all 27 lunar mansions and Vimshottari major/subperiod timelines
 - interactive 22-term guide, nine planetary profiles, and all 108
   planet-in-house educational combinations
+- a "Time zone" selector that shows the time navigator, the life timeline, and
+  the planetary periods in the birth place's time zone or in this device's;
+  it appears only when the two clocks differ
 - locale-native presentation: familiar English terms and zodiac names, German
   terms such as *Löwe*, *Sonne*, and *Mond*, and native Devanagari in Hindi and
   Marathi

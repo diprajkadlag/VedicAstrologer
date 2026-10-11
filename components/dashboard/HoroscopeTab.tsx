@@ -849,11 +849,13 @@ export default function HoroscopeTab({
   const moon = positions.moon;
   const sun = positions.sun;
   const mercury = positions.mercury;
-  const dateLabel = new Intl.DateTimeFormat(INTL_LOCALES[locale], {
+  // The tab works in UTC calendar days (see selectNow), so its time stays in
+  // UTC and says so; the page's time-zone choice does not apply here.
+  const dateLabel = `${new Intl.DateTimeFormat(INTL_LOCALES[locale], {
     dateStyle: "long",
     timeStyle: "short",
     timeZone: "UTC",
-  }).format(transitInstant);
+  }).format(transitInstant)} UTC`;
   const dailyRasi = getLocalizedRasiName(RASIS[moon.signIndex], locale);
   const dailyNakshatra = getLocalizedNakshatraName(
     analysis.daily.moonNakshatra,
