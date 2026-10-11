@@ -6,7 +6,6 @@ import { calculateVedicChart } from "../../lib/astro/ephemeris";
 import { APP_LOCALES } from "../../lib/i18n";
 import { TRANSIT_BAND_IDS } from "../../lib/timeline/gocharaBands";
 import { CURVE_REASON_KINDS, LIFE_CURVE_IDS } from "../../lib/timeline/lifeCurves";
-import { LIFE_EVENT_CATEGORIES } from "../../lib/timeline/lifeEvents";
 import LifeTimeline from "./LifeTimeline";
 import { TIMELINE_MESSAGES } from "./timelineMessages";
 
@@ -76,7 +75,7 @@ describe("LifeTimeline", () => {
     );
   });
 
-  it("has a sentence for every rule kind, band, curve and event category in every language", () => {
+  it("has a sentence for every rule kind, band and curve in every language", () => {
     for (const locale of APP_LOCALES) {
       const messages = TIMELINE_MESSAGES[locale] as Record<string, string>;
       for (const kind of CURVE_REASON_KINDS) {
@@ -89,9 +88,6 @@ describe("LifeTimeline", () => {
       }
       for (const curve of LIFE_CURVE_IDS) {
         expect(messages[`curve_${curve}`], `${locale} curve ${curve}`).toBeTruthy();
-      }
-      for (const category of LIFE_EVENT_CATEGORIES) {
-        expect(messages[`category_${category}`], `${locale} category ${category}`).toBeTruthy();
       }
     }
   });

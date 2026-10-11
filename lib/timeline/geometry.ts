@@ -101,9 +101,6 @@ export interface TimelineLayout {
   readonly axisHeight: number;
   readonly minimapTop: number;
   readonly minimapHeight: number;
-  /** Row of life-event flags; zero height when there are none. */
-  readonly eventsTop: number;
-  readonly eventsHeight: number;
   readonly ribbonTop: number;
   readonly ribbonRowHeight: number;
   readonly ribbonRows: number;
@@ -151,7 +148,6 @@ export interface LayoutOptions {
   readonly ribbonRows: number;
   readonly showStrength: boolean;
   readonly laneCount: number;
-  readonly showEvents?: boolean;
   /** Friction and expansion rows; shown unless set to false. */
   readonly showBands?: boolean;
 }
@@ -160,7 +156,6 @@ const AXIS_HEIGHT = 22;
 const MINIMAP_HEIGHT = 14;
 const BAND_ROW_HEIGHT = 10;
 const STRENGTH_HEIGHT = 12;
-const EVENTS_HEIGHT = 14;
 const GAP = 6;
 
 export function computeLayout(width: number, options: LayoutOptions): TimelineLayout {
@@ -172,9 +167,7 @@ export function computeLayout(width: number, options: LayoutOptions): TimelineLa
 
   const axisTop = 0;
   const minimapTop = axisTop + AXIS_HEIGHT + 4;
-  const eventsTop = minimapTop + MINIMAP_HEIGHT + GAP;
-  const eventsHeight = options.showEvents ? EVENTS_HEIGHT : 0;
-  const ribbonTop = eventsTop + eventsHeight + (options.showEvents ? 4 : 0);
+  const ribbonTop = minimapTop + MINIMAP_HEIGHT + GAP;
   const ribbonRows = clampNumber(Math.round(options.ribbonRows), 0, 4);
   const bandsTop = ribbonTop + ribbonRows * metrics.ribbonRow + (ribbonRows > 0 ? GAP : 0);
   const bandRows = options.showBands === false ? 0 : 2;
@@ -200,8 +193,6 @@ export function computeLayout(width: number, options: LayoutOptions): TimelineLa
     axisHeight: AXIS_HEIGHT,
     minimapTop,
     minimapHeight: MINIMAP_HEIGHT,
-    eventsTop,
-    eventsHeight,
     ribbonTop,
     ribbonRowHeight: metrics.ribbonRow,
     ribbonRows,

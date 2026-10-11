@@ -134,9 +134,7 @@ birth form so visitors can understand the workflow before submitting data.
   an "on this date" card with the period stack, body positions, curve values,
   active patterns, and a short summary; a tap on any period, band, line,
   station, or curve change opens an explanation
-- personal milestones and plans as markers, searchable, kept in memory or,
-  only when the reader opts in, in this browser's storage; a table view lists
-  the same changes as text
+- a table view that lists the same changes as text
 
 ### 3D geocentric cosmos
 
@@ -160,7 +158,7 @@ birth form so visitors can understand the workflow before submitting data.
 - synchronized planet and house selection across 3D, SVG, and analysis views
 - core Ascendant/Sun/Moon placements and a detailed planetary position table
 - after generation, the 12 house cards close the page, after the time
-  navigator, the life timeline, the 3D and chart tools, and the analysis
+  navigator, the 3D and chart tools, the life timeline, and the analysis
   tabs; each card is already open and short: what the house covers, one
   constructive line, one caution line, and a line per resident body, with
   no twelve-card accordion to work through
@@ -343,8 +341,8 @@ horizontal overflow, 16 px form fields, a 24 px control floor, 40 px primary
 controls, and the cosmos touch opt-in. For the life timeline it also checks
 that the Web Worker delivers every body, that zoom, pinch, scrubbing, and taps
 work, that a vertical swipe on the plot still scrolls the page, that the
-playhead and the time navigator stay in step, that life events are forgotten
-unless kept, and that Hindi fits at phone width. Screenshots of every section
+playhead and the time navigator stay in step, that the docked inspector works
+at desktop width, and that Hindi fits at phone width. Screenshots of every section
 land in `e2e-artifacts/screens/` and are uploaded by CI.
 
 Current milestone result:
@@ -446,7 +444,7 @@ components/analysis/          Jyotish dashboard, guide, methodology, audit UI
 components/dashboard/         Birth-chart, transit, and AI prompt workspaces
 components/export/            Client-only localized birth-chart PDF generation
 components/marketing/         Interactive illustrated feature showcase
-components/timeline/          Life timeline: plot, gestures, card, inspector, events
+components/timeline/          Life timeline: plot, gestures, card, inspector
 components/providers/         Locale and theme preferences
 components/ui/                Single-page birth form, term dialog, time navigator
 lib/astro/                    Ephemeris, civil time, periods, education, audits

@@ -347,34 +347,6 @@ export default function TimelineInspector({
         <p className="text-[11px] leading-5 text-[var(--muted)]">{t("lanesCaption")}</p>
       </>
     );
-  } else if (target?.kind === "event") {
-    const event = target.event;
-    const stack = dashaStackAt(clock, event.ms);
-    const active = bandsAt(bands, event.ms);
-    title = event.label;
-    body = (
-      <>
-        <p className="text-xs text-[var(--muted)]">
-          {t("eventInspectorTitle")} · {t(`category_${event.category}` as TimelineMessageKey)} · {formatDate(event.ms, timeZone, locale)}
-        </p>
-        <ul className="space-y-1 text-xs">
-          {stack.slice(0, 3).map((periodSpan) => (
-            <li key={periodSpan.level} className="flex justify-between gap-3">
-              <span className="text-[var(--muted)]">{levelName(periodSpan.level, t)}</span>
-              <span className="font-semibold text-[var(--foreground)]">{planetName(periodSpan.lord, locale)}</span>
-            </li>
-          ))}
-        </ul>
-        {active.length > 0 ? (
-          <p className="text-xs text-[var(--foreground)]">
-            {t("synthesisPatterns", { patterns: active.map((band) => bandName(band, t, locale)).join(", ") })}
-          </p>
-        ) : (
-          <p className="text-xs text-[var(--muted)]">{t("noBands")}</p>
-        )}
-      </>
-    );
-    range = { startMs: event.ms, endMs: event.ms };
   }
 
   const details = (
@@ -395,7 +367,7 @@ export default function TimelineInspector({
             onClick={() => onGoTo(range!.startMs)}
             className="min-h-10 rounded-xl border border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--foreground)] transition hover:bg-[var(--surface-muted)]"
           >
-            {range.endMs > range.startMs ? t("goToStart") : t("jump")}
+            {t("goToStart")}
           </button>
           {range.endMs > range.startMs ? (
             <button

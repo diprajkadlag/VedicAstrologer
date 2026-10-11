@@ -41,7 +41,6 @@ import {
 } from "@/lib/timeline/geometry";
 import { bandVisibleAt, type TransitBand } from "@/lib/timeline/gocharaBands";
 import { ZOOM_DASHA_LEVEL, type CurveStep, type LifeCurveId } from "@/lib/timeline/lifeCurves";
-import type { LifeEvent } from "@/lib/timeline/lifeEvents";
 import {
   DAY_MS,
   interpolateUnwrapped,
@@ -57,7 +56,6 @@ const TAP_SLOP_PX = 6;
 const TAP_MAX_MS = 500;
 /** While a finger moves, the real geometry is rebuilt at most this often. */
 const COMMIT_INTERVAL_MS = 120;
-const NO_EVENTS: readonly LifeEvent[] = [];
 const SLOW_BODIES: ReadonlySet<GrahaId> = new Set<GrahaId>(["saturn", "jupiter", "rahu", "ketu"]);
 const MEDIUM_BODIES: ReadonlySet<GrahaId> = new Set<GrahaId>(["sun", "mars", "venus", "mercury"]);
 
@@ -84,8 +82,6 @@ export interface TimelinePlotProps {
   readonly showBands: boolean;
   readonly curveSteps: Readonly<Record<LifeCurveId, readonly CurveStep[]>> | null;
   readonly visibleCurves: readonly LifeCurveId[];
-  readonly events: readonly LifeEvent[];
-  readonly showEvents: boolean;
   readonly strength: { readonly planet: AshtakavargaPlanet; readonly bindus: readonly number[] } | null;
   readonly sarva: readonly number[] | null;
   onViewChange(view: TimeWindow): void;
@@ -175,8 +171,6 @@ export default function TimelinePlot(props: TimelinePlotProps) {
     showBands,
     curveSteps,
     visibleCurves,
-    events,
-    showEvents,
     strength,
     sarva,
     onViewChange,
@@ -193,17 +187,15 @@ export default function TimelinePlot(props: TimelinePlotProps) {
   const hatchId = `timeline-hatch-${idBase}`;
 
   const ribbonLevels = showRibbon ? ZOOM_DASHA_LEVEL[zoom] : 0;
-  const eventsInRange = showEvents ? events : NO_EVENTS;
   const layout = useMemo(
     () =>
       computeLayout(width, {
         ribbonRows: ribbonLevels,
         showStrength: strength !== null,
         laneCount: visibleCurves.length,
-        showEvents: eventsInRange.length > 0,
         showBands,
       }),
-    [width, ribbonLevels, strength, visibleCurves.length, eventsInRange.length, showBands],
+    [width, ribbonLevels, strength, visibleCurves.length, showBands],
   );
 
   // Geometry covers one window to each side, so a drag reveals drawn content
@@ -505,39 +497,6 @@ export default function TimelinePlot(props: TimelinePlotProps) {
       });
     }
 
-    for (const event of eventsInRange) {
-      if (event.ms < renderWindow.startMs || event.ms > renderWindow.endMs) continue;
-      const x = timeToX(event.ms, renderWindow, renderLayout);
-      const top = layout.eventsTop;
-      nodes.push(
-        <g key={`event-${event.id}`}>
-          <line
-            x1={x}
-            x2={x}
-            y1={top}
-            y2={layout.height}
-            style={{ stroke: "var(--accent)" }}
-            strokeOpacity={0.35}
-            strokeDasharray="2 3"
-            vectorEffect="non-scaling-stroke"
-          />
-          <path
-            d={`M${x} ${top}l6 3.5l-6 3.5z`}
-            style={{ fill: "var(--accent)" }}
-          />
-          <line
-            x1={x}
-            x2={x}
-            y1={top}
-            y2={top + layout.eventsHeight}
-            style={{ stroke: "var(--accent)" }}
-            strokeWidth={1.5}
-            vectorEffect="non-scaling-stroke"
-          />
-        </g>,
-      );
-    }
-
     return nodes;
   }, [
     renderWindow,
@@ -562,7 +521,6 @@ export default function TimelinePlot(props: TimelinePlotProps) {
     curveSteps,
     visibleCurves,
     laneTops,
-    eventsInRange,
   ]);
 
   /* ------------------------------------------------- static, time-free layers */
@@ -761,14 +719,6 @@ export default function TimelinePlot(props: TimelinePlotProps) {
   function hitTest(x: number, y: number): InspectTarget | null {
     if (x < layout.plotLeft || x > layout.plotRight) return null;
     const ms = xToTime(x, view, layout);
-
-    if (layout.eventsHeight > 0 && y >= layout.eventsTop - 4 && y <= layout.eventsTop + layout.eventsHeight + 4) {
-      const nearest = eventsInRange
-        .map((event) => ({ event, distance: Math.abs(timeToX(event.ms, view, layout) - x) }))
-        .filter((entry) => entry.distance <= hitRadius)
-        .sort((a, b) => a.distance - b.distance)[0];
-      if (nearest) return { kind: "event", event: nearest.event };
-    }
 
     const ribbonBottom = layout.ribbonTop + ribbon.length * layout.ribbonRowHeight;
     if (y >= layout.ribbonTop && y < ribbonBottom) {

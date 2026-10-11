@@ -188,32 +188,17 @@ test.describe("life timeline", () => {
     await expect.poll(() => page.evaluate(() => window.scrollY)).toBeGreaterThan(before + 50);
   });
 
-  test("life events: add, jump, forget on reload, keep when asked", async ({ page }) => {
-    await generateChart(page);
-    let timeline = await readyTimeline(page);
-    await timeline.getByTestId("timeline-event-label").fill("New job");
-    await timeline.getByTestId("timeline-event-date").fill("2015-06-01");
-    await timeline.getByTestId("timeline-event-add").click();
-    const list = timeline.getByTestId("timeline-event-list");
-    await expect(list).toContainText("New job");
-
-    await list.getByRole("button", { name: /show on timeline/i }).click();
-    await expect(timeline.getByTestId("timeline-card-date")).toContainText("2015");
-
-    // Memory only by default: a new page knows nothing.
-    await generateChart(page);
-    timeline = await readyTimeline(page);
-    await expect(timeline.getByTestId("timeline-event-list")).toHaveCount(0);
-
-    await timeline.getByTestId("timeline-event-label").fill("Graduation");
-    await timeline.getByTestId("timeline-event-date").fill("2012-04-30");
-    await timeline.getByTestId("timeline-event-add").click();
-    await timeline.getByTestId("timeline-event-keep").check();
-
-    await generateChart(page);
-    timeline = await readyTimeline(page);
-    await expect(timeline.getByTestId("timeline-event-list")).toContainText("Graduation");
-    await expect(timeline.getByTestId("timeline-event-keep")).toBeChecked();
+  test("deletes life events that an earlier version kept on this device", async ({ page }) => {
+    await page.goto("/");
+    await page.evaluate(() => {
+      window.localStorage.setItem("jyotish-life-events:0123abcd", '[{"id":"e1","label":"Old","ms":0,"category":"other"}]');
+      window.localStorage.setItem("jyotish-unrelated-key", "kept");
+    });
+    await page.reload();
+    await expect
+      .poll(() => page.evaluate(() => window.localStorage.getItem("jyotish-life-events:0123abcd")))
+      .toBeNull();
+    expect(await page.evaluate(() => window.localStorage.getItem("jyotish-unrelated-key"))).toBe("kept");
   });
 
   test("controls meet the touch-target floors", async ({ page }) => {
@@ -272,6 +257,23 @@ test.describe("life timeline", () => {
     await expect
       .poll(async () => (await timeline.getAttribute("data-cursor-ms")) === (await timeline.getAttribute("data-selected-ms")))
       .toBe(true);
+  });
+
+  test("quick clicks on the navigator's step button all count", async ({ page }) => {
+    await generateChart(page);
+    const timeline = await readyTimeline(page);
+    await timeline.getByTestId("timeline-birth").click();
+    await expect(timeline.getByTestId("timeline-card-date")).toContainText("15 May 1990");
+
+    const navigator = page.locator('section[aria-labelledby="time-navigator-title"]');
+    await navigator.getByRole("button", { name: /century/i }).click();
+    // Three one-week steps in one task, before the page can commit any of them.
+    await navigator.locator('button[aria-label^="Move forward"]').evaluate((button: HTMLButtonElement) => {
+      button.click();
+      button.click();
+      button.click();
+    });
+    await expect(timeline.getByTestId("timeline-card-date")).toContainText("05 Jun 1990");
   });
 
   test("a cancelled scrub does not stop the cursor from following the navigator", async ({ page }) => {
@@ -457,8 +459,8 @@ test.describe("life timeline on a wide screen", () => {
     await expect(layers).toBeHidden();
     await expect(inspector).toBeVisible();
 
-    // Escape in a date field belongs to the field.
-    await timeline.getByTestId("timeline-event-date").focus();
+    // Escape in a select belongs to the select.
+    await page.getByRole("combobox", { name: "Language" }).first().focus();
     await page.keyboard.press("Escape");
     await expect(inspector).toBeVisible();
 

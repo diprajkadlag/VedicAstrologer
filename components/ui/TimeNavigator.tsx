@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   CalendarClock,
   Pause,
@@ -204,9 +204,21 @@ export default function TimeNavigator({
     t,
   );
 
+  // The page commits a new instant a frame or more after a click. Until it
+  // does, a further step builds on the last request, so a quick double click
+  // moves two steps instead of one.
+  const lastRequestRef = useRef<{ from: number; to: number } | null>(null);
+
   function setOffset(nextOffsetMinutes: number) {
     const bounded = clamp(nextOffsetMinutes, -maxOffsetMinutes, maxOffsetMinutes);
+    lastRequestRef.current = { from: offsetMinutes, to: bounded };
     onChange(new Date(birthInstant.getTime() + bounded * MINUTE_MS));
+  }
+
+  function stepOffset(direction: 1 | -1) {
+    const last = lastRequestRef.current;
+    const base = last && last.from === offsetMinutes ? last.to : offsetMinutes;
+    setOffset(base + direction * windowConfig.stepMinutes);
   }
 
   function changeWindow(nextDays: number) {
@@ -292,7 +304,7 @@ export default function TimeNavigator({
       <div className="mt-5 flex items-center gap-2 sm:gap-3">
         <button
           type="button"
-          onClick={() => setOffset(offsetMinutes - windowConfig.stepMinutes)}
+          onClick={() => stepOffset(-1)}
           aria-label={t("backward", {
             minutes: windowConfig.stepMinutes.toLocaleString(
               INTL_LOCALES[locale],
@@ -337,7 +349,7 @@ export default function TimeNavigator({
 
         <button
           type="button"
-          onClick={() => setOffset(offsetMinutes + windowConfig.stepMinutes)}
+          onClick={() => stepOffset(1)}
           aria-label={t("forward", {
             minutes: windowConfig.stepMinutes.toLocaleString(
               INTL_LOCALES[locale],
