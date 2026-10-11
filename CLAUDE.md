@@ -19,7 +19,7 @@ cloud sessions where every token is paid from a limited credit.
 | `npm ci` | install | ~15 s |
 | `npm run typecheck` | `tsc --noEmit` | ~10 s |
 | `npm run lint` | ESLint | ~10 s |
-| `npm test` | Vitest: 326 tests in 34 files (10 Oct 2026) | ~15 s |
+| `npm test` | Vitest: 332 tests in 35 files (11 Oct 2026) | ~15 s |
 | `npm run build` | production build | ~20 s |
 | `npm run e2e` | Playwright phone checks (builds and serves on port 3737) | a few minutes |
 
@@ -33,6 +33,9 @@ cloud sessions where every token is paid from a limited credit.
 - `components/VedicAstrologyApp.tsx`: the page. Owns the state: `natalChart`,
   `displayChart` (chart for the time-navigator instant), `selectedInstant`,
   `selectedPlanetId`, `selectedHouse`, and `selection` (see "Shared instant" below).
+  `shownTimeZone` is the zone for computed dates, from the "Time zone" selector
+  (`AppTimeZoneSelect`, `lib/timeZones.ts`). Pass it, not `request.birth.timeZone`,
+  to any new view of computed dates. The birth record and the PDF keep the birth zone.
 - `components/ui/TimeNavigator.tsx`: time slider (± day/month/year/decade/century around
   birth), play/pause. It widens its window by itself when the shared instant leaves it.
 - `components/timeline/` and `lib/timeline/`: the life timeline, 100 years of Vimshottari

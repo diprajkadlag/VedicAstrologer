@@ -90,6 +90,8 @@ export interface InterpretationPanelProps {
   request: InterpretationRequestMetadata;
   /** Explicit reference instant keeps Dasha output reproducible. */
   asOf: Date;
+  /** Zone for the period dates; the birth zone when not given. */
+  displayTimeZone?: string;
   onSelectPlanet?: (planet: GrahaId) => void;
   onSelectHouse?: (house: HouseNumber) => void;
   initialTab?: AnalysisTab;
@@ -1816,7 +1818,7 @@ export default function InterpretationPanel(props: InterpretationPanelProps) {
             chart={props.chart}
             birthInstant={props.request.birth.instant}
             asOf={props.asOf}
-            timeZone={props.request.birth.timeZone ?? "UTC"}
+            timeZone={props.displayTimeZone ?? props.request.birth.timeZone ?? "UTC"}
             locale={locale}
             copy={copy}
           />

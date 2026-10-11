@@ -4,6 +4,21 @@ This changelog records portfolio milestones for the application. Version 0.1.0 i
 an initial, test-backed release candidate, not a claim of production or
 professional astrological certification.
 
+## [Unreleased] - 2026-10-11
+
+### Time zones
+
+- A "Time zone" selector in the chart header shows the computed dates in
+  the birth place's time zone or in this device's time zone. It covers the
+  time navigator, the life timeline and the planetary-periods tab. The birth
+  record and the PDF keep the birth place's zone. The selector appears only
+  when the two clocks differ this year or at the birth moment, so it stays
+  hidden for an alias such as Asia/Calcutta for Asia/Kolkata. A zone that the
+  browser cannot use is never offered. The choice is remembered like the
+  language and the theme.
+- The Transits tab now writes "UTC" after its time, because it works in UTC
+  calendar days.
+
 ## [Unreleased] - 2026-10-09
 
 ### Life timeline

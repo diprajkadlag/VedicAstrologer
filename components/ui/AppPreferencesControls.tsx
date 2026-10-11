@@ -1,12 +1,13 @@
 "use client";
 
-import { Languages, Moon, Sun } from "lucide-react";
+import { Clock3, Languages, Moon, Sun } from "lucide-react";
 
 import {
   useAppPreferences,
   useScopedTranslations,
 } from "@/components/providers/AppPreferencesProvider";
 import { defineMessages, type AppLocale } from "@/lib/i18n";
+import { isTimeZoneMode } from "@/lib/timeZones";
 
 const messages = defineMessages({
   en: {
@@ -20,6 +21,9 @@ const messages = defineMessages({
     darkTheme: "Use dark theme",
     currentLight: "Light theme",
     currentDark: "Dark theme",
+    timeZone: "Time zone",
+    timeZoneBirth: "Birth place",
+    timeZoneDevice: "This device",
   },
   hi: {
     preferences: "प्रदर्शन प्राथमिकताएँ",
@@ -32,6 +36,9 @@ const messages = defineMessages({
     darkTheme: "गहरी थीम अपनाएँ",
     currentLight: "हल्की थीम",
     currentDark: "गहरी थीम",
+    timeZone: "समय-क्षेत्र",
+    timeZoneBirth: "जन्मस्थान",
+    timeZoneDevice: "यह उपकरण",
   },
   mr: {
     preferences: "दृश्य प्राधान्ये",
@@ -44,6 +51,9 @@ const messages = defineMessages({
     darkTheme: "गडद थीम वापरा",
     currentLight: "फिकट थीम",
     currentDark: "गडद थीम",
+    timeZone: "कालविभाग",
+    timeZoneBirth: "जन्मस्थळ",
+    timeZoneDevice: "हे उपकरण",
   },
   de: {
     preferences: "Anzeigeeinstellungen",
@@ -56,6 +66,9 @@ const messages = defineMessages({
     darkTheme: "Dunkles Design verwenden",
     currentLight: "Helles Design",
     currentDark: "Dunkles Design",
+    timeZone: "Zeitzone",
+    timeZoneBirth: "Geburtsort",
+    timeZoneDevice: "Dieses Gerät",
   },
 });
 
@@ -100,6 +113,48 @@ export function AppLanguageSelect({
             {t(localeLabels[option])}
           </option>
         ))}
+      </select>
+    </label>
+  );
+}
+
+/**
+ * Chooses the zone for computed dates (time navigator, life timeline, period
+ * tab). The birth record and the PDF always keep the birth place's zone.
+ */
+export function AppTimeZoneSelect({
+  birthTimeZone,
+  deviceTimeZone,
+}: {
+  birthTimeZone: string;
+  deviceTimeZone: string;
+}) {
+  const { timeZoneMode, setTimeZoneMode } = useAppPreferences();
+  const t = useScopedTranslations(messages);
+
+  return (
+    <label className="inline-flex min-h-10 max-w-full items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] px-3 text-[var(--foreground)] transition hover:border-violet-500/35">
+      <Clock3
+        aria-hidden="true"
+        className="size-4 shrink-0 text-violet-700 dark:text-violet-300"
+      />
+      <span className="text-xs font-semibold">{t("timeZone")}</span>
+      <select
+        aria-label={t("timeZone")}
+        value={timeZoneMode}
+        onChange={(event) => {
+          if (isTimeZoneMode(event.target.value)) setTimeZoneMode(event.target.value);
+        }}
+        className="min-h-9 min-w-0 max-w-[12rem] bg-transparent py-1.5 text-xs font-medium text-[var(--foreground)] outline-none sm:max-w-none"
+        data-testid="time-zone-select"
+      >
+        {/* The zone names stand next to every date, so the options stay short for phones. */}
+        <option value="birth" title={birthTimeZone}>
+          {t("timeZoneBirth")}
+        </option>
+        <option value="device" title={deviceTimeZone}>
+          {t("timeZoneDevice")}
+        </option>
       </select>
     </label>
   );

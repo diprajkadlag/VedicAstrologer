@@ -29,7 +29,7 @@ flowchart LR
     U[User]
 
     subgraph Browser["Browser — Next.js client application"]
-        PREF[AppPreferencesProvider<br/>locale and theme;<br/>header and post-submit controls]
+        PREF[AppPreferencesProvider<br/>locale, theme and time zone;<br/>header and post-submit controls]
         TOUR[FeatureShowcase<br/>promotional product tour]
         FORM[BirthForm]
         CIVIL[civil-time.ts<br/>IANA civil time to UTC instant]
@@ -127,8 +127,8 @@ calculation is deliberately local:
 - AI context and prompt construction.
 
 Birth-chart state is held in React memory. A refresh does not restore a
-generated chart. Only locale and theme preferences are persisted in
-`localStorage`. The generated PDF is assembled on demand and downloaded by the
+generated chart. Only the locale, theme and time-zone preferences are
+persisted in `localStorage`. The generated PDF is assembled on demand and downloaded by the
 browser; the application does not upload or retain the report.
 
 The WebGL bundle is loaded with `next/dynamic` and `ssr: false`. This isolates
@@ -318,6 +318,18 @@ SVG charts, analysis, guide, transits, and AI workspace without recalculating
 the natal chart. `KundaliPdfDownload` owns a separate report-language selection:
 changing it affects the next PDF only and does not change the application
 locale.
+
+Next to it, a "Time zone" selector (`AppTimeZoneSelect`) chooses the zone for
+computed dates: the birth place's zone or this device's zone (`Intl`, read
+through `useDeviceTimeZone`). The page passes the chosen zone to the time
+navigator, the life timeline and the planetary-periods tab. The birth record
+chips and the PDF keep the birth zone. The selector appears only when
+`sameClockTime` (`lib/timeZones.ts`) finds a different UTC offset on 1 January
+or 1 July of the current year or at the birth instant, so an alias such as
+Asia/Calcutta for Asia/Kolkata needs no choice. `validTimeZone` drops a device
+zone that Intl cannot use (for example "Etc/Unknown"). The Transits tab keeps
+UTC, because it works in UTC calendar days, and writes "UTC" after its time. All instants stay absolute; only their display
+changes.
 
 `analysisAsOf` is initialized to the current time and refreshed once per minute
 while a natal chart exists. All lower-level calculation functions accept

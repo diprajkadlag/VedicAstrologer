@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useTransition,
@@ -30,11 +31,13 @@ import {
 } from "@/components/providers/AppPreferencesProvider";
 import AppPreferencesControls, {
   AppLanguageSelect,
+  AppTimeZoneSelect,
 } from "@/components/ui/AppPreferencesControls";
 import BirthForm, {
   type HoroscopeRequest,
 } from "@/components/ui/BirthForm";
 import TimeNavigator from "@/components/ui/TimeNavigator";
+import { useDeviceTimeZone } from "@/components/ui/useDeviceTimeZone";
 import {
   calculateVedicChart,
   type GrahaId,
@@ -52,6 +55,7 @@ import {
   INTL_LOCALES,
   type AppLocale,
 } from "@/lib/i18n";
+import { displayTimeZone, sameClockTime } from "@/lib/timeZones";
 
 const messages = defineMessages({
   en: {
@@ -429,7 +433,8 @@ function SelectedPlanetStrip({
 }
 
 export default function VedicAstrologyApp() {
-  const { locale } = useAppPreferences();
+  const { locale, timeZoneMode } = useAppPreferences();
+  const deviceTimeZone = useDeviceTimeZone();
   const t = useScopedTranslations(messages);
   const [request, setRequest] = useState<HoroscopeRequest | null>(null);
   const [natalChart, setNatalChart] = useState<VedicChart | null>(null);
@@ -591,6 +596,29 @@ export default function VedicAstrologyApp() {
       selectedInstant.getTime() === request.birth.instant.getTime(),
   );
 
+  // Computed dates can follow this device's zone instead of the birth place's.
+  // The choice appears only when the two clocks differ this year (in winter or
+  // in summer) or at the birth instant. The birth record and the PDF always
+  // keep the birth zone.
+  const birthTimeZone = request?.birth.timeZone ?? "UTC";
+  const birthMs = request?.birth.instant.getTime() ?? null;
+  const currentYear = analysisAsOf?.getUTCFullYear() ?? null;
+  const offerTimeZoneChoice = useMemo(
+    () =>
+      deviceTimeZone !== null &&
+      currentYear !== null &&
+      birthMs !== null &&
+      !sameClockTime(birthTimeZone, deviceTimeZone, [
+        Date.UTC(currentYear, 0, 1),
+        Date.UTC(currentYear, 6, 1),
+        birthMs,
+      ]),
+    [birthMs, birthTimeZone, currentYear, deviceTimeZone],
+  );
+  const shownTimeZone = offerTimeZoneChoice
+    ? displayTimeZone(timeZoneMode, birthTimeZone, deviceTimeZone)
+    : birthTimeZone;
+
   // No horizontal clip on <main>: the decorative layer below is fixed and
   // clips itself, so anything else that overflows should stay reachable and
   // show up in testing rather than being silently cut off.
@@ -706,6 +734,12 @@ export default function VedicAstrologyApp() {
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <AppLanguageSelect showLabel />
+                  {offerTimeZoneChoice && deviceTimeZone ? (
+                    <AppTimeZoneSelect
+                      birthTimeZone={birthTimeZone}
+                      deviceTimeZone={deviceTimeZone}
+                    />
+                  ) : null}
                   <span className="inline-flex min-h-10 items-center rounded-full border border-emerald-300/15 bg-emerald-300/[0.07] px-3 py-1.5 text-xs text-emerald-800 dark:text-emerald-100/75">
                     {request.birth.utcOffset} · {request.birth.timeZone}
                   </span>
@@ -794,7 +828,7 @@ export default function VedicAstrologyApp() {
             <TimeNavigator
               birthInstant={request.birth.instant}
               selectedInstant={selectedInstant}
-              timeZone={request.birth.timeZone}
+              timeZone={shownTimeZone}
               onChange={handleTimeChange}
             />
 
@@ -849,7 +883,7 @@ export default function VedicAstrologyApp() {
               key={`${natalChart.instant}|${natalChart.location.latitude}|${natalChart.location.longitude}`}
               natalChart={natalChart}
               birthInstant={request.birth.instant}
-              timeZone={request.birth.timeZone}
+              timeZone={shownTimeZone}
               todayInstant={analysisAsOf}
               selectedInstant={selectedInstant}
               selectionSource={selection.source}
@@ -866,6 +900,7 @@ export default function VedicAstrologyApp() {
                 chart={natalChart}
                 request={request}
                 asOf={analysisAsOf}
+                displayTimeZone={shownTimeZone}
                 onSelectPlanet={handlePlanetSelection}
                 onSelectHouse={handleHouseSelection}
               />
